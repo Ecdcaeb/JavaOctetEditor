@@ -20,12 +20,12 @@ jobs:
             uses: actions/checkout@v4.1.4
           - name: Grant Execute Permission for gradlew
             run: chmod +x ./gradlew
-          - name: Setup Java
+          - name: Set up JDK 21
             uses: actions/setup-java@v4.2.1
             with:
-              java-version: '8'
-              distribution: 'zulu'
-              cache: gradle
+              java-version: '21'
+              distribution: 'temurin'
+
           - name: Build
             run: ./gradlew build
           - name: Upload Build Artifacts
