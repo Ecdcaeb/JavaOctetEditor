@@ -74,15 +74,10 @@ public class FernFlowerDecompiler implements IDecompiler, IBytecodeProvider, IRe
         });
 
         try {
-            File file = new File("class.class");
-            fernflower.addSource(file);
-            StructContext structContext = ReflectUtil.getFieldValue(fernflower, "structContext");
-            LazyLoader loader = ReflectUtil.getFieldValue(structContext, "loader");
-            loader.addClassLink(file.getName(), new LazyLoader.Link(file.getName(), null));
-
-            StructClass structClass = StructClass.create(new DataInputFullStream(bytes), true, loader);
-            ContextUnit contextUnit = new ContextUnit(ContextUnit.TYPE_FOLDER, null, file.getName(), true, this, fernflower);
-            contextUnit.addClass(structClass, file.getName());
+            //TODO : make faster
+            Map<String, StructClass> loader = ReflectUtil.getFieldValue(ReflectUtil.getFieldValue(fernflower, "structContext"), "classes");
+            StructClass structClass = StructClass.create(new DataInputFullStream(bytes), true);
+            loader.put(classNode.name, structClass);
             fernflower.decompileContext();
         } catch (NoSuchFieldException | IllegalAccessException | IOException e) {
             MessageUtil.error(e);
