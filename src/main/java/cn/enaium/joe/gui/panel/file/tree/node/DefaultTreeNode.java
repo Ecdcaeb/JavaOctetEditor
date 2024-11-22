@@ -16,11 +16,10 @@
 
 package cn.enaium.joe.gui.panel.file.tree.node;
 
+import cn.enaium.joe.util.Util;
+
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
 import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Enaium
@@ -30,12 +29,10 @@ public class DefaultTreeNode extends DefaultMutableTreeNode {
         super(userObject);
     }
 
-
-    @SuppressWarnings("unchecked")
     public Vector<DefaultTreeNode> getChildren() {
         if (children == null) {
             return new Vector<>();
         }
-        return children;
+        return Util.cast(this.children);
     }
 }

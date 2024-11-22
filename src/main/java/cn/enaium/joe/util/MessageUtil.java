@@ -27,6 +27,16 @@ import javax.swing.*;
  */
 public class MessageUtil {
 
+    public static void error(String readable) {
+        Logger.error(readable);
+        JOptionPane.showMessageDialog(null, readable, LangUtil.i18n("error"), JOptionPane.ERROR_MESSAGE);
+    }
+
+    public static void error(String readable, Throwable e) {
+        Logger.error(readable, e);
+        JOptionPane.showMessageDialog(null, readable + e.toString(), LangUtil.i18n("error"), JOptionPane.ERROR_MESSAGE);
+    }
+
     public static void error(Throwable e) {
         Logger.error(e);
         JOptionPane.showMessageDialog(null, e.toString(), LangUtil.i18n("error"), JOptionPane.ERROR_MESSAGE);

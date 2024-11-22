@@ -21,38 +21,30 @@ import cn.enaium.joe.config.extend.FernFlowerConfig;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.ReflectUtil;
 import org.jetbrains.java.decompiler.main.Fernflower;
-import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
-import org.jetbrains.java.decompiler.struct.ContextUnit;
 import org.jetbrains.java.decompiler.struct.StructClass;
-import org.jetbrains.java.decompiler.struct.StructContext;
-import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
 import org.jetbrains.java.decompiler.util.DataInputFullStream;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.Manifest;
 
 /**
  * @author Enaium
  * @since 1.0.0
  */
-public class FernFlowerDecompiler implements IDecompiler, IBytecodeProvider, IResultSaver {
+public class FernFlowerDecompiler extends IFernflowerLogger implements IDecompiler, IResultSaver {
 
-    private byte[] bytes;
     private String returned;
+    public static Map<String, Object> customProperties;
 
-    @Override
-    public String decompile(ClassNode classNode) {
-        ClassWriter classWriter = new ClassWriter(0);
-        classNode.accept(classWriter);
-        bytes = classWriter.toByteArray();
-
-        Fernflower fernflower = new Fernflower(this, this, new HashMap<String, Object>() {{
+    public static void updateCustomProperties(){
+        customProperties = Collections.unmodifiableMap(new HashMap<>() {{
             JavaOctetEditor.getInstance().config.getConfigMap(FernFlowerConfig.class).forEach((k, v) -> {
                 if (v.equals("true")) {
                     v = "1";
@@ -61,33 +53,26 @@ public class FernFlowerDecompiler implements IDecompiler, IBytecodeProvider, IRe
                 }
                 this.put(k, v);
             });
-        }}, new IFernflowerLogger() {
-            @Override
-            public void writeMessage(String message, Severity severity) {
+        }});
+    }
 
-            }
+    @Override
+    public String decompile(ClassNode classNode) {
+        ClassWriter classWriter = new ClassWriter(0);
+        classNode.accept(classWriter);
 
-            @Override
-            public void writeMessage(String message, Severity severity, Throwable t) {
-                MessageUtil.error(t);
-            }
-        });
+        Fernflower fernflower = new Fernflower(this, FernFlowerDecompiler.customProperties, this);
 
         try {
             //TODO : make faster
             Map<String, StructClass> loader = ReflectUtil.getFieldValue(ReflectUtil.getFieldValue(fernflower, "structContext"), "classes");
-            StructClass structClass = StructClass.create(new DataInputFullStream(bytes), true);
+            StructClass structClass = StructClass.create(new DataInputFullStream(classWriter.toByteArray()), true);
             loader.put(classNode.name, structClass);
             fernflower.decompileContext();
         } catch (NoSuchFieldException | IllegalAccessException | IOException e) {
             MessageUtil.error(e);
         }
         return returned;
-    }
-
-    @Override
-    public byte[] getBytecode(String externalPath, String internalPath) throws IOException {
-        return bytes;
     }
 
     @Override
@@ -128,5 +113,24 @@ public class FernFlowerDecompiler implements IDecompiler, IBytecodeProvider, IRe
     @Override
     public void closeArchive(String path, String archiveName) {
 
+    }
+
+    @Override
+    public void writeMessage(String message, Throwable t) {
+        MessageUtil.error(message, t);
+    }
+
+    @Override
+    public void writeMessage(String message, Severity severity) {
+        MessageUtil.error(severity.prefix + message);
+    }
+
+    @Override
+    public void writeMessage(String message, Severity severity, Throwable t) {
+        MessageUtil.error(message, t);
+    }
+
+    static {
+        updateCustomProperties();
     }
 }
