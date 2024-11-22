@@ -25,11 +25,11 @@ import java.util.Set;
  * @since 0.7.0
  */
 public class Value<T> {
-    private final Type type;
+    private transient final Type type;
     private final String name;
     private T value;
     private final String description;
-    private final Set<ConfigValueListener<T>> listeners = new HashSet<>();
+    private transient final Set<ConfigValueListener<T>> listeners = new HashSet<>();
 
     public Value(Type type, String name, T value, String description) {
         this.type = type;

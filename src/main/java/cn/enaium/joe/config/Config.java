@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 public class Config {
     private final String name;
 
-    private final Set<Consumer<Config>> listeners;
+    private transient final Set<Consumer<Config>> listeners;
 
     public Config(String name) {
         this(name, Collections.emptySet());

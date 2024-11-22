@@ -164,7 +164,7 @@ public class ConfigManager {
     public void save() {
         for (Config value : configMap.values()) {
             try {
-                Files.write(new File(System.getProperty("."), value.getName() + ".json").toPath(), gson().toJson(value).getBytes(StandardCharsets.UTF_8));
+                Files.writeString(new File(System.getProperty("."), value.getName() + ".json").toPath(), gson().toJson(value));
             } catch (IOException e) {
                 MessageUtil.error(e);
             }
