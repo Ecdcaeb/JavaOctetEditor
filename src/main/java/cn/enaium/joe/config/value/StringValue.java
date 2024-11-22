@@ -22,6 +22,6 @@ package cn.enaium.joe.config.value;
  */
 public class StringValue extends Value<String> {
     public StringValue(String name, String value, String description) {
-        super(name, value, description);
+        super(String.class, name, value, description);
     }
 }

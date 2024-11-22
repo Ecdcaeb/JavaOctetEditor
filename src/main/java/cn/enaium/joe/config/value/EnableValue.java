@@ -22,6 +22,6 @@ package cn.enaium.joe.config.value;
  */
 public class EnableValue extends Value<Boolean> {
     public EnableValue(String name, Boolean value, String description) {
-        super(name, value, description);
+        super(Boolean.class, name, value, description);
     }
 }

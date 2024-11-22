@@ -45,7 +45,7 @@ public class FernFlowerDecompiler extends IFernflowerLogger implements IDecompil
 
     public static void updateCustomProperties(){
         customProperties = Collections.unmodifiableMap(new HashMap<>() {{
-            JavaOctetEditor.getInstance().config.getConfigMap(FernFlowerConfig.class).forEach((k, v) -> {
+            JavaOctetEditor.getInstance().config.getConfigMapStrings(FernFlowerConfig.class).forEach((k, v) -> {
                 if (v.equals("true")) {
                     v = "1";
                 } else if (v.equals("false")) {

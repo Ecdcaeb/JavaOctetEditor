@@ -60,6 +60,7 @@ public class CFRDecompiler implements IDecompiler {
                 throw new RuntimeException();
             }
         };
-        return new PluginRunner(JavaOctetEditor.getInstance().config.getConfigMap(CFRConfig.class), cfs).getDecompilationFor(classNode.name);
+        //TODO use new api
+        return new PluginRunner(JavaOctetEditor.getInstance().config.getConfigMapStrings(CFRConfig.class), cfs).getDecompilationFor(classNode.name);
     }
 }

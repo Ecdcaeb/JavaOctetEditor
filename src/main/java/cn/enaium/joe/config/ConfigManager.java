@@ -64,7 +64,7 @@ public class ConfigManager {
         return configMap;
     }
 
-    public Map<String, String> getConfigMap(Class<? extends Config> config) {
+    public Map<String, String> getConfigMapStrings(Class<? extends Config> config) {
         Map<String, String> map = new HashMap<>();
         for (Field declaredField : config.getDeclaredFields()) {
             declaredField.setAccessible(true);
@@ -75,6 +75,22 @@ public class ConfigManager {
                     if (value != null) {
                         map.put(declaredField.getName(), value.toString());
                     }
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return map;
+    }
+
+    public Map<String, Value<?>> getConfigMap(Class<? extends Config> config) {
+        Map<String, Value<?>> map = new HashMap<>();
+        for (Field declaredField : config.getDeclaredFields()) {
+            declaredField.setAccessible(true);
+            try {
+                Object o = declaredField.get(getByClass(config));
+                if (o instanceof Value<?>) {
+                    map.put(declaredField.getName(), (Value<?>)o);
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);

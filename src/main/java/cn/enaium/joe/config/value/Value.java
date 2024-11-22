@@ -16,19 +16,30 @@
 
 package cn.enaium.joe.config.value;
 
+import java.lang.reflect.Type;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author Enaium
  * @since 0.7.0
  */
 public class Value<T> {
-    private String name;
+    private final Type type;
+    private final String name;
     private T value;
-    private String description;
+    private final String description;
+    private final Set<ConfigValueListener<T>> listeners = new HashSet<>();
 
-    public Value(String name, T value, String description) {
+    public Value(Type type, String name, T value, String description) {
+        this.type = type;
         this.name = name;
         this.value = value;
         this.description = description;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     public String getName() {
@@ -44,6 +55,14 @@ public class Value<T> {
     }
 
     public void setValue(T value) {
+        T oldValue = this.value;
         this.value = value;
+        for(ConfigValueListener<T> listener : this.listeners){
+            listener.update(this, oldValue, value);
+        }
+    }
+
+    public void addListener(ConfigValueListener<T> listener) {
+        this.listeners.add(listener);
     }
 }

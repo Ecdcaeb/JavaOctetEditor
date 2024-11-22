@@ -16,6 +16,10 @@
 
 package cn.enaium.joe.config;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.function.Consumer;
+
 /**
  * @author Enaium
  * @since 0.7.0
@@ -23,11 +27,25 @@ package cn.enaium.joe.config;
 public class Config {
     private final String name;
 
+    private final Set<Consumer<Config>> listeners;
+
     public Config(String name) {
+        this(name, Collections.emptySet());
+    }
+
+    public Config(String name, Set<Consumer<Config>> listeners ) {
         this.name = name;
+        this.listeners = listeners;
+    }
+
+    public void update(){
+        for(Consumer<Config> consumer : listeners){
+            consumer.accept(this);
+        }
     }
 
     public String getName() {
         return name;
     }
+
 }
