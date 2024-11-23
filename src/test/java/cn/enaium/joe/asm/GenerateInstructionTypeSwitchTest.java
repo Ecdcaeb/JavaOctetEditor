@@ -16,6 +16,7 @@
 
 package cn.enaium.joe.asm;
 
+import cn.enaium.joe.util.ImagineBreakerHelper;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.tree.AbstractInsnNode;
 
@@ -25,6 +26,11 @@ import java.lang.reflect.Field;
  * @author Enaium
  */
 class GenerateInstructionTypeSwitchTest {
+
+    static {
+        ImagineBreakerHelper.boot();
+    }
+
     @Test
     public void test() {
         StringBuilder stringBuilder = new StringBuilder();

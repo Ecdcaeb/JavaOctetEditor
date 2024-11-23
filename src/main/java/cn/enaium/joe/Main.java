@@ -17,10 +17,7 @@
 package cn.enaium.joe;
 
 import cn.enaium.joe.jar.Jar;
-import cn.enaium.joe.util.IOUtil;
-import cn.enaium.joe.util.MessageUtil;
-import cn.enaium.joe.util.ReflectUtil;
-import cn.enaium.joe.util.TinyLogPrintStream;
+import cn.enaium.joe.util.*;
 import com.formdev.flatlaf.FlatDarkLaf;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
@@ -28,7 +25,6 @@ import org.pmw.tinylog.Configurator;
 import org.pmw.tinylog.Logger;
 import org.pmw.tinylog.writers.ConsoleWriter;
 import org.pmw.tinylog.writers.FileWriter;
-import zone.rong.imaginebreaker.ImagineBreaker;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -51,15 +47,9 @@ import static cn.enaium.joe.util.TinyLogPrintStream.Type.STDOUT;
  */
 public final class Main {
     public static void main(String[] args) {
-        setupImagineBreaker();
+        ImagineBreakerHelper.boot();
         loadTools();
         launch();
-    }
-
-    public static void setupImagineBreaker(){
-        ImagineBreaker.openBootModules();
-        ImagineBreaker.wipeFieldFilters();
-        ImagineBreaker.wipeMethodFilters();
     }
 
     private static void agent(Instrumentation inst) throws IOException {

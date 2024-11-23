@@ -1,5 +1,6 @@
 package cn.enaium.joe.asm;
 
+import cn.enaium.joe.util.ImagineBreakerHelper;
 import javassist.*;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.ClassReader;
@@ -13,6 +14,10 @@ import java.lang.reflect.InvocationTargetException;
  * @author Enaium
  */
 class VisitorTest {
+    static {
+        ImagineBreakerHelper.boot();
+    }
+
     @Test
     public void test() throws IOException, CannotCompileException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NotFoundException {
         StringWriter stringWriter = new StringWriter();

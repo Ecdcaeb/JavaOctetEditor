@@ -16,6 +16,7 @@
 
 package cn.enaium.joe.asm;
 
+import cn.enaium.joe.util.ImagineBreakerHelper;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Opcodes;
 
@@ -25,6 +26,9 @@ import java.lang.reflect.Field;
  * @author Enaium
  */
 public class GenerateOpcodeTest {
+    static {
+        ImagineBreakerHelper.boot();
+    }
     @Test
     public void map() {
         for (Field field : Opcodes.class.getFields()) {
