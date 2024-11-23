@@ -159,6 +159,7 @@ public class ConfigManager {
         for (Config value : configMap.values()) {
             try {
                 Files.writeString(new File(System.getProperty("."), value.getName() + ".json").toPath(), gson().toJson(value));
+                value.update();
             } catch (IOException e) {
                 MessageUtil.error(e);
             }
