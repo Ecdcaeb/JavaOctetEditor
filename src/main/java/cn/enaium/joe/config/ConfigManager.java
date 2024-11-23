@@ -22,16 +22,15 @@ import cn.enaium.joe.config.extend.FernFlowerConfig;
 import cn.enaium.joe.config.extend.ProcyonConfig;
 import cn.enaium.joe.config.value.*;
 import cn.enaium.joe.util.MessageUtil;
-import cn.enaium.joe.util.ReflectUtil;
 import com.google.gson.*;
-import com.google.gson.annotations.Expose;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Enaium
@@ -41,10 +40,10 @@ public class ConfigManager {
     private final Map<Class<? extends Config>, Config> configMap = new LinkedHashMap<>();
 
     public ConfigManager() {
-        setByClass(new ApplicationConfig());
-        setByClass(new CFRConfig());
-        setByClass(new FernFlowerConfig());
-        setByClass(new ProcyonConfig());
+        addByInstance(new ApplicationConfig());
+        addByInstance(new CFRConfig());
+        addByInstance(new FernFlowerConfig());
+        addByInstance(new ProcyonConfig());
     }
 
     @SuppressWarnings("unchecked")
@@ -56,7 +55,15 @@ public class ConfigManager {
         }
     }
 
-    public void setByClass(Config config) {
+    public <T extends Config> void addByClass(Class<T> config) {
+        try {
+            configMap.put(config, config.getConstructor().newInstance());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw MessageUtil.runtimeException("Could not setup Config for " + config, e);
+        }
+    }
+
+    public void addByInstance(Config config) {
         configMap.put(config.getClass(), config);
     }
 
@@ -65,22 +72,9 @@ public class ConfigManager {
     }
 
     public Map<String, String> getConfigMapStrings(Class<? extends Config> config) {
-        Map<String, String> map = new HashMap<>();
-        for (Field declaredField : config.getDeclaredFields()) {
-            declaredField.setAccessible(true);
-            try {
-                Object o = declaredField.get(getByClass(config));
-                if (o instanceof Value<?>) {
-                    Object value = ((Value<?>) o).getValue();
-                    if (value != null) {
-                        map.put(declaredField.getName(), value.toString());
-                    }
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return map;
+        return getConfigMap(config).entrySet().stream()
+                .filter(entry -> entry.getValue() != null)
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().toString()));
     }
 
     public Map<String, Value<?>> getConfigMap(Class<? extends Config> config) {
@@ -111,7 +105,7 @@ public class ConfigManager {
             try {
                 File file = new File(System.getProperty("."), config.getName() + ".json");
                 if (file.exists()) {
-                    JsonObject jsonObject = gson().fromJson(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8), JsonObject.class);
+                    JsonObject jsonObject = gson().fromJson(Files.readString(file.toPath()), JsonObject.class);
 
                     for (Field configField : klass.getDeclaredFields()) {
                         configField.setAccessible(true);

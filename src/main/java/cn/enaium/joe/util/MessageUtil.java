@@ -42,6 +42,16 @@ public class MessageUtil {
         JOptionPane.showMessageDialog(null, e.toString(), LangUtil.i18n("error"), JOptionPane.ERROR_MESSAGE);
     }
 
+    public static RuntimeException runtimeException(String readable, Throwable e) {
+        error(readable, e);
+        return new RuntimeException(readable, e);
+    }
+
+    public static RuntimeException runtimeException(Throwable e) {
+        error(e);
+        return new RuntimeException(e);
+    }
+
     public static void confirm(Object message, String title, Runnable yes, Runnable no) {
         int i = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.OK_CANCEL_OPTION);
         if (i == JOptionPane.YES_OPTION) {

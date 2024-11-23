@@ -16,12 +16,8 @@
 
 package cn.enaium.joe;
 
-import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.ReflectUtil;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
 
-import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
