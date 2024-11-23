@@ -22,7 +22,6 @@ import cn.enaium.joe.util.OpcodeUtil;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.tree.*;
 
-import java.awt.*;
 import java.util.Arrays;
 
 /**
