@@ -6,7 +6,7 @@ public class ImagineBreakerHelper {
     private static boolean isBooted = false;
 
     public static void boot(){
-        if (isBooted){
+        if (!isBooted){
             ImagineBreaker.openBootModules();
             ImagineBreaker.wipeFieldFilters();
             ImagineBreaker.wipeMethodFilters();
