@@ -28,6 +28,7 @@ import org.pmw.tinylog.Configurator;
 import org.pmw.tinylog.Logger;
 import org.pmw.tinylog.writers.ConsoleWriter;
 import org.pmw.tinylog.writers.FileWriter;
+import zone.rong.imaginebreaker.ImagineBreaker;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -50,10 +51,16 @@ import static cn.enaium.joe.util.TinyLogPrintStream.Type.STDOUT;
  */
 public final class Main {
     public static void main(String[] args) {
+        setupImagineBreaker();
         loadTools();
         launch();
     }
 
+    public static void setupImagineBreaker(){
+        ImagineBreaker.openBootModules();
+        ImagineBreaker.wipeFieldFilters();
+        ImagineBreaker.wipeMethodFilters();
+    }
 
     private static void agent(Instrumentation inst) throws IOException {
         launch();
