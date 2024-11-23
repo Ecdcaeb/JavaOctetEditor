@@ -73,8 +73,8 @@ public class ConfigManager {
 
     public Map<String, String> getConfigMapStrings(Class<? extends Config> config) {
         return getConfigMap(config).entrySet().stream()
-                .filter(entry -> entry.getValue() != null)
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().toString()));
+                .filter(entry -> entry.getValue().getValue() != null)
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getValue().toString()));
     }
 
     public Map<String, Value<?>> getConfigMap(Class<? extends Config> config) {
