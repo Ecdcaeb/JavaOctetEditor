@@ -1,5 +1,8 @@
 # JavaOctetEditor
 
+This is the continue of JavaOctetEditor. 
+Keep the latest library, remove upstream problems and absorb upstream ideas.
+
 ![GitHub all releases](https://img.shields.io/github/downloads/Ecdcaeb/JavaOctetEditor/total?style=flat-square)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Ecdcaeb/JavaOctetEditor?style=flat-square)
 ![GitHub](https://img.shields.io/github/license/Ecdcaeb/JavaOctetEditor?style=flat-square)

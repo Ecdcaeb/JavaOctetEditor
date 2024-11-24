@@ -25,7 +25,8 @@ jobs:
             with:
               java-version: '21'
               distribution: 'temurin'
-
+          - name: Change mod version
+            run: sed -i "s/version.*=.*/version = snapshot-${{ github.run_number}}/g" gradle.properties
           - name: Build
             run: ./gradlew build
           - name: Upload Build Artifacts
