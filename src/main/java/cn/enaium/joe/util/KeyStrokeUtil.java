@@ -20,6 +20,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -30,16 +31,11 @@ public class KeyStrokeUtil {
 
     private static final AtomicInteger ATOMIC_INTEGER = new AtomicInteger(0);
 
-    public static void register(JComponent component, KeyStroke keyStroke, Runnable action) {
+    public static void register(JComponent component, KeyStroke keyStroke, Runnable runnable) {
         String key = String.valueOf(ATOMIC_INTEGER.incrementAndGet());
         InputMap inputMap = component.getInputMap(JComponent.WHEN_FOCUSED);
         inputMap.put(keyStroke, key);
         ActionMap actionMap = component.getActionMap();
-        actionMap.put(key, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                action.run();
-            }
-        });
+        actionMap.put(key, Util.ofAction(runnable));
     }
 }

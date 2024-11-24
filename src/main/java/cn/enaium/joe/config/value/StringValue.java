@@ -16,6 +16,8 @@
 
 package cn.enaium.joe.config.value;
 
+import com.google.gson.JsonElement;
+
 /**
  * @author Enaium
  * @since 0.7.0
@@ -23,5 +25,10 @@ package cn.enaium.joe.config.value;
 public class StringValue extends Value<String> {
     public StringValue(String name, String value, String description) {
         super(String.class, name, value, description);
+    }
+
+    @Override
+    public void decode(JsonElement jsonElement) {
+        this.setValue(jsonElement.getAsString());
     }
 }

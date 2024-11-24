@@ -16,14 +16,12 @@
 
 package cn.enaium.joe.config;
 
-import cn.enaium.joe.config.extend.ApplicationConfig;
-import cn.enaium.joe.config.extend.CFRConfig;
-import cn.enaium.joe.config.extend.FernFlowerConfig;
-import cn.enaium.joe.config.extend.ProcyonConfig;
+import cn.enaium.joe.config.extend.*;
 import cn.enaium.joe.config.value.*;
 import cn.enaium.joe.util.MessageUtil;
 import com.google.gson.*;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -44,6 +42,7 @@ public class ConfigManager {
         addByInstance(new CFRConfig());
         addByInstance(new FernFlowerConfig());
         addByInstance(new ProcyonConfig());
+        addByInstance(new KeymapConfig());
     }
 
     @SuppressWarnings("unchecked")
@@ -93,8 +92,9 @@ public class ConfigManager {
         return map;
     }
 
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private Gson gson() {
-        return new GsonBuilder().setPrettyPrinting().create();
+        return GSON;
     }
 
     public void load() {
@@ -106,14 +106,13 @@ public class ConfigManager {
                 File file = new File(System.getProperty("."), config.getName() + ".json");
                 if (file.exists()) {
                     JsonObject jsonObject = gson().fromJson(Files.readString(file.toPath()), JsonObject.class);
-
                     for (Field configField : klass.getDeclaredFields()) {
                         configField.setAccessible(true);
                         if (!jsonObject.has(configField.getName())) {
                             continue;
                         }
 
-                        if (!jsonObject.has(configField.getName())) {
+                        if (!jsonObject.get(configField.getName()).isJsonObject()) {
                             continue;
                         }
 
@@ -126,26 +125,7 @@ public class ConfigManager {
                         Object valueObject = configField.get(config);
                         if (valueObject instanceof Value<?>) {
                             Value<?> value = (Value<?>) valueObject;
-                            if (value instanceof EnableValue) {
-                                ((EnableValue) value).setValue(valueJsonElement.getAsBoolean());
-                            } else if (value instanceof IntegerValue) {
-                                ((IntegerValue) value).setValue(valueJsonElement.getAsInt());
-                            } else if (value instanceof ModeValue) {
-                                ModeValue modeValue = (ModeValue) value;
-                                if (modeValue.getMode().contains(valueJsonElement.getAsString())) {
-                                    modeValue.setValue(valueJsonElement.getAsString());
-                                } else {
-                                    modeValue.setValue(modeValue.getMode().get(0));
-                                }
-                            } else if (value instanceof StringSetValue) {
-                                Set<String> strings = new HashSet<>();
-                                for (JsonElement jsonElement : valueJsonElement.getAsJsonArray()) {
-                                    strings.add(jsonElement.getAsString());
-                                }
-                                ((StringSetValue) value).setValue(strings);
-                            } else if (value instanceof StringValue) {
-                                ((StringValue) value).setValue(valueJsonElement.getAsString());
-                            }
+                            value.decode(valueJsonElement);
                         }
                     }
                 }

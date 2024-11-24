@@ -54,6 +54,10 @@ public class CFRDecompiler implements IDecompiler {
                 String name = path.substring(0, path.length() - 6);
                 if (name.equals(classNode.getInternalName())) {
                     return Pair.make(classNode.getClassBytes(), name);
+                } else {
+                    if (JavaOctetEditor.getInstance().getJar().classes.get(path) != null) {
+                        return Pair.make(ClassNode.of(JavaOctetEditor.getInstance().getJar().classes.get(path)).getClassBytes(), name);
+                    }
                 }
                 return null;
             }
@@ -62,7 +66,6 @@ public class CFRDecompiler implements IDecompiler {
             @Override public String getPossiblyRenamedPath(String path) {return path;}
             @Override public Collection<String> addJar(String arg0) {return Collections.emptySet();}
         });
-
         return decompile(state, classNode);
     }
 

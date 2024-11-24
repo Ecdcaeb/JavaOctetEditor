@@ -16,9 +16,11 @@
 
 package cn.enaium.joe.config.value;
 
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -29,5 +31,14 @@ public class StringSetValue extends Value<Set<String>>{
     public static final Type TYPE = TypeToken.getParameterized(Set.class, String.class).getType();//<Set<String>>().getType();
     public StringSetValue(String name, Set<String> value, String description) {
         super(TYPE, name, value, description);
+    }
+
+    @Override
+    public void decode(JsonElement jsonElement) {
+        Set<String> strings = new HashSet<>();
+        for (JsonElement element : jsonElement.getAsJsonArray()) {
+            strings.add(element.getAsString());
+        }
+        this.setValue(strings);
     }
 }

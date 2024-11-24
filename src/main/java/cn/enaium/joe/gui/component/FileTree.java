@@ -167,7 +167,7 @@ public class FileTree extends JTree {
                     FolderTreeNode folderTreeNode = new FolderTreeNode(s);
 
                     if (split.length == i + 1) {
-                        folderTreeNode = new FileTreeNode(s, stringEntry.getValue());
+                        folderTreeNode = new FileTreeNode(s,stringEntry.getKey());
                     }
 
                     if (prev == null) {
@@ -226,7 +226,7 @@ public class FileTree extends JTree {
                     name = name.substring(name.lastIndexOf("/") + 1);
                 }
 
-                FileTreeNode classTreeNode = new FileTreeNode(name, stringEntry.getValue());
+                FileTreeNode classTreeNode = new FileTreeNode(name, stringEntry.getKey());
 
                 if (folderName.isEmpty()) {
                     resourceRoot.add(classTreeNode);

@@ -16,8 +16,11 @@
 
 package cn.enaium.joe.gui.panel.method;
 
+import cn.enaium.joe.JavaOctetEditor;
+import cn.enaium.joe.config.extend.KeymapConfig;
 import cn.enaium.joe.gui.component.InstructionComboBox;
 import cn.enaium.joe.gui.panel.confirm.InstructionEditPanel;
+import cn.enaium.joe.util.Util;
 import cn.enaium.joe.util.*;
 import cn.enaium.joe.wrapper.InstructionWrapper;
 import org.objectweb.asm.Handle;
@@ -27,10 +30,6 @@ import org.objectweb.asm.tree.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -42,6 +41,7 @@ public class MethodInstructionPanel extends JPanel {
         super(new BorderLayout());
         DefaultListModel<InstructionWrapper> instructionDefaultListModel = new DefaultListModel<>();
         JList<InstructionWrapper> instructionJList = new JList<>(instructionDefaultListModel);
+        instructionJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         instructionJList.setPrototypeCellValue(new InstructionWrapper(null));
         instructionJList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> new JPanel(new BorderLayout()) {{
             if (isSelected) {
@@ -57,79 +57,63 @@ public class MethodInstructionPanel extends JPanel {
         }
 
         JPopupMenu jPopupMenu = new JPopupMenu();
-        jPopupMenu.add(new JMenuItem(LangUtil.i18n("popup.instruction.edit")) {{
-            addActionListener(e -> {
-                InstructionWrapper selectedValue = instructionJList.getSelectedValue();
-                if (selectedValue != null && !(selectedValue.getWrapper() instanceof LabelNode)) {
-                    MessageUtil.confirm(new InstructionEditPanel(selectedValue.getWrapper()), LangUtil.i18n("popup.instruction.edit"));
+        KeymapConfig keymapConfig = JavaOctetEditor.getInstance().config.getByClass(KeymapConfig.class);
+
+        addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.edit"), () -> {
+            InstructionWrapper selectedValue = instructionJList.getSelectedValue();
+            if (selectedValue != null && !(selectedValue.getWrapper() instanceof LabelNode)) {
+                MessageUtil.confirm(new InstructionEditPanel(selectedValue.getWrapper()), LangUtil.i18n("popup.instructions.edit"));
+            }
+        }, keymapConfig.edit.getValue());
+
+
+        addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.clone"), () -> {
+            InstructionWrapper selectedValue = instructionJList.getSelectedValue();
+            if (instructionJList.getSelectedIndex() != -1 || selectedValue != null) {
+                AbstractInsnNode clone;
+                if (selectedValue.getWrapper() instanceof LabelNode) {
+                    clone = new LabelNode();
+                } else {
+                    clone = selectedValue.getWrapper().clone(new HashMap<>());
                 }
-            });
-        }});
 
-        jPopupMenu.add(new JMenuItem(LangUtil.i18n("popup.instruction.clone")) {{
-            addActionListener(e -> {
-                InstructionWrapper selectedValue = instructionJList.getSelectedValue();
-                if (instructionJList.getSelectedIndex() != -1 || selectedValue != null) {
-                    AbstractInsnNode clone;
-                    if (selectedValue.getWrapper() instanceof LabelNode) {
-                        clone = new LabelNode();
-                    } else {
-                        clone = selectedValue.getWrapper().clone(new HashMap<>());
-                    }
+                instructionDefaultListModel.add(instructionJList.getSelectedIndex() + 1, new InstructionWrapper(clone));
+                methodNode.instructions.insert(selectedValue.getWrapper(), clone);
+            }
+        }, keymapConfig.clone.getValue());
 
-                    instructionDefaultListModel.add(instructionJList.getSelectedIndex() + 1, new InstructionWrapper(clone));
-                    methodNode.instructions.insert(selectedValue.getWrapper(), clone);
-                }
-            });
-        }});
+        addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.remove"), () -> {
+            InstructionWrapper selectedValue = instructionJList.getSelectedValue();
+            if (instructionJList.getSelectedIndex() != -1 || selectedValue != null) {
+                MessageUtil.confirm(LangUtil.i18n("dialog.wantRemove"), LangUtil.i18n("button.remove"), () -> {
+                    instructionDefaultListModel.remove(instructionJList.getSelectedIndex());
+                    methodNode.instructions.remove(selectedValue.getWrapper());
+                });
+            }
+        }, keymapConfig.remove.getValue());
 
-        jPopupMenu.add(new JMenuItem(LangUtil.i18n("popup.instructions.remove")) {{
-            addActionListener(e -> {
-                InstructionWrapper selectedValue = instructionJList.getSelectedValue();
-                if (instructionJList.getSelectedIndex() != -1 || selectedValue != null) {
-                    MessageUtil.confirm(LangUtil.i18n("dialog.wantRemove"), LangUtil.i18n("button.remove"), () -> {
-                        instructionDefaultListModel.remove(instructionJList.getSelectedIndex());
-                        methodNode.instructions.remove(selectedValue.getWrapper());
-                    });
-                }
-            });
-        }});
+        addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.copyText"), () -> {
+            InstructionWrapper selectedValue = instructionJList.getSelectedValue();
+            if (instructionJList.getSelectedIndex() != -1 || selectedValue != null) {
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(HtmlUtil.remove(selectedValue.toString())), null);
+            }
+        }, keymapConfig.copy.getValue());
 
-        jPopupMenu.add(new JMenuItem(LangUtil.i18n("popup.instructions.copyText")) {{
-            addActionListener(e -> {
-                InstructionWrapper selectedValue = instructionJList.getSelectedValue();
-                if (instructionJList.getSelectedIndex() != -1 || selectedValue != null) {
-                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(HtmlUtil.remove(selectedValue.toString())), null);
-                }
-            });
-        }});
-
-        jPopupMenu.add(new JMenuItem(LangUtil.i18n("popup.instructions.insertBefore")) {{
-            addActionListener(e -> {
-                insert(methodNode, instructionJList, true);
-            });
-        }});
-
-        jPopupMenu.add(new JMenuItem(LangUtil.i18n("popup.instructions.insertAfter")) {{
-            addActionListener(e -> {
-                insert(methodNode, instructionJList, false);
-            });
-        }});
-
-        jPopupMenu.add(new JMenuItem(LangUtil.i18n("popup.instructions.moveUp")) {{
-            addActionListener(e -> {
-                moveInstruction(instructionJList, methodNode, true);
-            });
-        }});
-
-        jPopupMenu.add(new JMenuItem(LangUtil.i18n("popup.instructions.moveDown")) {{
-            addActionListener(e -> {
-                moveInstruction(instructionJList, methodNode, false);
-            });
-        }});
+        addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.insertBefore"), () -> insert(methodNode, instructionJList, true), keymapConfig.insertBefore.getValue());
+        addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.insertAfter"), () -> insert(methodNode, instructionJList, false), keymapConfig.insertAfter.getValue());
+        addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.moveUp"), () -> moveInstruction(instructionJList, methodNode, true), keymapConfig.insertAfter.getValue());
+        addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.moveDown"), () -> moveInstruction(instructionJList, methodNode, false), keymapConfig.insertAfter.getValue());
 
         JMenuUtil.addPopupMenu(instructionJList, () -> jPopupMenu, () -> instructionJList.getSelectedValue() != null);
         add(new JScrollPane(instructionJList), BorderLayout.CENTER);
+    }
+
+    private void addItem(JList<InstructionWrapper> instructionJList, JPopupMenu jPopupMenu, String text, Runnable runnable, KeyStroke key) {
+        jPopupMenu.add(new JMenuItem(text) {{
+            KeyStrokeUtil.register(instructionJList, key, runnable);
+            setAccelerator(key);
+            addActionListener(Util.ofAction(runnable));
+        }});
     }
 
     private static void moveInstruction(JList<InstructionWrapper> instructionJList, MethodNode methodNode, boolean up) {
@@ -217,7 +201,7 @@ public class MethodInstructionPanel extends JPanel {
                     throw new RuntimeException();
             }
 
-            MessageUtil.confirm(new InstructionEditPanel(abstractInsnNode), LangUtil.i18n("popup.instruction.edit"), () -> {
+            MessageUtil.confirm(new InstructionEditPanel(abstractInsnNode), LangUtil.i18n("popup.instructions.edit"), () -> {
                 if (before) {
                     methodNode.instructions.insertBefore(instructionJList.getSelectedValue().getWrapper(), abstractInsnNode);
                 } else {

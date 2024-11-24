@@ -41,6 +41,7 @@ dependencies {
 
     implementation 'com.formdev:flatlaf:3.5.2'
     implementation 'com.formdev:flatlaf-extras:3.5.2'
+    implementation 'com.github.weisj:jsvg:1.6.1'
     //noinspection GradlePackageUpdate
     implementation 'com.miglayout:miglayout-swing:11.4.2'
     implementation 'com.github.bobbylight:RSyntaxTextArea:3.5.2'
@@ -65,11 +66,11 @@ shadowJar {
     dependencies {
         include(dependency('com.formdev:.*'))
         include(dependency('com.miglayout:.*'))
+        include(dependency('com.github.weisj:.*'))
         include(dependency('com.github.bobbylight:RSyntaxTextArea'))
         include(dependency('org.ow2.asm:.*'))
         include(dependency('org.benf:cfr'))
         include(dependency('com.github.mstrobel.procyon:procyon-decompiler'))
-        include(dependency('org.javassist:javassist'))
         include(dependency('com.google.code.gson:gson'))
         include(dependency('org.tinylog:.*'))
         include(dependency('org.vineflower:vineflower'))
