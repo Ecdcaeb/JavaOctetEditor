@@ -92,7 +92,7 @@ public class ConfigManager {
         return map;
     }
 
-    private static final Gson GSON new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private Gson gson() {
         return GSON;
     }
