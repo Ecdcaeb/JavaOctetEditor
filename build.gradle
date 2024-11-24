@@ -41,6 +41,7 @@ dependencies {
 
     implementation 'com.formdev:flatlaf:3.5.2'
     implementation 'com.formdev:flatlaf-extras:3.5.2'
+    implementation 'com.github.weisj:jsvg:1.6.1'
     //noinspection GradlePackageUpdate
     implementation 'com.miglayout:miglayout-swing:11.4.2'
     implementation 'com.github.bobbylight:RSyntaxTextArea:3.5.2'
