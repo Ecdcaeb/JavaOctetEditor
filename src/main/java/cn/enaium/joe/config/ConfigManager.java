@@ -92,8 +92,9 @@ public class ConfigManager {
         return map;
     }
 
-    private GsonBuilder gson() {
-        return new GsonBuilder().setPrettyPrinting().disableHtmlEscaping();
+    private static final Gson GSON new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    private Gson gson() {
+        return GSON;
     }
 
     public void load() {
@@ -104,7 +105,7 @@ public class ConfigManager {
             try {
                 File file = new File(System.getProperty("."), config.getName() + ".json");
                 if (file.exists()) {
-                    JsonObject jsonObject = gson().create().fromJson(Files.readString(file.toPath()), JsonObject.class);
+                    JsonObject jsonObject = gson().fromJson(Files.readString(file.toPath()), JsonObject.class);
                     for (Field configField : klass.getDeclaredFields()) {
                         configField.setAccessible(true);
                         if (!jsonObject.has(configField.getName())) {
