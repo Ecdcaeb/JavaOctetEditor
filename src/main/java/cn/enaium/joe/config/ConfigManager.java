@@ -112,7 +112,7 @@ public class ConfigManager {
                             continue;
                         }
 
-                        if (!jsonObject.has(configField.getName())) {
+                        if (!jsonObject.get(configField.getName()).isJsonObject()) {
                             continue;
                         }
 

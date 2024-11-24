@@ -63,6 +63,8 @@ public class JavaOctetEditor {
 
 
     public JavaOctetEditor() {
+        instance = this;
+        
         event = new EventManager();
         config = new ConfigManager();
         config.load();
@@ -78,7 +80,6 @@ public class JavaOctetEditor {
         FlatDarkLaf.setup();
         UIManager.put("Tree.paintLines", true);
 
-        instance = this;
         fileTabbedPanel = new FileTabbedPanel();
         fileTree = new FileTree();
         bottomPanel = new BottomPanel();
