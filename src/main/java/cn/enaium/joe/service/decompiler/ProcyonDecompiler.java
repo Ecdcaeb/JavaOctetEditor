@@ -19,6 +19,7 @@ package cn.enaium.joe.service.decompiler;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.extend.ProcyonConfig;
 import cn.enaium.joe.util.ReflectUtil;
+import cn.enaium.joe.util.classes.ClassNode;
 import com.strobel.assembler.InputTypeLoader;
 import com.strobel.assembler.metadata.Buffer;
 import com.strobel.assembler.metadata.ITypeLoader;
@@ -27,8 +28,6 @@ import com.strobel.decompiler.DecompilationOptions;
 import com.strobel.decompiler.DecompilerSettings;
 import com.strobel.decompiler.PlainTextOutput;
 import com.strobel.decompiler.languages.java.JavaFormattingOptions;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
 import org.pmw.tinylog.Logger;
 
 import java.io.StringWriter;
@@ -70,10 +69,8 @@ public class ProcyonDecompiler implements IDecompiler {
 
             @Override
             public boolean tryLoadType(String s, Buffer buffer) {
-                if (s.equals(classNode.name)) {
-                    ClassWriter classWriter = new ClassWriter(0);
-                    classNode.accept(classWriter);
-                    byte[] b = classWriter.toByteArray();
+                if (s.equals(classNode.getInternalName())) {
+                    byte[] b = classNode.getClassBytes();
                     buffer.putByteArray(b, 0, b.length);
                     buffer.position(0);
                     return true;
@@ -83,7 +80,7 @@ public class ProcyonDecompiler implements IDecompiler {
             }
         });
         StringWriter stringwriter = new StringWriter();
-        decompilerSettings.getLanguage().decompileType(metadataSystem.lookupType(classNode.name).resolve(), new PlainTextOutput(stringwriter), new DecompilationOptions(){{
+        decompilerSettings.getLanguage().decompileType(metadataSystem.lookupType(classNode.getCanonicalName()).resolve(), new PlainTextOutput(stringwriter), new DecompilationOptions(){{
             setFullDecompilation(true);
             DecompilerSettings settings = DecompilerSettings.javaDefaults();
             settings.setJavaFormattingOptions(cachedFormattingOptions);

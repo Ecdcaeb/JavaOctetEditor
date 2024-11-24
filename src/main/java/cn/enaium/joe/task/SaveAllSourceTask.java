@@ -57,7 +57,7 @@ public class SaveAllSourceTask extends AbstractTask<Boolean> {
                 String name = value.name + ".java";
                 name = "src/main/java/" + name;
                 zipOutputStream.putNextEntry(new ZipEntry(name));
-                zipOutputStream.write(DecompileService.getService().decompile(value).getBytes(StandardCharsets.UTF_8));
+                zipOutputStream.write(DecompileService.getService().decompile(cn.enaium.joe.util.classes.ClassNode.of(value)).getBytes(StandardCharsets.UTF_8));
                 setProgress((int) ((loaded++ / files) * 100f));
             }
 
