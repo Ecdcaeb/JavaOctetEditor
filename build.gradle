@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'cn.enaium'
-version '1.3.2'
+version project.version
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
