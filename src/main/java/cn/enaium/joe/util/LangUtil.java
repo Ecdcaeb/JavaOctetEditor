@@ -20,48 +20,64 @@ import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.extend.ApplicationConfig;
 import cn.enaium.joe.config.value.ModeValue;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.pmw.tinylog.Logger;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 public class LangUtil {
+    public static String lang = null;
+    public static Map<String, String> locales = new HashMap<>();
+
+    public static String getCurrentLang(){
+        String langConfig = JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).language.getValue();
+        if (langConfig.equals("System")) {
+            Locale locale = Locale.getDefault();
+            return locale.getLanguage() + "_" + locale.getCountry();
+        } else {
+            return langConfig;
+        }
+    }
+
+    public static void reloadLang(){
+        reloadLang(getCurrentLang());
+    }
+
+    public static void reloadLang(String lang){
+        locales.clear();
+        try (InputStream stream = LangUtil.class.getResourceAsStream("/lang/en_US.json")){
+            for(Map.Entry<String, JsonElement> entry : JsonParser.parseReader(new InputStreamReader(Objects.requireNonNull(stream))).getAsJsonObject().entrySet()) {
+                locales.put(entry.getKey(), entry.getValue().getAsString());
+            }
+        } catch (IOException | NullPointerException e) {
+            Logger.warn(e);
+        }
+        try (InputStream stream = LangUtil.class.getResourceAsStream("/lang/" + lang + ".json")){
+            for(Map.Entry<String, JsonElement> entry : JsonParser.parseReader(new InputStreamReader(Objects.requireNonNull(stream))).getAsJsonObject().entrySet()) {
+                locales.putIfAbsent(entry.getKey(), entry.getValue().getAsString());
+            }
+        } catch (IOException | NullPointerException e) {
+            Logger.warn(e);
+        }
+    }
 
     public static String i18n(String key, Object... args) {
-        Locale locale = Locale.getDefault();
-        String lang = locale.getLanguage() + "_" + locale.getCountry();
-        ModeValue language = JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).language;
-        if (!language.getValue().equals("System")) {
-            lang = language.getValue();
-        }
-        try {
+        if (locales.containsKey(key)) {
+            return String.format(locales.get(key), args);
+        } else return key;
+    }
 
-            String text;
-
-            URL url = LangUtil.class.getResource("/lang/" + lang + ".json");
-
-            if (url != null) {
-                text = IOUtil.getString(url.openStream());
-            } else {
-                text = IOUtil.getString(LangUtil.class.getResourceAsStream("/lang/en_US.json"));
-            }
-
-            JsonObject jsonObject = new Gson().fromJson(text, JsonObject.class);
-            try {
-                return String.format(jsonObject.get(key).getAsString(), args);
-            } catch (NullPointerException e) {
-                Logger.warn(String.format("Lang not found \" %s \" ", key));
-                try {
-                    return String.format(new Gson().fromJson(text, JsonObject.class).get(key).getAsString(), args);
-                } catch (NullPointerException ex) {
-                    MessageUtil.error(new NullPointerException(String.format("not found key ' %s ' in en_us", key)));
-                }
-            }
-        } catch (IOException e) {
-            MessageUtil.error(e);
-        }
-        return key;
+    static {
+        reloadLang();
     }
 }

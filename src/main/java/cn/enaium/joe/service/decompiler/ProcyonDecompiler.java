@@ -18,6 +18,8 @@ package cn.enaium.joe.service.decompiler;
 
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.extend.ProcyonConfig;
+import cn.enaium.joe.util.ReflectUtil;
+import cn.enaium.joe.util.classes.ClassNode;
 import com.strobel.assembler.InputTypeLoader;
 import com.strobel.assembler.metadata.Buffer;
 import com.strobel.assembler.metadata.ITypeLoader;
@@ -25,16 +27,40 @@ import com.strobel.assembler.metadata.MetadataSystem;
 import com.strobel.decompiler.DecompilationOptions;
 import com.strobel.decompiler.DecompilerSettings;
 import com.strobel.decompiler.PlainTextOutput;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
+import com.strobel.decompiler.languages.java.JavaFormattingOptions;
+import org.pmw.tinylog.Logger;
 
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 
 /**
  * @author Enaium
  * @since 0.7.0
  */
 public class ProcyonDecompiler implements IDecompiler {
+    public static JavaFormattingOptions cachedFormattingOptions;
+
+    public static void create() {
+        JavaFormattingOptions aDefault = JavaFormattingOptions.createDefault();
+
+        JavaOctetEditor.getInstance().config.getConfigMap(ProcyonConfig.class).forEach(
+                (s, value) -> {
+                    try {
+                        Field f = ReflectUtil.getField(aDefault.getClass(), value.getName());
+                        Object defaultValue = ReflectUtil.getFieldValue(aDefault, value.getName());
+                        if (defaultValue instanceof Enum<?>) {
+                            f.set(aDefault, Enum.valueOf(((Enum<?>) defaultValue).getDeclaringClass(), (String) value.getValue()));
+                        } else {
+                            f.set(aDefault, value.getValue());
+                        }
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                        Logger.error(e);
+                    }
+                }
+        );
+        cachedFormattingOptions = aDefault;
+    }
+
     @Override
     public String decompile(ClassNode classNode) {
         DecompilerSettings decompilerSettings = new DecompilerSettings();
@@ -43,10 +69,8 @@ public class ProcyonDecompiler implements IDecompiler {
 
             @Override
             public boolean tryLoadType(String s, Buffer buffer) {
-                if (s.equals(classNode.name)) {
-                    ClassWriter classWriter = new ClassWriter(0);
-                    classNode.accept(classWriter);
-                    byte[] b = classWriter.toByteArray();
+                if (s.equals(classNode.getInternalName())) {
+                    byte[] b = classNode.getClassBytes();
                     buffer.putByteArray(b, 0, b.length);
                     buffer.position(0);
                     return true;
@@ -56,12 +80,16 @@ public class ProcyonDecompiler implements IDecompiler {
             }
         });
         StringWriter stringwriter = new StringWriter();
-        decompilerSettings.getLanguage().decompileType(metadataSystem.lookupType(classNode.name).resolve(), new PlainTextOutput(stringwriter), new DecompilationOptions(){{
+        decompilerSettings.getLanguage().decompileType(metadataSystem.lookupType(classNode.getCanonicalName()).resolve(), new PlainTextOutput(stringwriter), new DecompilationOptions(){{
             setFullDecompilation(true);
             DecompilerSettings settings = DecompilerSettings.javaDefaults();
-            settings.setJavaFormattingOptions(JavaOctetEditor.getInstance().config.getByClass(ProcyonConfig.class).get());
+            settings.setJavaFormattingOptions(cachedFormattingOptions);
             setSettings(settings);
         }});
         return stringwriter.toString();
+    }
+
+    static {
+        create();
     }
 }

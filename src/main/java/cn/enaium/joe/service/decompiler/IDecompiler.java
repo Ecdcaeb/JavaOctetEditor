@@ -16,7 +16,7 @@
 
 package cn.enaium.joe.service.decompiler;
 
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 
 /**
  * @author Enaium

@@ -38,6 +38,6 @@ public class DecompileTask extends AbstractTask<String> {
     @Override
     public String get() {
         Logger.info("DECOMPILE:{}", classNode.name);
-        return DecompileService.getService().decompile(classNode);
+        return DecompileService.getService().decompile(cn.enaium.joe.util.classes.ClassNode.of(classNode));
     }
 }

@@ -21,7 +21,10 @@ import cn.enaium.joe.config.value.EnableValue;
 import cn.enaium.joe.config.value.IntegerValue;
 import cn.enaium.joe.config.value.ModeValue;
 import cn.enaium.joe.config.value.StringValue;
+import cn.enaium.joe.service.decompiler.CFRDecompiler;
 import org.benf.cfr.reader.state.OsInfo;
+
+import java.util.Set;
 
 /**
  * @author Enaium
@@ -323,6 +326,6 @@ public class CFRConfig extends Config {
             "Propagate bytecode location info.");
 
     public CFRConfig() {
-        super("CFR");
+        super("CFR", Set.of((value) -> CFRDecompiler.update()));
     }
 }

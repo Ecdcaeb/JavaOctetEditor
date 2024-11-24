@@ -21,8 +21,10 @@ import cn.enaium.joe.config.value.EnableValue;
 import cn.enaium.joe.config.value.IntegerValue;
 import cn.enaium.joe.config.value.ModeValue;
 import cn.enaium.joe.config.value.StringValue;
+import cn.enaium.joe.service.decompiler.FernFlowerDecompiler;
 
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * @author Enaium
@@ -86,6 +88,6 @@ public class FernFlowerConfig extends Config {
 
 
     public FernFlowerConfig() {
-        super("FernFlower");
+        super("FernFlower", Set.of((config)-> FernFlowerDecompiler.updateCustomProperties()));
     }
 }

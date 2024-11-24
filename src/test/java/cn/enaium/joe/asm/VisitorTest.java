@@ -2,6 +2,8 @@ package cn.enaium.joe.asm;
 
 import cn.enaium.joe.compiler.Compiler;
 import cn.enaium.joe.util.ASMUtil;
+import cn.enaium.joe.util.ImagineBreakerHelper;
+import javassist.*;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
@@ -17,6 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Enaium
  */
 class VisitorTest {
+    static {
+        ImagineBreakerHelper.boot();
+    }
+
     @Test
     public void test() throws IOException {
         StringWriter stringWriter = new StringWriter();

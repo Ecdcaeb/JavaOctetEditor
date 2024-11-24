@@ -16,12 +16,12 @@
 
 package cn.enaium.joe.asm;
 
+import cn.enaium.joe.util.ImagineBreakerHelper;
 import com.strobel.decompiler.languages.java.JavaFormattingOptions;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -29,6 +29,11 @@ import java.util.Map;
  * @since 1.1.0
  */
 public class GenerateDecompilerConfigTest {
+
+    static {
+        ImagineBreakerHelper.boot();
+    }
+
     @Test
     public void fernFlower() throws IllegalAccessException {
         Map<String, Object> defaults = IFernflowerPreferences.getDefaults();

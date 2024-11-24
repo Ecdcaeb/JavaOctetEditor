@@ -20,18 +20,16 @@ import cn.enaium.joe.config.Config;
 import cn.enaium.joe.config.value.EnableValue;
 import cn.enaium.joe.config.value.IntegerValue;
 import cn.enaium.joe.config.value.ModeValue;
-import cn.enaium.joe.config.value.Value;
-import cn.enaium.joe.util.ReflectUtil;
-import com.strobel.decompiler.languages.java.JavaFormattingOptions;
-import org.pmw.tinylog.Logger;
+import cn.enaium.joe.service.decompiler.ProcyonDecompiler;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * @author Enaium
  * @since 1.1.0
  */
+@SuppressWarnings("unused")
 public class ProcyonConfig extends Config {
     public EnableValue IndentNamespaceBody = new EnableValue("IndentNamespaceBody", true, "IndentNamespaceBody");
     public EnableValue IndentClassBody = new EnableValue("IndentClassBody", true, "IndentClassBody");
@@ -157,31 +155,6 @@ public class ProcyonConfig extends Config {
     public ModeValue ArrayInitializerBraceStyle = new ModeValue("ArrayInitializerBraceStyle", "EndOfLine", "ArrayInitializerBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
 
     public ProcyonConfig() {
-        super("Procyon");
-    }
-
-
-    public JavaFormattingOptions get() {
-        JavaFormattingOptions aDefault = JavaFormattingOptions.createDefault();
-
-        for (Field field : this.getClass().getFields()) {
-            try {
-                Object o = field.get(this);
-
-                if (!(o instanceof Value<?>)) {
-                    continue;
-                }
-                Field f = ReflectUtil.getField(aDefault.getClass(), field.getName());
-                Object defaultValue = ReflectUtil.getFieldValue(aDefault, field.getName());
-                if (defaultValue instanceof Enum<?>) {
-                    f.set(aDefault, Enum.valueOf(((Enum<?>) defaultValue).getDeclaringClass(), (String) ((Value<?>) o).getValue()));
-                } else {
-                    f.set(aDefault, ((Value<?>) o).getValue());
-                }
-            } catch (IllegalAccessException | NoSuchFieldException e) {
-                Logger.error(e);
-            }
-        }
-        return aDefault;
+        super("Procyon", Set.of((config)-> ProcyonDecompiler.create()));
     }
 }

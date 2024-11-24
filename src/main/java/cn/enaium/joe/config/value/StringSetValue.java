@@ -16,7 +16,9 @@
 
 package cn.enaium.joe.config.value;
 
-import java.util.List;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.Set;
 
 /**
@@ -24,7 +26,8 @@ import java.util.Set;
  * @since 0.9.0
  */
 public class StringSetValue extends Value<Set<String>>{
+    public static final Type TYPE = TypeToken.getParameterized(Set.class, String.class).getType();//<Set<String>>().getType();
     public StringSetValue(String name, Set<String> value, String description) {
-        super(name, value, description);
+        super(TYPE, name, value, description);
     }
 }

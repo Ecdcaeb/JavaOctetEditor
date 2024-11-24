@@ -19,41 +19,30 @@ package cn.enaium.joe.service.decompiler;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.extend.FernFlowerConfig;
 import cn.enaium.joe.util.MessageUtil;
-import cn.enaium.joe.util.ReflectUtil;
-import org.jetbrains.java.decompiler.main.Fernflower;
-import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
+import cn.enaium.joe.util.classes.ClassNode;
+import org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler;
+import org.jetbrains.java.decompiler.main.extern.IContextSource;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
-import org.jetbrains.java.decompiler.struct.ContextUnit;
-import org.jetbrains.java.decompiler.struct.StructClass;
-import org.jetbrains.java.decompiler.struct.StructContext;
-import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
-import org.jetbrains.java.decompiler.util.DataInputFullStream;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
+import org.pmw.tinylog.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.*;
 import java.util.jar.Manifest;
 
 /**
  * @author Enaium
  * @since 1.0.0
  */
-public class FernFlowerDecompiler implements IDecompiler, IBytecodeProvider, IResultSaver {
-
-    private byte[] bytes;
+public class FernFlowerDecompiler extends IFernflowerLogger implements IDecompiler, IResultSaver, IContextSource, IContextSource.IOutputSink {
     private String returned;
+    private ClassNode activeClass;
+    public static Map<String, Object> customProperties;
 
-    @Override
-    public String decompile(ClassNode classNode) {
-        ClassWriter classWriter = new ClassWriter(0);
-        classNode.accept(classWriter);
-        bytes = classWriter.toByteArray();
-
-        Fernflower fernflower = new Fernflower(this, this, new HashMap<String, Object>() {{
-            JavaOctetEditor.getInstance().config.getConfigMap(FernFlowerConfig.class).forEach((k, v) -> {
+    public static void updateCustomProperties(){
+        customProperties = Collections.unmodifiableMap(new HashMap<>() {{
+            JavaOctetEditor.getInstance().config.getConfigMapStrings(FernFlowerConfig.class).forEach((k, v) -> {
                 if (v.equals("true")) {
                     v = "1";
                 } else if (v.equals("false")) {
@@ -61,77 +50,104 @@ public class FernFlowerDecompiler implements IDecompiler, IBytecodeProvider, IRe
                 }
                 this.put(k, v);
             });
-        }}, new IFernflowerLogger() {
-            @Override
-            public void writeMessage(String message, Severity severity) {
+        }});
+    }
 
-            }
-
-            @Override
-            public void writeMessage(String message, Severity severity, Throwable t) {
-                MessageUtil.error(t);
-            }
-        });
-
-        try {
-            File file = new File("class.class");
-            fernflower.addSource(file);
-            StructContext structContext = ReflectUtil.getFieldValue(fernflower, "structContext");
-            LazyLoader loader = ReflectUtil.getFieldValue(structContext, "loader");
-            loader.addClassLink(file.getName(), new LazyLoader.Link(file.getName(), null));
-
-            StructClass structClass = StructClass.create(new DataInputFullStream(bytes), true, loader);
-            ContextUnit contextUnit = new ContextUnit(ContextUnit.TYPE_FOLDER, null, file.getName(), true, this, fernflower);
-            contextUnit.addClass(structClass, file.getName());
-            fernflower.decompileContext();
-        } catch (NoSuchFieldException | IllegalAccessException | IOException e) {
-            MessageUtil.error(e);
-        }
+    @Override
+    public String decompile(final ClassNode classNode) {
+        returned = null;
+        activeClass = classNode;
+        BaseDecompiler baseDecompiler = new BaseDecompiler(this,customProperties, this);
+        baseDecompiler.addSource(this);
+        baseDecompiler.decompileContext();
         return returned;
     }
 
     @Override
-    public byte[] getBytecode(String externalPath, String internalPath) throws IOException {
-        return bytes;
-    }
-
-    @Override
-    public void saveFolder(String path) {
-
-    }
-
-    @Override
-    public void copyFile(String source, String path, String entryName) {
-
-    }
-
-    @Override
     public void saveClassFile(String path, String qualifiedName, String entryName, String content, int[] mapping) {
-        returned = content;
+        if (returned == null){
+            returned = content;
+        }
     }
 
     @Override
-    public void createArchive(String path, String archiveName, Manifest manifest) {
-
+    public void writeMessage(String message, Throwable t) {
+        Logger.info(t, message);
     }
 
     @Override
-    public void saveDirEntry(String path, String archiveName, String entryName) {
-
+    public void writeMessage(String message, Severity severity) {
+        switch (severity){
+            case INFO -> Logger.info(message);
+            case WARN -> Logger.warn(message);
+            case TRACE -> Logger.trace(message);
+            case ERROR -> MessageUtil.error(message);
+        }
     }
 
     @Override
-    public void copyEntry(String source, String path, String archiveName, String entry) {
-
+    public void writeMessage(String message, Severity severity, Throwable t) {
+        switch (severity){
+            case INFO -> Logger.info(t, message);
+            case WARN -> Logger.warn(t, message);
+            case TRACE -> Logger.trace(t, message);
+            case ERROR -> MessageUtil.error(message, t);
+        }
     }
 
     @Override
-    public void saveClassEntry(String path, String archiveName, String qualifiedName, String entryName, String content) {
-
+    public String getName() {
+        return JavaOctetEditor.TITLE;
     }
 
     @Override
-    public void closeArchive(String path, String archiveName) {
-
+    public Entries getEntries() {
+        return new Entries(List.of(Entry.atBase(activeClass.getInternalName())), List.of(), List.of());
     }
+
+    @Override
+    public boolean isLazy() {
+        return true;
+    }
+
+    @Override
+    public InputStream getInputStream(String resource) {
+        return new ByteArrayInputStream(activeClass.getClassBytes());
+    }
+
+    @Override
+    public byte[] getClassBytes(String className) {
+        return activeClass.getClassBytes();
+    }
+
+    @Override
+    public boolean hasClass(String className) {
+        return className.equals(activeClass.getInternalName()) || className.equals(activeClass.getCanonicalName());
+    }
+
+    @Override
+    public IOutputSink createOutputSink(IResultSaver saver) {
+        return this;
+    }
+
+    @Override
+    public void acceptClass(String qualifiedName, String fileName, String content, int[] mapping) {
+        this.saveClassFile(null, null, null, content, mapping);
+    }
+
+    static {
+        updateCustomProperties();
+    }
+
+    @Override public void begin() {}
+    @Override public void close() {}
+    @Override public void acceptDirectory(String s) {}
+    @Override public void acceptOther(String s) {}
+    @Override public void saveFolder(String path) {}
+    @Override public void copyFile(String source, String path, String entryName) {}
+    @Override public void createArchive(String path, String archiveName, Manifest manifest) {}
+    @Override public void saveDirEntry(String path, String archiveName, String entryName) {}
+    @Override public void copyEntry(String source, String path, String archiveName, String entry) {}
+    @Override public void saveClassEntry(String path, String archiveName, String qualifiedName, String entryName, String content) {}
+    @Override public void closeArchive(String path, String archiveName) {}
 }

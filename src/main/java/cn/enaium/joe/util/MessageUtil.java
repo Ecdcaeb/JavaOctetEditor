@@ -32,6 +32,16 @@ import java.io.StringWriter;
  */
 public class MessageUtil {
 
+    public static void error(String readable) {
+        Logger.error(readable);
+        JOptionPane.showMessageDialog(null, readable, LangUtil.i18n("error"), JOptionPane.ERROR_MESSAGE);
+    }
+
+    public static void error(String readable, Throwable e) {
+        Logger.error(readable, e);
+        JOptionPane.showMessageDialog(null, readable + e.toString(), LangUtil.i18n("error"), JOptionPane.ERROR_MESSAGE);
+    }
+
     public static void error(Throwable e) {
         e.printStackTrace();
         new OptionDialog(LangUtil.i18n("error"), new BorderPanel() {{
@@ -43,6 +53,16 @@ public class MessageUtil {
                 setEditable(false);
             }}));
         }}, JOptionPane.ERROR_MESSAGE).setVisible(true);
+    }
+
+    public static RuntimeException runtimeException(String readable, Throwable e) {
+        error(readable, e);
+        return new RuntimeException(readable, e);
+    }
+
+    public static RuntimeException runtimeException(Throwable e) {
+        error(e);
+        return new RuntimeException(e);
     }
 
     public static void confirm(Object message, String title, Runnable yes, Runnable no) {

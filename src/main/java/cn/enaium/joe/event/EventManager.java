@@ -17,6 +17,7 @@
 package cn.enaium.joe.event;
 
 import cn.enaium.joe.util.Pair;
+import cn.enaium.joe.util.Util;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -27,14 +28,13 @@ import java.util.function.Consumer;
  * @since 1.2.0
  */
 public class EventManager {
-    List<Pair<Class<? extends Event>, Consumer<Event>>> listeners = new CopyOnWriteArrayList<>();
+    List<Pair<Class<? extends Event>, Consumer<? extends Event>>> listeners = new CopyOnWriteArrayList<>();
 
-    @SuppressWarnings("unchecked")
-    public void register(Class<? extends Event> listener, Consumer<? extends Event> consumer) {
-        listeners.add(new Pair<>(listener, ((Consumer<Event>) consumer)));
+    public <T extends Event>void register(Class<T> listener, Consumer<T> consumer) {
+        listeners.add(new Pair<>(listener,  consumer));
     }
 
     public void call(Event event) {
-        listeners.stream().filter(it -> it.getKey() == event.getClass()).forEach(it -> it.getValue().accept(event));
+        listeners.stream().filter(it -> event.getClass().isAssignableFrom(it.getKey())).forEach(it -> it.getValue().accept(Util.cast(event)));
     }
 }

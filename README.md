@@ -1,9 +1,9 @@
 # JavaOctetEditor
 
-![GitHub all releases](https://img.shields.io/github/downloads/Enaium/JavaOctetEditor/total?style=flat-square)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/Enaium/JavaOctetEditor?style=flat-square)
-![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/Enaium/JavaOctetEditor?include_prereleases&style=flat-square)
-![GitHub](https://img.shields.io/github/license/Enaium/JavaOctetEditor?style=flat-square)
+![GitHub all releases](https://img.shields.io/github/downloads/Ecdcaeb/JavaOctetEditor/total?style=flat-square)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/Ecdcaeb/JavaOctetEditor?style=flat-square)
+![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/Ecdcaeb/JavaOctetEditor?include_prereleases&style=flat-square)
+![GitHub](https://img.shields.io/github/license/Ecdcaeb/JavaOctetEditor?style=flat-square)
 
 ![](https://user-images.githubusercontent.com/32991121/190947407-bbc6642e-2c9d-46f3-921c-6558c74272cf.png)
 ![](https://user-images.githubusercontent.com/32991121/190947409-9df48d03-e1b7-4c0a-ae1d-08e1ca2bc9aa.png)

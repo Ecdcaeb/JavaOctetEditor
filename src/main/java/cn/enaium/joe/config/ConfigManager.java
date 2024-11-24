@@ -25,10 +25,10 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Enaium
@@ -38,11 +38,11 @@ public class ConfigManager {
     private final Map<Class<? extends Config>, Config> configMap = new LinkedHashMap<>();
 
     public ConfigManager() {
-        setByClass(new ApplicationConfig());
-        setByClass(new CFRConfig());
-        setByClass(new FernFlowerConfig());
-        setByClass(new ProcyonConfig());
-        setByClass(new KeymapConfig());
+        addByInstance(new ApplicationConfig());
+        addByInstance(new CFRConfig());
+        addByInstance(new FernFlowerConfig());
+        addByInstance(new ProcyonConfig());
+        addByInstance(new KeymapConfig());
     }
 
     @SuppressWarnings("unchecked")
@@ -54,7 +54,15 @@ public class ConfigManager {
         }
     }
 
-    public void setByClass(Config config) {
+    public <T extends Config> void addByClass(Class<T> config) {
+        try {
+            configMap.put(config, config.getConstructor().newInstance());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw MessageUtil.runtimeException("Could not setup Config for " + config, e);
+        }
+    }
+
+    public void addByInstance(Config config) {
         configMap.put(config.getClass(), config);
     }
 
@@ -62,17 +70,20 @@ public class ConfigManager {
         return configMap;
     }
 
-    public Map<String, String> getConfigMap(Class<? extends Config> config) {
-        Map<String, String> map = new HashMap<>();
+    public Map<String, String> getConfigMapStrings(Class<? extends Config> config) {
+        return getConfigMap(config).entrySet().stream()
+                .filter(entry -> entry.getValue().getValue() != null)
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getValue().toString()));
+    }
+
+    public Map<String, Value<?>> getConfigMap(Class<? extends Config> config) {
+        Map<String, Value<?>> map = new HashMap<>();
         for (Field declaredField : config.getDeclaredFields()) {
             declaredField.setAccessible(true);
             try {
                 Object o = declaredField.get(getByClass(config));
                 if (o instanceof Value<?>) {
-                    Object value = ((Value<?>) o).getValue();
-                    if (value != null) {
-                        map.put(declaredField.getName(), value.toString());
-                    }
+                    map.put(declaredField.getName(), (Value<?>)o);
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
@@ -93,8 +104,7 @@ public class ConfigManager {
             try {
                 File file = new File(System.getProperty("."), config.getName() + ".json");
                 if (file.exists()) {
-                    JsonObject jsonObject = gson().create().fromJson(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8), JsonObject.class);
-
+                    JsonObject jsonObject = gson().create().fromJson(Files.readString(file.toPath()), JsonObject.class);
                     for (Field configField : klass.getDeclaredFields()) {
                         configField.setAccessible(true);
                         if (!jsonObject.has(configField.getName())) {
@@ -148,7 +158,8 @@ public class ConfigManager {
     public void save() {
         for (Config value : configMap.values()) {
             try {
-                Files.write(new File(System.getProperty("."), value.getName() + ".json").toPath(), gson().registerTypeAdapter(KeyStroke.class, (JsonSerializer<KeyStroke>) (src, typeOfSrc, context) -> new JsonPrimitive(src.toString())).create().toJson(value).getBytes(StandardCharsets.UTF_8));
+                Files.writeString(new File(System.getProperty("."), value.getName() + ".json").toPath(), gson().toJson(value));
+                value.update();
             } catch (IOException e) {
                 MessageUtil.error(e);
             }

@@ -27,6 +27,10 @@ import java.util.jar.JarFile;
  * @author Enaium
  */
 public class Util {
+    @SuppressWarnings("unchecked")
+    public static<T> T cast(Object obj) {
+        return (T)obj;
+    }
     public static int countFiles(JarFile zipFile) {
         final Enumeration<? extends JarEntry> entries = zipFile.entries();
         int c = 0;

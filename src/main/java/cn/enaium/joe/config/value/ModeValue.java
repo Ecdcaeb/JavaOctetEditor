@@ -30,7 +30,7 @@ public class ModeValue extends Value<String> {
     private List<String> mode;
 
     public ModeValue(String name, String value, String description, List<String> mode) {
-        super(name, value, description);
+        super(String.class, name, value, description);
         this.mode = mode;
     }
 
