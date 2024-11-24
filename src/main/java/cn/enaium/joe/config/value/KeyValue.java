@@ -1,9 +1,9 @@
 package cn.enaium.joe.config.value;
 
-import javax.swing.*;
+import javax.swing.KeyStroke;
 
 public class KeyValue extends Value<KeyStroke> {
     public KeyValue(String name, KeyStroke value, String description) {
-        super(name, value, description);
+        super(KeyStroke.class, name, value, description);
     }
 }
