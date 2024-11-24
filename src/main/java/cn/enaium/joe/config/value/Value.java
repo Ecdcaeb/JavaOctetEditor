@@ -16,6 +16,8 @@
 
 package cn.enaium.joe.config.value;
 
+import com.google.gson.JsonElement;
+
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +26,7 @@ import java.util.Set;
  * @author Enaium
  * @since 0.7.0
  */
-public class Value<T> {
+public abstract class Value<T> {
     private transient final Type type;
     private final String name;
     private T value;
@@ -61,6 +63,8 @@ public class Value<T> {
             listener.update(this, oldValue, value);
         }
     }
+
+    public abstract void decode(JsonElement jsonElement);
 
     public void addListener(ConfigValueListener<T> listener) {
         this.listeners.add(listener);

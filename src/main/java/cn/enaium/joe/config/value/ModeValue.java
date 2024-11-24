@@ -16,6 +16,7 @@
 
 package cn.enaium.joe.config.value;
 
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 
 import java.util.List;
@@ -40,5 +41,14 @@ public class ModeValue extends Value<String> {
 
     public void setMode(List<String> mode) {
         this.mode = mode;
+    }
+
+    @Override
+    public void decode(JsonElement jsonElement) {
+        if (this.getMode().contains(jsonElement.getAsString())) {
+            this.setValue(jsonElement.getAsString());
+        } else {
+            this.setValue(this.getMode().getFirst());
+        }
     }
 }

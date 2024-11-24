@@ -125,28 +125,7 @@ public class ConfigManager {
                         Object valueObject = configField.get(config);
                         if (valueObject instanceof Value<?>) {
                             Value<?> value = (Value<?>) valueObject;
-                            if (value instanceof EnableValue) {
-                                ((EnableValue) value).setValue(valueJsonElement.getAsBoolean());
-                            } else if (value instanceof IntegerValue) {
-                                ((IntegerValue) value).setValue(valueJsonElement.getAsInt());
-                            } else if (value instanceof ModeValue) {
-                                ModeValue modeValue = (ModeValue) value;
-                                if (modeValue.getMode().contains(valueJsonElement.getAsString())) {
-                                    modeValue.setValue(valueJsonElement.getAsString());
-                                } else {
-                                    modeValue.setValue(modeValue.getMode().get(0));
-                                }
-                            } else if (value instanceof StringSetValue) {
-                                Set<String> strings = new HashSet<>();
-                                for (JsonElement jsonElement : valueJsonElement.getAsJsonArray()) {
-                                    strings.add(jsonElement.getAsString());
-                                }
-                                ((StringSetValue) value).setValue(strings);
-                            } else if (value instanceof StringValue) {
-                                ((StringValue) value).setValue(valueJsonElement.getAsString());
-                            } else if (value instanceof KeyValue) {
-                                ((KeyValue) value).setValue(KeyStroke.getKeyStroke(valueJsonElement.getAsString()));
-                            }
+                            value.decode(valueJsonElement);
                         }
                     }
                 }
