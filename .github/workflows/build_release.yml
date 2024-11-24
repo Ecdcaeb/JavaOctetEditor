@@ -54,4 +54,4 @@ jobs:
           allow_override: true
           gzip: false
           files: |
-              ./installer/*-installer.ja
+              ./build/libs/*.jar
