@@ -17,14 +17,13 @@
 package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.event.Event;
 import cn.enaium.joe.Instance;
+import cn.enaium.joe.gui.panel.file.tabbed.FileTabbedPanel;
 import cn.enaium.joe.util.LangUtil;
 import org.objectweb.asm.tree.ClassNode;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.function.Consumer;
 
 /**
  * @author Enaium
@@ -32,6 +31,7 @@ import java.util.function.Consumer;
 public class ClassTabPanel extends JPanel {
 
     public final ClassNode classNode;
+    protected final JTabbedPane jTabbedPane;
 
     public ClassTabPanel(ClassNode classNode) {
         super(new BorderLayout());
@@ -43,16 +43,15 @@ public class ClassTabPanel extends JPanel {
         jTabbedPane.addTab(LangUtil.i18n("class.tab.visitorEdit"), new ASMifierTablePanel(classNode));
         jTabbedPane.addTab(LangUtil.i18n("class.tab.infoEdit"), new ClassInfoTabPanel(classNode));
         jTabbedPane.setSelectedIndex(Instance.INSTANCE.classTabIndex);
-        jTabbedPane.addChangeListener(e -> JavaOctetEditor.getInstance().event.call(new Change(Instance.INSTANCE.classTabIndex = jTabbedPane.getSelectedIndex())));
-        JavaOctetEditor.getInstance().event.register(Change.class, (Consumer<Change>) event -> jTabbedPane.setSelectedIndex(event.index));
-        add(jTabbedPane);
-    }
-
-    private static class Change implements Event {
-        private final int index;
-
-        public Change(int index) {
-            this.index = index;
-        }
+        jTabbedPane.addChangeListener(e -> {
+            Instance.INSTANCE.classTabIndex = jTabbedPane.getSelectedIndex();
+            FileTabbedPanel fileTabbedPanel = JavaOctetEditor.getInstance().fileTabbedPanel;
+            for (int i = 0; i < fileTabbedPanel.getTabCount(); i++) {
+                if (fileTabbedPanel.getTabComponentAt(i) instanceof ClassTabPanel panel) {
+                    panel.jTabbedPane.setSelectedIndex(Instance.INSTANCE.classTabIndex);
+                }
+            }
+        });
+        add(this.jTabbedPane = jTabbedPane);
     }
 }
