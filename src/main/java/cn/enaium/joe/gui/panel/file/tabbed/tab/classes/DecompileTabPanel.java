@@ -19,6 +19,7 @@ package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.compiler.Compiler;
 import cn.enaium.joe.config.extend.KeymapConfig;
+import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
 import cn.enaium.joe.task.DecompileTask;
 import cn.enaium.joe.util.*;
@@ -34,10 +35,11 @@ import java.awt.event.KeyEvent;
  * @author Enaium
  */
 public class DecompileTabPanel extends ClassNodeTabPanel {
+    protected CodeAreaPanel codeAreaPanel;
     public DecompileTabPanel(ClassNode classNode) {
         super(classNode);
         setLayout(new BorderLayout());
-        CodeAreaPanel codeAreaPanel = new CodeAreaPanel() {{
+        CodeAreaPanel codeAreaPanel = this.codeAreaPanel = new CodeAreaPanel() {{
             KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(KeymapConfig.class).save.getValue(), () -> {
                 try {
                     Compiler compiler = new Compiler();
@@ -46,6 +48,7 @@ public class DecompileTabPanel extends ClassNodeTabPanel {
                     if (compiler.getClasses().get(ASMUtil.getReferenceName(classNode)).length != 0) {
                         ReflectUtil.copyAllMember(classNode, ASMUtil.acceptClassNode(new ClassReader(compiler.getClasses().get(ASMUtil.getReferenceName(classNode)))));
                         MessageUtil.info(LangUtil.i18n("success"));
+                        EditSaveSuccessEvent.trigger(classNode.name);
                     } else {
                         MessageUtil.error(new RuntimeException("Compile failed,Please check console"));
                     }
@@ -55,10 +58,14 @@ public class DecompileTabPanel extends ClassNodeTabPanel {
             });
         }};
         codeAreaPanel.getTextArea().setSyntaxEditingStyle("text/java");
-        JavaOctetEditor.getInstance().task.submit(new DecompileTask(classNode)).thenAccept(it -> {
-            codeAreaPanel.getTextArea().setText(it);
-        });
+        update();
         codeAreaPanel.getTextArea().setCaretPosition(0);
         add(codeAreaPanel);
+    }
+
+    public void update(){
+        JavaOctetEditor.getInstance().task.submit(new DecompileTask(this.getClassNode())).thenAccept(it -> {
+            codeAreaPanel.getTextArea().setText(it);
+        });
     }
 }

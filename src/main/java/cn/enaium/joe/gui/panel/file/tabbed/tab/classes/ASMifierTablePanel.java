@@ -19,6 +19,7 @@ package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.compiler.Compiler;
 import cn.enaium.joe.config.extend.KeymapConfig;
+import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
 import cn.enaium.joe.util.*;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -38,10 +39,11 @@ import java.io.StringWriter;
  * @author Enaium
  */
 public class ASMifierTablePanel extends ClassNodeTabPanel {
+    protected CodeAreaPanel codeAreaPanel;
     public ASMifierTablePanel(ClassNode classNode) {
         super(classNode);
         setLayout(new BorderLayout());
-        CodeAreaPanel codeAreaPanel = new CodeAreaPanel() {{
+        CodeAreaPanel codeAreaPanel = this.codeAreaPanel = new CodeAreaPanel() {{
             KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(KeymapConfig.class).save.getValue(), () -> {
                 try {
                     String stringBuilder = "import org.objectweb.asm.AnnotationVisitor;" +
@@ -80,6 +82,7 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
                     byte[] dumps = (byte[]) loader.loadClass(ASMifier.class.getSimpleName()).getMethod("dump").invoke(null);
                     ReflectUtil.copyAllMember(classNode, ASMUtil.acceptClassNode(new ClassReader(dumps)));
                     MessageUtil.info(LangUtil.i18n("success"));
+                    EditSaveSuccessEvent.trigger(classNode.name);
                 } catch (Throwable e) {
                     MessageUtil.error(e);
                 }
@@ -87,16 +90,20 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
         }};
         codeAreaPanel.getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         codeAreaPanel.getTextArea().setEditable(true);
+        update();
+        add(codeAreaPanel);
+    }
+
+    public void update(){
         StringWriter stringWriter = new StringWriter();
 
         ASyncUtil.execute(() -> {
-            classNode.accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(stringWriter)));
+            this.getClassNode().accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(stringWriter)));
         }, () -> {
             String trim = getMiddle(getMiddle(stringWriter.toString())).trim();
             codeAreaPanel.getTextArea().setText(trim.substring(0, trim.lastIndexOf("\n")));
             codeAreaPanel.getTextArea().setCaretPosition(0);
         });
-        add(codeAreaPanel);
     }
 
     public String getMiddle(String s) {

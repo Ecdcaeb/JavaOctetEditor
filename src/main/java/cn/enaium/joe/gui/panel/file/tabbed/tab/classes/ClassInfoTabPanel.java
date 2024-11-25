@@ -18,6 +18,7 @@ package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 
 import cn.enaium.joe.dialog.AnnotationListDialog;
+import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.StringUtil;
 import net.miginfocom.swing.MigLayout;
@@ -25,7 +26,6 @@ import org.benf.cfr.reader.util.StringUtils;
 import org.objectweb.asm.tree.ClassNode;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -144,6 +144,7 @@ public class ClassInfoTabPanel extends ClassNodeTabPanel {
                 }
 
                 JOptionPane.showMessageDialog(ClassInfoTabPanel.this, LangUtil.i18n("success"));
+                EditSaveSuccessEvent.trigger(classNode.name);
             });
         }}, "span 2");
     }

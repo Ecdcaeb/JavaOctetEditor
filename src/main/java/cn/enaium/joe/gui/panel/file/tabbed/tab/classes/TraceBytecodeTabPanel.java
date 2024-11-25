@@ -30,19 +30,24 @@ import java.nio.charset.StandardCharsets;
  * @author Enaium
  */
 public class TraceBytecodeTabPanel extends ClassNodeTabPanel {
+    protected CodeAreaPanel codeAreaPanel;
     public TraceBytecodeTabPanel(ClassNode classNode) {
         super(classNode);
         setLayout(new BorderLayout());
-        CodeAreaPanel codeAreaPanel = new CodeAreaPanel();
+        CodeAreaPanel codeAreaPanel = this.codeAreaPanel = new CodeAreaPanel();
         codeAreaPanel.getTextArea().setEditable(false);
         codeAreaPanel.getTextArea().setSyntaxEditingStyle("text/custom");
+        update();
+        add(codeAreaPanel);
+    }
+
+    public void update(){
         final StringWriter stringWriter = new StringWriter();
         ASyncUtil.execute(() -> {
-            classNode.accept(new TraceClassVisitor(new PrintWriter(stringWriter)));
+            this.getClassNode().accept(new TraceClassVisitor(new PrintWriter(stringWriter)));
         }, () -> {
             codeAreaPanel.getTextArea().setText(new String(stringWriter.toString().getBytes(StandardCharsets.UTF_8)));
             codeAreaPanel.getTextArea().setCaretPosition(0);
         });
-        add(codeAreaPanel);
     }
 }

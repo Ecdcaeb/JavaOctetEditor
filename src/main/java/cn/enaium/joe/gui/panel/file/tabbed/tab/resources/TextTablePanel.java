@@ -18,6 +18,7 @@ package cn.enaium.joe.gui.panel.file.tabbed.tab.resources;
 
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.extend.KeymapConfig;
+import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.gui.panel.BorderPanel;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
 import cn.enaium.joe.gui.panel.file.tree.node.FileTreeNode;
