@@ -17,20 +17,19 @@
 package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.Instance;
 import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.util.LangUtil;
 import org.objectweb.asm.tree.ClassNode;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.WeakHashMap;
 
 /**
  * @author Enaium
  */
 public class ClassTabPanel extends JPanel {
+    public static int classTabIndex = 0;
 
     protected TraceBytecodeTabPanel traceBytecodeTabPanel;
     protected DecompileTabPanel decompileTabPanel;
@@ -51,23 +50,23 @@ public class ClassTabPanel extends JPanel {
         jTabbedPane.addTab(LangUtil.i18n("class.tab.decompileEdit"), decompileTabPanel = new DecompileTabPanel(classNode));
         jTabbedPane.addTab(LangUtil.i18n("class.tab.visitorEdit"), asmTablePanel = new ASMifierTablePanel(classNode));
         jTabbedPane.addTab(LangUtil.i18n("class.tab.infoEdit"), classInfoTabPanel = new ClassInfoTabPanel(classNode));
-        jTabbedPane.setSelectedIndex(Instance.INSTANCE.classTabIndex);
+        jTabbedPane.setSelectedIndex(classTabIndex);
         internalName2panel.put(classNode.name, this);
         jTabbedPane.addChangeListener(e -> {
-            Instance.INSTANCE.classTabIndex = jTabbedPane.getSelectedIndex();
+            classTabIndex = jTabbedPane.getSelectedIndex();
             for (ClassTabPanel panel : internalName2panel.values()){
                 if (panel != null){
-                    panel.jTabbedPane.setSelectedIndex(Instance.INSTANCE.classTabIndex);
+                    panel.jTabbedPane.setSelectedIndex(classTabIndex);
                 }
             }
         });
         add(this.jTabbedPane = jTabbedPane);
     }
 
-    public void update(){
-        traceBytecodeTabPanel.update();
-        decompileTabPanel.update();
-        asmTablePanel.update();
+    public void update(boolean forced){
+        if (forced || classTabIndex != 0) traceBytecodeTabPanel.update();
+        if (forced || classTabIndex != 1) decompileTabPanel.update();
+        if (forced || cclassTabIndex != 2) asmTablePanel.update();
     }
 
     static {
@@ -75,7 +74,7 @@ public class ClassTabPanel extends JPanel {
             if (internalName2panel.containsKey(event.classInternalName())){
                 ClassTabPanel panel = internalName2panel.get(event.classInternalName());
                 if (panel != null){
-                    panel.update();
+                    panel.update(false);
                 }
             }
         });
