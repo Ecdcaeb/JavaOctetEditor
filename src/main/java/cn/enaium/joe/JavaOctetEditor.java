@@ -41,6 +41,7 @@ import java.awt.event.*;
  * @author Enaium
  */
 public class JavaOctetEditor {
+    public static final ClassLoader classLoader = JavaOctetEditor.class.getClassLoader();
     private static JavaOctetEditor instance;
 
     public static final String TITLE = "JavaOctetEditor";
@@ -142,5 +143,14 @@ public class JavaOctetEditor {
 
     public static JavaOctetEditor getInstance() {
         return instance;
+    }
+
+    public static boolean isClassExist(String canonicalName){
+        try {
+            Class.forName(canonicalName, false, classLoader);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 }

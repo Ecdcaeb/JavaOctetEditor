@@ -1,9 +1,8 @@
 package cn.enaium.joe.asm;
 
-import cn.enaium.joe.compiler.Compiler;
+import cn.enaium.joe.util.compiler.Compiler;
 import cn.enaium.joe.util.ASMUtil;
 import cn.enaium.joe.util.ImagineBreakerHelper;
-import javassist.*;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
@@ -11,7 +10,6 @@ import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

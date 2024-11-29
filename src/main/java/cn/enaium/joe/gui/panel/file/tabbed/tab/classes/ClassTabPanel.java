@@ -66,7 +66,7 @@ public class ClassTabPanel extends JPanel {
     public void update(boolean forced){
         if (forced || classTabIndex != 0) traceBytecodeTabPanel.update();
         if (forced || classTabIndex != 1) decompileTabPanel.update();
-        if (forced || cclassTabIndex != 2) asmTablePanel.update();
+        if (forced || classTabIndex != 2) asmTablePanel.update();
     }
 
     static {

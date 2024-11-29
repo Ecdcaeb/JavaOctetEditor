@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package cn.enaium.joe.compiler;
+package cn.enaium.joe.util.compiler;
+
+import cn.enaium.joe.util.compiler.environment.RecompileEnvironment;
+import cn.enaium.joe.util.compiler.virtual.VirtualFileManager;
+import cn.enaium.joe.util.compiler.virtual.VirtualJavaFileObject;
 
 import javax.tools.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,26 +32,41 @@ import java.util.stream.Collectors;
  * @since 1.4.0
  */
 public class Compiler {
+
+
+
     private final Map<String, VirtualJavaFileObject> javaFileObjectMap = new HashMap<>();
+    private Map<String, byte[]> results = new HashMap<>();
 
     private DiagnosticListener<VirtualJavaFileObject> listener;
+
 
     public void addSource(String name, String content) {
         javaFileObjectMap.put(name, new VirtualJavaFileObject(name, content));
     }
 
     public Map<String, byte[]> getClasses() {
-        return javaFileObjectMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue().getBytecode()));
+        return results;
+    }
+
+    public static byte[] compileSingle(String canonicalName, String text){
+        Compiler compiler = new Compiler();
+        compiler.addSource(canonicalName, text);
+        compiler.compile();
+        return compiler.getClasses().get(canonicalName);
     }
 
     @SuppressWarnings("unchecked")
     public boolean compile() {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        VirtualFileManager fileManager = new VirtualFileManager(compiler.getStandardFileManager(null, null, StandardCharsets.UTF_8));
+        VirtualFileManager fileManager = new VirtualFileManager(compiler.getStandardFileManager(null, null, StandardCharsets.UTF_8), this.javaFileObjectMap, RecompileEnvironment.getEnvironment());
         try {
             JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, ((DiagnosticListener<? super JavaFileObject>) (Object) listener), null, null, javaFileObjectMap.values());
             Boolean b = task.call();
-            return b != null && b;
+            if (b != null && b){
+                this.results = fileManager.getClasses();
+                return true;
+            } else return false;
         } catch (Exception e) {
             return false;
         }
@@ -58,20 +76,5 @@ public class Compiler {
         this.listener = listener;
     }
 
-    private final class VirtualFileManager extends ForwardingJavaFileManager<JavaFileManager> {
-        public VirtualFileManager(JavaFileManager fileManager) {
-            super(fileManager);
-        }
 
-        @Override
-        public JavaFileObject getJavaFileForOutput(JavaFileManager.Location location, String className, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
-            if (JavaFileObject.Kind.CLASS == kind) {
-                VirtualJavaFileObject virtualJavaFileObject = new VirtualJavaFileObject(className, null);
-                javaFileObjectMap.put(className, virtualJavaFileObject);
-                return virtualJavaFileObject;
-            } else {
-                return super.getJavaFileForOutput(location, className, kind, sibling);
-            }
-        }
-    }
 }

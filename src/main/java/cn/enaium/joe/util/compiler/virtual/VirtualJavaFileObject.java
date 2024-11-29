@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.enaium.joe.compiler;
+package cn.enaium.joe.util.compiler.virtual;
 
 import javax.tools.SimpleJavaFileObject;
 import java.io.ByteArrayOutputStream;
@@ -31,7 +31,7 @@ public class VirtualJavaFileObject extends SimpleJavaFileObject {
 
     private final String content;
 
-    protected VirtualJavaFileObject(String className, String content) {
+    public VirtualJavaFileObject(String className, String content) {
         super(URI.create("string:///" + className.replace(".", "/") + Kind.SOURCE.extension), Kind.SOURCE);
         this.content = content;
     }

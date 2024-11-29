@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class ReflectionHelper {
+
     public static class UnableToFindMethodException extends RuntimeException
     {
         @Serial
@@ -227,5 +228,11 @@ public class ReflectionHelper {
     public static<T,E> FieldAccessor<T,E> getFieldAccessor(Class<?> clazz, String... fieldNames){
         Field field = findField(clazz, fieldNames);
         return new FieldAccessor<>(field);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static<T> ConstructorAccessor<T> getConstructorAccessor(Class<?> clazz, Class<?> args){
+        Constructor<T> constructor = (Constructor<T>) findConstructor(clazz, args);
+        return new ConstructorAccessor<>(constructor);
     }
 }

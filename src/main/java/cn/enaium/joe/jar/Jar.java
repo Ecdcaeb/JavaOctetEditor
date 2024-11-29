@@ -16,21 +16,10 @@
 
 package cn.enaium.joe.jar;
 
-import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.ApplicationConfig;
-import cn.enaium.joe.util.Util;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 /**
  * @author Enaium

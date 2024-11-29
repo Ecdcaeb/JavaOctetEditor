@@ -17,21 +17,19 @@
 package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.compiler.Compiler;
+import cn.enaium.joe.util.compiler.Compiler;
 import cn.enaium.joe.config.extend.KeymapConfig;
 import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
 import cn.enaium.joe.util.*;
+import cn.enaium.joe.util.classes.ASMClassLoader;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -46,7 +44,9 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
         CodeAreaPanel codeAreaPanel = this.codeAreaPanel = new CodeAreaPanel() {{
             KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(KeymapConfig.class).save.getValue(), () -> {
                 try {
-                    String stringBuilder = "import org.objectweb.asm.AnnotationVisitor;" +
+                    String className = "ASMifier" + Integer.toHexString(classNode.name.hashCode()) + Integer.toHexString(getTextArea().getText().hashCode());
+                    String stringBuilder =
+                            "import org.objectweb.asm.AnnotationVisitor;" +
                             "import org.objectweb.asm.Attribute;" +
                             "import org.objectweb.asm.ClassReader;" +
                             "import org.objectweb.asm.ClassWriter;" +
@@ -60,26 +60,15 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
                             "import org.objectweb.asm.ModuleVisitor;" +
                             "import org.objectweb.asm.Type;" +
                             "import org.objectweb.asm.TypePath;" +
-                            "public class" + " " + ASMifier.class.getSimpleName() + " " + "implements Opcodes" +
+                            "public class " + className + " implements Opcodes" +
                             "{" +
                             "public static byte[] dump() throws Exception {" +
                             getTextArea().getText() +
                             "return classWriter.toByteArray();" +
                             "}" +
                             "}";
-                    Compiler compiler = new Compiler();
-                    compiler.addSource(ASMifier.class.getSimpleName(), stringBuilder);
-                    compiler.compile();
 
-                    ClassLoader loader = new ClassLoader() {
-                        @Override
-                        protected Class<?> findClass(String name) {
-                            byte[] bytes = compiler.getClasses().get(ASMifier.class.getSimpleName());
-                            return defineClass(name, bytes, 0, bytes.length);
-                        }
-                    };
-
-                    byte[] dumps = (byte[]) loader.loadClass(ASMifier.class.getSimpleName()).getMethod("dump").invoke(null);
+                    byte[] dumps = (byte[])new ASMClassLoader().defineClass(className, Compiler.compileSingle(className, stringBuilder)).getMethod("dump").invoke(null);
                     ReflectUtil.copyAllMember(classNode, ASMUtil.acceptClassNode(new ClassReader(dumps)));
                     MessageUtil.info(LangUtil.i18n("success"));
                     EditSaveSuccessEvent.trigger(classNode.name);
@@ -92,6 +81,13 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
         codeAreaPanel.getTextArea().setEditable(true);
         update();
         add(codeAreaPanel);
+    }
+
+    public static String getSimpleName(String name){
+        int idx = name.lastIndexOf('/');
+        if (idx != -1){
+            return name.substring(idx + 1, name.length() - 1);
+        } else return name.substring(name.lastIndexOf('.') + 1, name.length() - 1);
     }
 
     public void update(){

@@ -17,6 +17,7 @@
 package cn.enaium.joe.compiler;
 
 import cn.enaium.joe.util.ASMUtil;
+import cn.enaium.joe.util.compiler.Compiler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.ClassReader;

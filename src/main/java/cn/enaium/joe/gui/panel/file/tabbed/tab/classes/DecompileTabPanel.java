@@ -17,7 +17,7 @@
 package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.compiler.Compiler;
+import cn.enaium.joe.util.compiler.Compiler;
 import cn.enaium.joe.config.extend.KeymapConfig;
 import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
@@ -26,10 +26,7 @@ import cn.enaium.joe.util.*;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 
 /**
  * @author Enaium
