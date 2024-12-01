@@ -16,6 +16,8 @@
 
 package cn.enaium.joe.gui.panel.file;
 
+import org.pmw.tinylog.Logger;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * @author Enaium
@@ -34,11 +37,11 @@ public class FileDropTarget implements DropTargetListener {
     private boolean drop = false;
     private final List<File> files = new ArrayList<>();
 
-    private final String suffix;
+    private final Predicate<File> predicate;
     private final Consumer<List<File>> consumer;
 
-    public FileDropTarget(String suffix, Consumer<List<File>> consumer) {
-        this.suffix = suffix;
+    public FileDropTarget(Predicate<File> predicate, Consumer<List<File>> consumer) {
+        this.predicate = predicate;
         this.consumer = consumer;
     }
 
@@ -55,8 +58,7 @@ public class FileDropTarget implements DropTargetListener {
                     for (Object value : ((List) td)) {
                         if (value instanceof File) {
                             File file = (File) value;
-                            String name = file.getName().toLowerCase();
-                            if (!name.endsWith(suffix)) {
+                            if (!predicate.test(file)) {
                                 drop = false;
                                 break;
                             } else {
@@ -66,7 +68,7 @@ public class FileDropTarget implements DropTargetListener {
                     }
                 }
             } catch (UnsupportedFlavorException | IOException ex) {
-                ex.printStackTrace();
+                Logger.info(ex);
             }
         }
         if (drop) {

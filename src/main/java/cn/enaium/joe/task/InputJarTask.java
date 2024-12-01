@@ -27,9 +27,13 @@ import org.pmw.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @author Enaium
@@ -48,23 +52,44 @@ public class InputJarTask extends AbstractTask<Jar> {
         Logger.info("LOAD:{}", file.getAbsolutePath());
         Jar jar = new Jar();
         try {
-            JarFile jarFile = new JarFile(file);
-            float loaded = 0;
-            float files = Util.countFiles(jarFile);
+            if (file.isFile()){
+                ZipFile jarFile = new ZipFile(file);
+                float loaded = 0;
+                float files = Util.countFiles(jarFile);
 
 
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry jarEntry = entries.nextElement();
-                if (jarEntry.getName().endsWith(".class")) {
-                    ClassReader classReader = new ClassReader(IOUtil.getBytes(jarFile.getInputStream(new JarEntry(jarEntry.getName()))));
-                    jar.classes.put(jarEntry.getName(), ASMUtil.acceptClassNode(classReader));
-                } else if (!jarEntry.isDirectory()) {
-                    jar.resources.put(jarEntry.getName(), IOUtil.getBytes(jarFile.getInputStream(new JarEntry(jarEntry.getName()))));
+                var entries = jarFile.entries();
+                while (entries.hasMoreElements()) {
+                    ZipEntry jarEntry = entries.nextElement();
+                    if (jarEntry.getName().endsWith(".class")) {
+                        ClassReader classReader = new ClassReader(IOUtil.getBytes(jarFile.getInputStream(new ZipEntry(jarEntry.getName()))));
+                        jar.classes.put(jarEntry.getName(), ASMUtil.acceptClassNode(classReader));
+                    } else if (!jarEntry.isDirectory()) {
+                        jar.resources.put(jarEntry.getName(), IOUtil.getBytes(jarFile.getInputStream(new ZipEntry(jarEntry.getName()))));
+                    }
+                    setProgress((int) ((loaded++ / files) * 100f));
                 }
-                setProgress((int) ((loaded++ / files) * 100f));
+                jarFile.close();
+            } else {
+                Path root = file.toPath();
+                Iterator<Path> itr = Files.walk(root).filter(Files::isReadable).iterator();
+                List<Path> paths = new LinkedList<>();
+                while (itr.hasNext()){
+                    paths.add(itr.next());
+                }
+                float loaded = 0;
+                float files = paths.size();
+                for(Path path : paths){
+                    String relative = root.relativize(path).toString();
+                    if (relative.endsWith(".class")) {
+                        ClassReader classReader = new ClassReader(IOUtil.getBytes(Files.newInputStream(path)));
+                        jar.classes.put(relative, ASMUtil.acceptClassNode(classReader));
+                    } else if (!Files.isDirectory(path)) {
+                        jar.resources.put(relative, IOUtil.getBytes(Files.newInputStream(path));
+                    }
+                    setProgress((int) ((loaded++ / files) * 100f));
+                }
             }
-            jarFile.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
