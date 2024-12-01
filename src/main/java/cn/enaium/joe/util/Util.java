@@ -19,9 +19,12 @@ package cn.enaium.joe.util;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @author Enaium
@@ -31,8 +34,9 @@ public class Util {
     public static<T> T cast(Object obj) {
         return (T)obj;
     }
-    public static int countFiles(JarFile zipFile) {
-        final Enumeration<? extends JarEntry> entries = zipFile.entries();
+
+    public static int countFiles(ZipFile zipFile) {
+        final Enumeration<? extends ZipEntry> entries = zipFile.entries();
         int c = 0;
         while (entries.hasMoreElements()) {
             entries.nextElement();

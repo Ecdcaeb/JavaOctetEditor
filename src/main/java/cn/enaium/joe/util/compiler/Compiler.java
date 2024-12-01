@@ -16,24 +16,23 @@
 
 package cn.enaium.joe.util.compiler;
 
+import cn.enaium.joe.util.Util;
 import cn.enaium.joe.util.compiler.environment.RecompileEnvironment;
+import cn.enaium.joe.util.compiler.virtual.MemoryClassLoader;
 import cn.enaium.joe.util.compiler.virtual.VirtualFileManager;
 import cn.enaium.joe.util.compiler.virtual.VirtualJavaFileObject;
 
 import javax.tools.*;
-import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author Enaium
  * @since 1.4.0
  */
 public class Compiler {
-
-
 
     private final Map<String, VirtualJavaFileObject> javaFileObjectMap = new HashMap<>();
     private Map<String, byte[]> results = new HashMap<>();
@@ -52,23 +51,27 @@ public class Compiler {
     public static byte[] compileSingle(String canonicalName, String text){
         Compiler compiler = new Compiler();
         compiler.addSource(canonicalName, text);
-        compiler.compile();
+        CompileError compileError = compiler.compile();
+        if (compileError != null) return null;
         return compiler.getClasses().get(canonicalName);
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean compile() {
+    public CompileError compile() {
+        MemoryClassLoader memoryClassLoader = new MemoryClassLoader(RecompileEnvironment.getEnvironment());
+        Thread.currentThread().setContextClassLoader(memoryClassLoader);
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        VirtualFileManager fileManager = new VirtualFileManager(compiler.getStandardFileManager(null, null, StandardCharsets.UTF_8), this.javaFileObjectMap, RecompileEnvironment.getEnvironment());
+        StandardJavaFileManager standardJavaFileManager = compiler.getStandardFileManager(null, null, StandardCharsets.UTF_8);
+        VirtualFileManager fileManager = new VirtualFileManager(standardJavaFileManager, this.javaFileObjectMap, memoryClassLoader);
         try {
-            JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, ((DiagnosticListener<? super JavaFileObject>) (Object) listener), null, null, javaFileObjectMap.values());
+            StringWriter stringWriter = new StringWriter();
+            JavaCompiler.CompilationTask task = compiler.getTask(stringWriter, fileManager, Util.cast(listener), null, null, javaFileObjectMap.values());
             Boolean b = task.call();
-            if (b != null && b){
+            if (b != null && b) {
                 this.results = fileManager.getClasses();
-                return true;
-            } else return false;
+                return null;
+            } else return new CompileError(stringWriter.toString());
         } catch (Exception e) {
-            return false;
+            return new CompileError(e);
         }
     }
 

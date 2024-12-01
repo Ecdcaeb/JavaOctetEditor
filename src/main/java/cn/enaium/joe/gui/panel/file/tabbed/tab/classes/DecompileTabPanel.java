@@ -17,12 +17,14 @@
 package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 import cn.enaium.joe.JavaOctetEditor;
+import cn.enaium.joe.util.compiler.CompileError;
 import cn.enaium.joe.util.compiler.Compiler;
 import cn.enaium.joe.config.extend.KeymapConfig;
 import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
 import cn.enaium.joe.task.DecompileTask;
 import cn.enaium.joe.util.*;
+import cn.enaium.joe.util.reflection.ReflectionHelper;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -40,10 +42,14 @@ public class DecompileTabPanel extends ClassNodeTabPanel {
             KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(KeymapConfig.class).save.getValue(), () -> {
                 try {
                     Compiler compiler = new Compiler();
-                    compiler.addSource(ASMUtil.getReferenceName(classNode), getTextArea().getText());
-                    compiler.compile();
-                    if (compiler.getClasses().get(ASMUtil.getReferenceName(classNode)).length != 0) {
-                        ReflectUtil.copyAllMember(classNode, ASMUtil.acceptClassNode(new ClassReader(compiler.getClasses().get(ASMUtil.getReferenceName(classNode)))));
+                    String name = ASMUtil.getReferenceName(classNode);
+                    compiler.addSource(name, getTextArea().getText());
+                    CompileError throwable = compiler.compile();
+                    if (throwable != null) {
+                        MessageUtil.error("Compile failed", throwable);
+                    }
+                    else if (compiler.getClasses().containsKey(name) && compiler.getClasses().get(ASMUtil.getReferenceName(classNode)).length != 0) {
+                        ReflectionHelper.copyAllMember(classNode, ASMUtil.acceptClassNode(new ClassReader(compiler.getClasses().get(ASMUtil.getReferenceName(classNode)))));
                         MessageUtil.info(LangUtil.i18n("success"));
                         EditSaveSuccessEvent.trigger(classNode.name);
                     } else {

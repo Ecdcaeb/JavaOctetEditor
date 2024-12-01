@@ -24,7 +24,6 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -33,10 +32,10 @@ import java.io.StringWriter;
  */
 class CompilerTest {
     @Test
-    public void compile() throws IOException {
+    public void compile() {
         Compiler compiler = new Compiler();
         compiler.addSource("Test", "public class Test { public static void main(String[] args) { System.out.println(0xCAFEBABE); } }");
-        Assertions.assertTrue(compiler.compile());
+        Assertions.assertNull(compiler.compile());
         ClassNode classNode = ASMUtil.acceptClassNode(new ClassReader(compiler.getClasses().get("Test")));
         StringWriter out = new StringWriter();
         classNode.accept(new TraceClassVisitor(new PrintWriter(out)));

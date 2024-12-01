@@ -1,7 +1,7 @@
 package cn.enaium.joe.util.compiler.environment;
 
-import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.jar.Jar;
+import cn.enaium.joe.util.reflection.ReflectionHelper;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
@@ -23,20 +23,34 @@ public class RecompileEnvironment {
 
     public static Map<String, byte[]> build(Jar jar, IntConsumer progress){
         Map<String, ClassCatch> classes = new HashMap<>();
+        int total = jar.classes.size();
+        int done = 0;
         for(ClassNode classNode : jar.classes.values()){
             applyClassNode(classes, classNode);
+            done ++;
+            progress.accept((int) ((double) done / total * 70f));
         }
+
+        classes.remove("B");
+        classes.remove("C");
+        classes.remove("I");
+        classes.remove("S");
+        classes.remove("Z");
+        classes.remove("J");
+        classes.remove("F");
+        classes.remove("D");
+
         progress.accept(70);
         Set<String> innerClasses = new HashSet<>();
+
         classes = classes.entrySet().stream()
-                .filter(Objects::nonNull)
-                .filter(entry -> entry.getKey() != null && entry.getValue() != null)
-                .filter(entry -> entry.getKey().startsWith("java/"))
-                .filter(entry -> entry.getKey().startsWith("jdk/"))
-                .filter(entry -> entry.getKey().startsWith("sun/"))
-                .filter(entry -> entry.getKey().startsWith("javax/"))
-                .filter(entry -> entry.getKey().startsWith("com/sun/"))
-                .filter(entry -> !JavaOctetEditor.isClassExist(entry.getKey().replace('/', '.')))
+                .filter(entry -> entry!= null &&entry.getKey() != null && entry.getValue() != null)
+                .filter(entry -> !entry.getKey().startsWith("java/"))
+                .filter(entry -> !entry.getKey().startsWith("jdk/"))
+                .filter(entry -> !entry.getKey().startsWith("sun/"))
+                .filter(entry -> !entry.getKey().startsWith("javax/"))
+                .filter(entry -> !entry.getKey().startsWith("com/sun/"))
+                .filter(entry -> !ReflectionHelper.isClassExist(entry.getKey().replace('/', '.')))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o1, o2) -> o1));
         progress.accept(80);
         Map<String, ClassNode> classNodes = new HashMap<>();
@@ -90,7 +104,7 @@ public class RecompileEnvironment {
         Collection<ClassNode> classNodeSet = classNodes.values();
         Map<String, byte[]> environment_ = HashMap.newHashMap(classNodeSet.size());
         for(ClassNode classNode : classNodeSet){
-            environment_.put(classNode.name, cn.enaium.joe.util.classes.ClassNode.of(classNode).getClassBytes());
+            environment_.put(classNode.name.replace('/', '.'), cn.enaium.joe.util.classes.ClassNode.of(classNode).getClassBytes());
         }
         progress.accept(99);
 

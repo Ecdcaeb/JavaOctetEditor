@@ -9,9 +9,12 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import java.io.*;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author Enaium
@@ -29,7 +32,7 @@ class VisitorTest {
         Compiler compiler = new Compiler();
         String name = "asm." + this.getClass().getName() + "Dump";
         compiler.addSource(name, stringWriter.toString());
-        assertTrue(compiler.compile());
+        assertNull(compiler.compile());
         ClassNode classNode = ASMUtil.acceptClassNode(new ClassReader(compiler.getClasses().get(name)));
         StringWriter out = new StringWriter();
         classNode.accept(new TraceClassVisitor(new PrintWriter(out)));

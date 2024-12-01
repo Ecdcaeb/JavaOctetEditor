@@ -12,6 +12,7 @@ version project.version
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 jar {
+
     manifest.attributes(
             'Manifest-Version': 1.0,
             'Main-Class': 'cn.enaium.joe.Main',

@@ -14,6 +14,7 @@ public class MemoryClassLoader extends ASMClassLoader {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
+        System.out.println("find :" + name);
         if (classes.containsKey(name)){
             return this.defineClass(name, classes.get(name));
         }
