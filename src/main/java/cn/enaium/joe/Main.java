@@ -16,10 +16,9 @@
 
 package cn.enaium.joe;
 
-import cn.enaium.joe.config.extend.ApplicationConfig;
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.*;
-import com.formdev.flatlaf.FlatDarkLaf;
+import cn.enaium.joe.util.reflection.ReflectionHelper;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.pmw.tinylog.Configurator;
@@ -27,7 +26,6 @@ import org.pmw.tinylog.Logger;
 import org.pmw.tinylog.writers.ConsoleWriter;
 import org.pmw.tinylog.writers.FileWriter;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.InvocationTargetException;
@@ -47,6 +45,8 @@ import static cn.enaium.joe.util.TinyLogPrintStream.Type.STDOUT;
  * @author Enaium
  */
 public final class Main {
+    public static final ClassLoader classLoader = Main.class.getClassLoader();
+
     public static void main(String[] args) {
         ImagineBreakerHelper.boot();
         loadTools();
@@ -82,7 +82,7 @@ public final class Main {
     }
 
     private static void loadTools() {
-        if (!ReflectUtil.classHas("com.sun.tools.attach.VirtualMachine")) {
+        if (!ReflectionHelper.isClassExist("com.sun.tools.attach.VirtualMachine")) {
             Path toolsPath = Paths.get("lib", "tools.jar");
             Path jrePath = Paths.get(System.getProperty("java.home"));
             Path tool = jrePath.getParent().resolve(toolsPath);

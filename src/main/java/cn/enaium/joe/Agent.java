@@ -16,8 +16,6 @@
 
 package cn.enaium.joe;
 
-import cn.enaium.joe.util.ReflectUtil;
-
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,7 +38,7 @@ public class Agent {
     private static void agent(String agentArgs, Instrumentation inst) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         URLClassLoader loader = new URLClassLoader(new URL[]{Agent.class.getProtectionDomain().getCodeSource().getLocation()}, ClassLoader.getSystemClassLoader().getParent());
         Class<?> main = loader.loadClass("cn.enaium.joe.Main");
-        Method agent = ReflectUtil.getMethod(main, "agent", Instrumentation.class);
+        Method agent = main.getMethod( "agent", Instrumentation.class);
         agent.invoke(null, inst);
     }
 }

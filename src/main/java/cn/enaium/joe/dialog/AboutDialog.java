@@ -17,7 +17,7 @@
 package cn.enaium.joe.dialog;
 
 import cn.enaium.joe.util.LangUtil;
-import cn.enaium.joe.util.ReflectUtil;
+import cn.enaium.joe.util.reflection.ReflectionHelper;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -58,7 +58,7 @@ public class AboutDialog extends Dialog {
             add(new JLabel(LangUtil.i18n("about.java.supportCompiler")));
             add(new JLabel(String.valueOf(ToolProvider.getSystemJavaCompiler() != null)), "wrap");
             add(new JLabel(LangUtil.i18n("about.java.supportAttach")));
-            add(new JLabel(String.valueOf(ReflectUtil.classHas("com.sun.tools.attach.VirtualMachine"))), "wrap");
+            add(new JLabel(String.valueOf(ReflectionHelper.isClassExist("com.sun.tools.attach.VirtualMachine"))), "wrap");
         }});
         setResizable(false);
         pack();

@@ -25,7 +25,7 @@ import cn.enaium.joe.gui.panel.file.tree.node.PackageTreeNode;
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.ASMUtil;
 import cn.enaium.joe.util.JTreeUtil;
-import cn.enaium.joe.util.ReflectUtil;
+import cn.enaium.joe.util.reflection.ReflectionHelper;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -102,7 +102,7 @@ public class InheritPanel extends BorderPanel {
                 ClassTreeNode newChild = null;
                 if (classes.containsKey(s + ".class")) {
                     newChild = new ClassTreeNode(classes.get(s + ".class"));
-                } else if (ReflectUtil.classHas(s.replace("/", "."))) {
+                } else if (ReflectionHelper.isClassExist(s.replace("/", "."))) {
                     try {
                         newChild = new ClassTreeNode(ASMUtil.acceptClassNode(new ClassReader(s)));
                     } catch (IOException ignored) {

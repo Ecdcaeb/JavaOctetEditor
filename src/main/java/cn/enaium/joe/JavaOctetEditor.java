@@ -28,6 +28,7 @@ import cn.enaium.joe.gui.panel.menu.*;
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.task.TaskManager;
 import cn.enaium.joe.util.*;
+import cn.enaium.joe.util.reflection.ReflectionHelper;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
@@ -41,7 +42,6 @@ import java.awt.event.*;
  * @author Enaium
  */
 public class JavaOctetEditor {
-    public static final ClassLoader classLoader = JavaOctetEditor.class.getClassLoader();
     private static JavaOctetEditor instance;
 
     public static final String TITLE = "JavaOctetEditor";
@@ -100,7 +100,7 @@ public class JavaOctetEditor {
             add(new SearchMenu());
 
             AttachMenu attachMenu = new AttachMenu() {{
-                if (!ReflectUtil.classHas("com.sun.tools.attach.VirtualMachine")) {
+                if (!ReflectionHelper.isClassExist("com.sun.tools.attach.VirtualMachine")) {
                     setEnabled(false);
                 }
             }};
@@ -143,14 +143,5 @@ public class JavaOctetEditor {
 
     public static JavaOctetEditor getInstance() {
         return instance;
-    }
-
-    public static boolean isClassExist(String canonicalName){
-        try {
-            Class.forName(canonicalName, false, classLoader);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
     }
 }

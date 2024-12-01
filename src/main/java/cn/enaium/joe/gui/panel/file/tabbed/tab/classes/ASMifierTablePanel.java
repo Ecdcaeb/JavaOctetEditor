@@ -23,6 +23,7 @@ import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
 import cn.enaium.joe.util.*;
 import cn.enaium.joe.util.classes.ASMClassLoader;
+import cn.enaium.joe.util.reflection.ReflectionHelper;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
@@ -69,7 +70,7 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
                             "}";
 
                     byte[] dumps = (byte[])new ASMClassLoader().defineClass(className, Compiler.compileSingle(className, stringBuilder)).getMethod("dump").invoke(null);
-                    ReflectUtil.copyAllMember(classNode, ASMUtil.acceptClassNode(new ClassReader(dumps)));
+                    ReflectionHelper.copyAllMember(classNode, ASMUtil.acceptClassNode(new ClassReader(dumps)));
                     MessageUtil.info(LangUtil.i18n("success"));
                     EditSaveSuccessEvent.trigger(classNode.name);
                 } catch (Throwable e) {

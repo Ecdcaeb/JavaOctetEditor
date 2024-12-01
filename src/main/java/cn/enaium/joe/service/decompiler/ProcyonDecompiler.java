@@ -18,8 +18,9 @@ package cn.enaium.joe.service.decompiler;
 
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.extend.ProcyonConfig;
-import cn.enaium.joe.util.ReflectUtil;
 import cn.enaium.joe.util.classes.ClassNode;
+import cn.enaium.joe.util.reflection.FieldAccessor;
+import cn.enaium.joe.util.reflection.ReflectionHelper;
 import com.strobel.assembler.InputTypeLoader;
 import com.strobel.assembler.metadata.Buffer;
 import com.strobel.assembler.metadata.ITypeLoader;
@@ -31,7 +32,6 @@ import com.strobel.decompiler.languages.java.JavaFormattingOptions;
 import org.pmw.tinylog.Logger;
 
 import java.io.StringWriter;
-import java.lang.reflect.Field;
 
 /**
  * @author Enaium
@@ -46,14 +46,14 @@ public class ProcyonDecompiler implements IDecompiler {
         JavaOctetEditor.getInstance().config.getConfigMap(ProcyonConfig.class).forEach(
                 (s, value) -> {
                     try {
-                        Field f = ReflectUtil.getField(aDefault.getClass(), value.getName());
-                        Object defaultValue = ReflectUtil.getFieldValue(aDefault, value.getName());
+                        FieldAccessor<Object, JavaFormattingOptions> f = ReflectionHelper.getFieldAccessor(JavaFormattingOptions.class, value.getName());
+                        Object defaultValue = f.get(aDefault);
                         if (defaultValue instanceof Enum<?>) {
                             f.set(aDefault, Enum.valueOf(((Enum<?>) defaultValue).getDeclaringClass(), (String) value.getValue()));
                         } else {
                             f.set(aDefault, value.getValue());
                         }
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                    } catch (Throwable e) {
                         Logger.error(e);
                     }
                 }

@@ -1,5 +1,7 @@
 package cn.enaium.joe.util.reflection;
 
+import cn.enaium.joe.Main;
+
 import java.io.Serial;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -234,5 +236,32 @@ public class ReflectionHelper {
     public static<T> ConstructorAccessor<T> getConstructorAccessor(Class<?> clazz, Class<?> args){
         Constructor<T> constructor = (Constructor<T>) findConstructor(clazz, args);
         return new ConstructorAccessor<>(constructor);
+    }
+
+    public static boolean isClassExist(String canonicalName){
+        try {
+            Class.forName(canonicalName, false, Main.classLoader);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
+     * copy all class member from the old class object to the new class object
+     *
+     * @param oldObject old object
+     * @param newObject new object
+     * @param <T>       type of two classes
+     * @throws NoSuchFieldException   e
+     * @throws IllegalAccessException e
+     */
+    @Deprecated
+    public static <T> void copyAllMember(T oldObject, T newObject) throws NoSuchFieldException, IllegalAccessException {
+        for (Field oldField : oldObject.getClass().getDeclaredFields()) {
+            oldField.setAccessible(true);
+            Field declaredField = newObject.getClass().getDeclaredField(oldField.getName());
+            oldField.set(oldObject, declaredField.get(newObject));
+        }
     }
 }

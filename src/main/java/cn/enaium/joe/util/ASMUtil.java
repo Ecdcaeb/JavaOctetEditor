@@ -30,6 +30,13 @@ import java.util.Set;
  * @since 1.2.0
  */
 public class ASMUtil {
+
+    public static String resolvePkgName(String className){
+        if (className.indexOf('.') > 0){
+            return className.substring(0, className.lastIndexOf('.') -1);
+        } else return className.substring(0, className.lastIndexOf('/') -1);
+    }
+
     /**
      * converts a string value to a value of that type
      *
