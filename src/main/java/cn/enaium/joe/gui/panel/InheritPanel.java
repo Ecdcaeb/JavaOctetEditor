@@ -55,8 +55,7 @@ public class InheritPanel extends BorderPanel {
                     if (e.getClickCount() == 2) {
                         if (getSelectionPath() != null) {
                             Object lastPathComponent = getSelectionPath().getLastPathComponent();
-                            if (lastPathComponent instanceof PackageTreeNode) {
-                                PackageTreeNode packageTreeNode = (PackageTreeNode) lastPathComponent;
+                            if (lastPathComponent instanceof PackageTreeNode packageTreeNode) {
                                 if (packageTreeNode instanceof ClassTreeNode) {
                                     ClassNode classNode = ((ClassTreeNode) packageTreeNode).classNode;
                                     JavaOctetEditor.getInstance().fileTabbedPanel.addTab(classNode.name.substring(classNode.name.lastIndexOf("/") + 1), new ClassTabPanel(classNode));

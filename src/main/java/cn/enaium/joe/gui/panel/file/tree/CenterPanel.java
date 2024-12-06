@@ -20,9 +20,15 @@ import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.gui.component.RightTabBar;
 import cn.enaium.joe.gui.panel.BorderPanel;
 import cn.enaium.joe.gui.panel.LeftPanel;
+import cn.enaium.joe.gui.panel.file.FileDropTarget;
+import cn.enaium.joe.task.InputJarTask;
+import cn.enaium.joe.task.RemappingTask;
+import net.fabricmc.mappingio.format.MappingFormat;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.io.File;
 
 /**
  * @author Enaium
@@ -30,12 +36,44 @@ import java.awt.*;
  */
 public class CenterPanel extends BorderPanel {
     public CenterPanel() {
-        setCenter(new JSplitPane() {{
+        setCenter(new CenterPane());
+        setRight(new RightPane());
+    }
+
+    public static class CenterPane extends JSplitPane{
+        public CenterPane(){
             setLeftComponent(new LeftPanel());
             setRightComponent(JavaOctetEditor.getInstance().fileTabbedPanel);
             setDividerLocation(200);
-        }});
-        setRight(new BorderPanel() {{
+            new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, new FileDropTarget(
+                    (file) -> {
+                        if (file.isDirectory()) return true;
+                        else {
+                            String name = file.getName().toLowerCase();
+                            return name.endsWith(".jar") || name.endsWith(".zip");
+                        }
+                    }
+                    , files -> {
+
+                if (!files.isEmpty()) {
+                    File file = files.getFirst();
+                    if (file.isDirectory()) {
+                        JavaOctetEditor.getInstance().task.submit(new InputJarTask(file));
+                    } else {
+                        String name = file.getName().toLowerCase();
+                        if (name.endsWith(".jar") || name.endsWith(".zip")){
+                            JavaOctetEditor.getInstance().task.submit(new InputJarTask(file));
+                        } else if (name.endsWith(".srg")){
+                            JavaOctetEditor.getInstance().task.submit(new RemappingTask(file, MappingFormat.SRG));
+                        }
+                    }
+                }
+            }), true);
+        }
+    }
+
+    public static class RightPane extends BorderPanel{
+        public RightPane(){
             JViewport jViewport = new JViewport();
             setCenter(jViewport);
             setRight(new RightTabBar() {{
@@ -43,6 +81,6 @@ public class CenterPanel extends BorderPanel {
                     jViewport.setView(getSelectedComponent());
                 });
             }});
-        }});
+        }
     }
 }

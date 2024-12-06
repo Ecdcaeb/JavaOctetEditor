@@ -27,7 +27,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Locale;
 
 /**
  * @author Enaium
@@ -37,11 +36,7 @@ public class ContactDialog extends Dialog {
         super(LangUtil.i18n("menu.help.contact"));
         setSize(290, 150);
         setContentPane(new JPanel(new MigLayout()) {{
-            addLink(this, "Github", new FlatSVGIcon("icons/github.svg"), "https://github.com/Enaium/JavaOctetEditor");
-            if (Locale.getDefault().getLanguage().equals("zh")) {
-                addLink(this, "BiliBili", new FlatSVGIcon("icons/biliBili.svg"), "https://space.bilibili.com/44537204");
-                addLink(this, "KOOK", new FlatSVGIcon("icons/kook.svg"), "https://kook.top/YaP12f");
-            }
+            addLink(this, "Github", new FlatSVGIcon("icons/github.svg"), "https://github.com/Ecdcaeb/JavaOctetEditor");
         }});
         setResizable(false);
         pack();

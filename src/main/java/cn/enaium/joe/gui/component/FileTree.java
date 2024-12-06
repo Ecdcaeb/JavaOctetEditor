@@ -18,30 +18,22 @@ package cn.enaium.joe.gui.component;
 
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.extend.ApplicationConfig;
-import cn.enaium.joe.gui.panel.file.FileDropTarget;
 import cn.enaium.joe.gui.panel.file.tabbed.tab.classes.ClassTabPanel;
 import cn.enaium.joe.gui.panel.file.tabbed.tab.resources.FileTablePane;
 import cn.enaium.joe.gui.panel.file.tree.FileTreeCellRenderer;
 import cn.enaium.joe.gui.panel.file.tree.node.*;
 import cn.enaium.joe.jar.Jar;
-import cn.enaium.joe.task.InputJarTask;
-import cn.enaium.joe.task.RemappingTask;
 import cn.enaium.joe.util.JMenuUtil;
 import cn.enaium.joe.util.JTreeUtil;
 import cn.enaium.joe.util.LangUtil;
-import net.fabricmc.mappingio.format.MappingFormat;
 import org.objectweb.asm.tree.ClassNode;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * @author Enaium
@@ -68,31 +60,6 @@ public class FileTree extends JTree {
                 }
             }
         });
-
-        new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, new FileDropTarget(
-                (file) -> {
-                    if (file.isDirectory()) return true;
-                    else {
-                        String name = file.getName().toLowerCase();
-                        return name.endsWith(".jar") || name.endsWith(".zip");
-                    }
-                }
-                , files -> {
-
-            if (!files.isEmpty()) {
-                File file = files.get(0);
-                if (file.isDirectory()) {
-                    JavaOctetEditor.getInstance().task.submit(new InputJarTask(file));
-                } else {
-                    String name = file.getName().toLowerCase();
-                    if (name.endsWith(".jar") || name.endsWith(".zip")){
-                        JavaOctetEditor.getInstance().task.submit(new InputJarTask(file));
-                    } else if (name.endsWith(".srg")){
-                        JavaOctetEditor.getInstance().task.submit(new RemappingTask(file, MappingFormat.SRG));
-                    }
-                }
-            }
-        }), true);
 
         JPopupMenu jPopupMenu = new JPopupMenu();
 

@@ -21,22 +21,29 @@ import cn.enaium.joe.config.extend.ApplicationConfig;
 import cn.enaium.joe.event.EventManager;
 import cn.enaium.joe.gui.panel.BorderPanel;
 import cn.enaium.joe.gui.panel.BottomPanel;
+import cn.enaium.joe.gui.panel.file.FileDropTarget;
 import cn.enaium.joe.gui.panel.file.tree.CenterPanel;
 import cn.enaium.joe.gui.panel.file.tabbed.FileTabbedPanel;
 import cn.enaium.joe.gui.component.FileTree;
 import cn.enaium.joe.gui.panel.menu.*;
 import cn.enaium.joe.jar.Jar;
+import cn.enaium.joe.task.InputJarTask;
+import cn.enaium.joe.task.RemappingTask;
 import cn.enaium.joe.task.TaskManager;
 import cn.enaium.joe.util.*;
 import cn.enaium.joe.util.reflection.ReflectionHelper;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import net.fabricmc.mappingio.format.MappingFormat;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
 import java.awt.event.*;
+import java.io.File;
 
 /**
  * @author Enaium
