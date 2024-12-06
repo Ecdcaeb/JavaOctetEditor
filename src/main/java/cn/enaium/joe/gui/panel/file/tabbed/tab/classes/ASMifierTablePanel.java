@@ -69,7 +69,12 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
                             "}" +
                             "}";
 
-                    byte[] dumps = (byte[])new ASMClassLoader().defineClass(className, Compiler.compileSingle(className, stringBuilder)).getMethod("dump").invoke(null);
+                    StringWriter errorTracer = new StringWriter();
+                    byte[] dumpClazz = Compiler.compileSingle(className, stringBuilder, errorTracer);
+                    if (dumpClazz == null) {
+                        MessageUtil.error(errorTracer.toString());
+                    }
+                    byte[] dumps = (byte[])new ASMClassLoader().defineClass(className, dumpClazz).getMethod("dump").invoke(null);
                     ReflectionHelper.copyAllMember(classNode, ASMUtil.acceptClassNode(new ClassReader(dumps)));
                     MessageUtil.info(LangUtil.i18n("success"));
                     EditSaveSuccessEvent.trigger(classNode.name);

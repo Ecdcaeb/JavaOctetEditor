@@ -22,7 +22,7 @@ public class VirtualFileManager extends ForwardingJavaFileManager<StandardJavaFi
 
     @Override
     public ClassLoader getClassLoader(Location location) {
-        return this.classLoader;
+        return this.classLoader == null ? super.getClassLoader(location) : this.classLoader;
     }
 
     @Override
@@ -37,23 +37,26 @@ public class VirtualFileManager extends ForwardingJavaFileManager<StandardJavaFi
     }
 
     @Override
-    public <S> ServiceLoader<S> getServiceLoader(Location location, Class<S> service) {
-        return ServiceLoader.load(service, classLoader);
+    public <S> ServiceLoader<S> getServiceLoader(Location location, Class<S> service) throws IOException {
+        return this.classLoader == null ? super.getServiceLoader(location, service) : ServiceLoader.load(service, classLoader);
     }
 
     @Override
     public Iterable<JavaFileObject> list(Location location, String packageName, Set<JavaFileObject.Kind> kinds, boolean recurse) throws IOException {
         List<JavaFileObject> ret = new ArrayList<>();
-        if ((StandardLocation.CLASS_OUTPUT.equals(location) || StandardLocation.CLASS_PATH.equals(location))
-                && kinds.contains(JavaFileObject.Kind.CLASS)) {
-            for (Map.Entry<String, byte[]> e : classLoader.classes.entrySet()) {
-                if (e.getKey().startsWith(packageName + ".")) {
-                    if (recurse || e.getKey().lastIndexOf('.') == packageName.length()) {
-                        ret.add(new VirtualJavaClassObject(e.getKey(), e.getValue()));
+        if (this.classLoader != null) {
+            if ((StandardLocation.CLASS_OUTPUT.equals(location) || StandardLocation.CLASS_PATH.equals(location))
+                    && kinds.contains(JavaFileObject.Kind.CLASS)) {
+                for (Map.Entry<String, byte[]> e : classLoader.classes.entrySet()) {
+                    if (e.getKey().startsWith(packageName + ".")) {
+                        if (recurse || e.getKey().lastIndexOf('.') == packageName.length()) {
+                            ret.add(new VirtualJavaClassObject(e.getKey(), e.getValue()));
+                        }
                     }
                 }
             }
         }
+        System.out.println(Arrays.toString(ret.toArray()));
         Iterable<JavaFileObject> superList = super.list(location, packageName, kinds, recurse);
         if (superList != null) for (JavaFileObject f : superList)
             ret.add(f);
@@ -62,6 +65,8 @@ public class VirtualFileManager extends ForwardingJavaFileManager<StandardJavaFi
 
     @Override
     public String inferBinaryName(Location location, JavaFileObject file) {
-        return file.getName();
+        if (file instanceof VirtualJavaClassObject) {
+            return file.getName();
+        } else return super.inferBinaryName(location, file);
     }
 }

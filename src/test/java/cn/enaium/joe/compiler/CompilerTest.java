@@ -17,6 +17,7 @@
 package cn.enaium.joe.compiler;
 
 import cn.enaium.joe.util.ASMUtil;
+import cn.enaium.joe.util.classes.ASMClassLoader;
 import cn.enaium.joe.util.compiler.Compiler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,12 +34,24 @@ import java.io.StringWriter;
 class CompilerTest {
     @Test
     public void compile() {
-        Compiler compiler = new Compiler();
-        compiler.addSource("Test", "public class Test { public static void main(String[] args) { System.out.println(0xCAFEBABE); } }");
-        Assertions.assertNull(compiler.compile());
-        ClassNode classNode = ASMUtil.acceptClassNode(new ClassReader(compiler.getClasses().get("Test")));
+        StringWriter stringWriter = new StringWriter();
+        final byte[] clazz = Compiler.compileSingle("CompilerTestFooClass", "public class CompilerTestFooClass { public static boolean foo() { return CompilerTestFooClass.class.getName().equals(\"CompilerTestFooClass\"); } }", stringWriter);
+        if (!stringWriter.toString().isEmpty()) {
+            System.out.println(stringWriter);
+        }
+        Assertions.assertNotNull(clazz);
+        ClassNode classNode = ASMUtil.acceptClassNode(new ClassReader(clazz));
         StringWriter out = new StringWriter();
         classNode.accept(new TraceClassVisitor(new PrintWriter(out)));
-        System.out.println(out);
+        Assertions.assertTrue(() -> {
+            try {
+                return (boolean) new ASMClassLoader().defineClass("CompilerTestFooClass", clazz).getMethod("foo").invoke(null);
+            } catch (Throwable throwable) {
+                StringWriter stringWriter1 = new StringWriter();
+                throwable.printStackTrace(new PrintWriter(stringWriter1));
+                System.out.println(stringWriter1);
+                return false;
+            }
+        });
     }
 }

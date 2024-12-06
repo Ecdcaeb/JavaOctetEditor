@@ -7,7 +7,8 @@ import java.util.Map;
 public class MemoryClassLoader extends ASMClassLoader {
     final Map<String, byte[]> classes;
 
-    public MemoryClassLoader(Map<String, byte[]> classes){
+    public MemoryClassLoader(ClassLoader parent, Map<String, byte[]> classes){
+        super(parent);
         if (classes == null) classes = Map.of();
         this.classes = classes;
     }
