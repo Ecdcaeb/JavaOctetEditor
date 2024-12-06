@@ -100,7 +100,8 @@ public class InputJarTask extends AbstractTask<Jar> {
         JavaOctetEditor.getInstance().setJar(jar);
         JavaOctetEditor.getInstance().window.setTitle(JavaOctetEditor.TITLE + "-" + file.getName());
 
-        JavaOctetEditor.getInstance().task.submit(new BuildEnvironmentTask(jar));
+        if (JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).makeDemoRecompileEnvironment.getValue())
+            JavaOctetEditor.getInstance().task.submit(new BuildEnvironmentTask(jar));
 
         return jar;
     }

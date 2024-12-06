@@ -23,7 +23,6 @@ import cn.enaium.joe.config.value.IntegerValue;
 import cn.enaium.joe.config.value.ModeValue;
 import cn.enaium.joe.config.value.StringSetValue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -40,6 +39,7 @@ public class ApplicationConfig extends Config {
     public final StringSetValue loadRecent = new StringSetValue("Load Recent", new HashSet<>(), "");
     public IntegerValue scale = new IntegerValue("Scale", 0, "UI scale,it doesn't scale if value 0");
 
+    public EnableValue makeDemoRecompileEnvironment = new EnableValue("makeDemoRecompileEnvironment", false, "[EXP] Make the Demo Recompile Symbol environment.");
     public ApplicationConfig() {
         super("Application");
     }

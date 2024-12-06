@@ -15,7 +15,7 @@ public class RecompileEnvironment {
         return 21;
     }
 
-    public static Map<String, byte[]> environment;
+    public static Map<String, byte[]> environment = null;
 
     public static Map<String, byte[]> getEnvironment(){
         return environment;
