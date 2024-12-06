@@ -21,7 +21,6 @@ import cn.enaium.joe.config.value.*;
 import cn.enaium.joe.util.MessageUtil;
 import com.google.gson.*;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -70,10 +69,18 @@ public class ConfigManager {
         return configMap;
     }
 
+    public Map<String, String> getConfigMapStrings(Config config) {
+        return getConfigMapStrings(config.getClass());
+    }
+
     public Map<String, String> getConfigMapStrings(Class<? extends Config> config) {
         return getConfigMap(config).entrySet().stream()
                 .filter(entry -> entry.getValue().getValue() != null)
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getValue().toString()));
+    }
+
+    public Map<String, Value<?>> getConfigMap(Config config) {
+        return this.getConfigMap(config.getClass());
     }
 
     public Map<String, Value<?>> getConfigMap(Class<? extends Config> config) {
@@ -93,6 +100,7 @@ public class ConfigManager {
     }
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+
     private Gson gson() {
         return GSON;
     }
@@ -105,33 +113,37 @@ public class ConfigManager {
             try {
                 File file = new File(System.getProperty("."), config.getName() + ".json");
                 if (file.exists()) {
-                    JsonObject jsonObject = gson().fromJson(Files.readString(file.toPath()), JsonObject.class);
-                    for (Field configField : klass.getDeclaredFields()) {
-                        configField.setAccessible(true);
-                        if (!jsonObject.has(configField.getName())) {
-                            continue;
-                        }
+                    if (JsonParser.parseString(Files.readString(file.toPath())) instanceof JsonObject jsonObject) {
+                        for (Field configField : klass.getDeclaredFields()) {
+                            configField.setAccessible(true);
+                            if (!jsonObject.has(configField.getName())) {
+                                continue;
+                            }
 
-                        if (!jsonObject.get(configField.getName()).isJsonObject()) {
-                            continue;
-                        }
+                            if (!jsonObject.get(configField.getName()).isJsonObject()) {
+                                continue;
+                            }
 
-                        if (!jsonObject.get(configField.getName()).getAsJsonObject().has("value")) {
-                            continue;
-                        }
+                            if (!jsonObject.get(configField.getName()).getAsJsonObject().has("value")) {
+                                continue;
+                            }
 
-                        JsonElement valueJsonElement = jsonObject.get(configField.getName()).getAsJsonObject().get("value");
+                            JsonElement valueJsonElement = jsonObject.get(configField.getName()).getAsJsonObject().get("value");
 
-                        Object valueObject = configField.get(config);
-                        if (valueObject instanceof Value<?>) {
-                            Value<?> value = (Value<?>) valueObject;
-                            value.decode(valueJsonElement);
+                            Object valueObject = configField.get(config);
+                            if (valueObject instanceof Value<?>) {
+                                Value<?> value = (Value<?>) valueObject;
+                                value.decode(valueJsonElement);
+                            }
                         }
+                    } else {
+                        MessageUtil.error("Could not read the config '" + classConfigEntry.getValue().getName() + "'");
                     }
                 }
             } catch (Throwable e) {
-                MessageUtil.error(e);
+                MessageUtil.error("Could not read the config '" + classConfigEntry.getValue().getName() + "'", e);
             }
+            classConfigEntry.getValue().update();
         }
     }
 

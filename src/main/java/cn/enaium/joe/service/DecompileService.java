@@ -28,11 +28,11 @@ import cn.enaium.joe.service.decompiler.*;
 public class DecompileService {
     public static IDecompiler getService() {
         ModeValue decompilerMode = JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).decompilerMode;
-        switch (decompilerMode.getValue()) {
-            case "CFR": return new CFRDecompiler();
-            case "Procyon": return new ProcyonDecompiler();
-            case "FernFlower": return new FernFlowerDecompiler();
-        }
-        throw new NullPointerException("Not found decompiler");
+        return switch (decompilerMode.getValue()) {
+            case "CFR" -> new CFRDecompiler();
+            case "Procyon" -> new ProcyonDecompiler();
+            case "FernFlower" -> new FernFlowerDecompiler();
+            default -> throw new NullPointerException("Not found decompiler");
+        };
     }
 }

@@ -17,7 +17,7 @@
 package cn.enaium.joe.service.decompiler;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.ProcyonConfig;
+import cn.enaium.joe.config.util.CachedGlobalValue;
 import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.reflection.FieldAccessor;
 import cn.enaium.joe.util.reflection.ReflectionHelper;
@@ -38,12 +38,10 @@ import java.io.StringWriter;
  * @since 0.7.0
  */
 public class ProcyonDecompiler implements IDecompiler {
-    public static JavaFormattingOptions cachedFormattingOptions;
-
-    public static void create() {
+    public static final CachedGlobalValue<JavaFormattingOptions> cachedFormattingOptions = new CachedGlobalValue<>(config -> {
         JavaFormattingOptions aDefault = JavaFormattingOptions.createDefault();
 
-        JavaOctetEditor.getInstance().config.getConfigMap(ProcyonConfig.class).forEach(
+        JavaOctetEditor.getInstance().config.getConfigMap(config).forEach(
                 (s, value) -> {
                     try {
                         FieldAccessor<Object, JavaFormattingOptions> f = ReflectionHelper.getFieldAccessor(JavaFormattingOptions.class, value.getName());
@@ -58,8 +56,8 @@ public class ProcyonDecompiler implements IDecompiler {
                     }
                 }
         );
-        cachedFormattingOptions = aDefault;
-    }
+        return aDefault;
+    });
 
     @Override
     public String decompile(ClassNode classNode) {
@@ -83,13 +81,9 @@ public class ProcyonDecompiler implements IDecompiler {
         decompilerSettings.getLanguage().decompileType(metadataSystem.lookupType(classNode.getCanonicalName()).resolve(), new PlainTextOutput(stringwriter), new DecompilationOptions(){{
             setFullDecompilation(true);
             DecompilerSettings settings = DecompilerSettings.javaDefaults();
-            settings.setJavaFormattingOptions(cachedFormattingOptions);
+            settings.setJavaFormattingOptions(cachedFormattingOptions.getValue());
             setSettings(settings);
         }});
         return stringwriter.toString();
-    }
-
-    static {
-        create();
     }
 }

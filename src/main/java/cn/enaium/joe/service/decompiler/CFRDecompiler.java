@@ -17,7 +17,7 @@
 package cn.enaium.joe.service.decompiler;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.CFRConfig;
+import cn.enaium.joe.config.util.CachedGlobalValue;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.classes.ClassNode;
 import org.benf.cfr.reader.Main;
@@ -40,15 +40,12 @@ import java.util.Collections;
  * @since 0.7.0
  */
 public class CFRDecompiler implements IDecompiler {
-    public static Options options;
 
-    public static void update(){
-        options = OptionsImpl.getFactory().create(JavaOctetEditor.getInstance().config.getConfigMapStrings(CFRConfig.class));
-    }
+    public static final CachedGlobalValue<Options> options = new CachedGlobalValue<>(config -> OptionsImpl.getFactory().create(JavaOctetEditor.getInstance().config.getConfigMapStrings(config)));
 
     @Override
     public String decompile(final ClassNode classNode) {
-        DCCommonState state = new DCCommonState(options, new ClassFileSource2() {
+        DCCommonState state = new DCCommonState(options.getValue(), new ClassFileSource2() {
             @Override
             public Pair<byte[], String> getClassFileContent(String path) {
                 String name = path.substring(0, path.length() - 6);
@@ -90,13 +87,13 @@ public class CFRDecompiler implements IDecompiler {
         }
 
         public Dumper getNewTopLevelDumper(JavaTypeInstance classType, SummaryDumper summaryDumper, TypeUsageInformation typeUsageInformation, IllegalIdentifierDump illegalIdentifierDump) {
-            return new StringStreamDumper(new MethodErrorCollector.SummaryDumperMethodErrorCollector(classType, summaryDumper), this.outBuffer, typeUsageInformation, CFRDecompiler.options, this.illegalIdentifierDump);
+            return new StringStreamDumper(new MethodErrorCollector.SummaryDumperMethodErrorCollector(classType, summaryDumper), this.outBuffer, typeUsageInformation, CFRDecompiler.options.getValue(), this.illegalIdentifierDump);
         }
         public Dumper wrapLineNoDumper(Dumper dumper) {
             return dumper;
         }
         public SummaryDumper getSummaryDumper() {
-            return !CFRDecompiler.options.optionIsSet(OptionsImpl.OUTPUT_DIR) ? new NopSummaryDumper() : new FileSummaryDumper(CFRDecompiler.options.getOption(OptionsImpl.OUTPUT_DIR), CFRDecompiler.options, null);
+            return !CFRDecompiler.options.getValue().optionIsSet(OptionsImpl.OUTPUT_DIR) ? new NopSummaryDumper() : new FileSummaryDumper(CFRDecompiler.options.getValue().getOption(OptionsImpl.OUTPUT_DIR), CFRDecompiler.options.getValue(), null);
         }
         public ProgressDumper getProgressDumper() {
             return ProgressDumperNop.INSTANCE;
@@ -114,7 +111,4 @@ public class CFRDecompiler implements IDecompiler {
         }
     }
 
-    static {
-        update();
-    }
 }

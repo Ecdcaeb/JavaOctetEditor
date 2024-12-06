@@ -155,6 +155,6 @@ public class ProcyonConfig extends Config {
     public ModeValue ArrayInitializerBraceStyle = new ModeValue("ArrayInitializerBraceStyle", "EndOfLine", "ArrayInitializerBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
 
     public ProcyonConfig() {
-        super("Procyon", Set.of((config)-> ProcyonDecompiler.create()));
+        super("Procyon", Set.of(ProcyonDecompiler.cachedFormattingOptions));
     }
 }

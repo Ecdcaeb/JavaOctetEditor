@@ -88,6 +88,6 @@ public class FernFlowerConfig extends Config {
 
 
     public FernFlowerConfig() {
-        super("FernFlower", Set.of((config)-> FernFlowerDecompiler.updateCustomProperties()));
+        super("FernFlower", Set.of(FernFlowerDecompiler.customProperties));
     }
 }

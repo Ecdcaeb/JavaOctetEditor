@@ -1,12 +1,16 @@
 package cn.enaium.joe.util.compiler.environment;
 
+import cn.enaium.joe.JavaOctetEditor;
+import cn.enaium.joe.config.util.CachedConfigValue;
 import cn.enaium.joe.jar.Jar;
+import cn.enaium.joe.task.BuildEnvironmentTask;
 import cn.enaium.joe.util.reflection.ReflectionHelper;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 
@@ -15,10 +19,18 @@ public class RecompileEnvironment {
         return 21;
     }
 
-    public static Map<String, byte[]> environment = null;
+    public static final CachedConfigValue<Map<String, byte[]>, Boolean> environment = new CachedConfigValue<>(new BiFunction<Boolean, Boolean, Map<String, byte[]>>() {
+        @Override
+        public Map<String, byte[]> apply(Boolean old, Boolean newBoolean) {
+            if (old == Boolean.FALSE && newBoolean == Boolean.TRUE && JavaOctetEditor.getInstance().getJar() != null) {
+                JavaOctetEditor.getInstance().task.submit(new BuildEnvironmentTask(JavaOctetEditor.getInstance().getJar()));
+            }
+            return null;
+        }
+    });
 
     public static Map<String, byte[]> getEnvironment(){
-        return environment;
+        return environment.getValue();
     }
 
     public static Map<String, byte[]> build(Jar jar, IntConsumer progress){

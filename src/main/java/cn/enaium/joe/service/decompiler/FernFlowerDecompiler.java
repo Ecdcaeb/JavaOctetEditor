@@ -17,7 +17,7 @@
 package cn.enaium.joe.service.decompiler;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.FernFlowerConfig;
+import cn.enaium.joe.config.util.CachedGlobalValue;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.classes.ClassNode;
 import org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler;
@@ -38,26 +38,25 @@ import java.util.jar.Manifest;
 public class FernFlowerDecompiler extends IFernflowerLogger implements IDecompiler, IResultSaver, IContextSource, IContextSource.IOutputSink {
     private String returned;
     private ClassNode activeClass;
-    public static Map<String, Object> customProperties;
-
-    public static void updateCustomProperties(){
-        customProperties = Collections.unmodifiableMap(new HashMap<>() {{
-            JavaOctetEditor.getInstance().config.getConfigMapStrings(FernFlowerConfig.class).forEach((k, v) -> {
-                if (v.equals("true")) {
-                    v = "1";
-                } else if (v.equals("false")) {
-                    v = "0";
-                }
-                this.put(k, v);
-            });
-        }});
-    }
+    public static final CachedGlobalValue<Map<String, Object>> customProperties = new CachedGlobalValue<>(config -> {
+        Map<String, String> map = JavaOctetEditor.getInstance().config.getConfigMapStrings(config);
+        HashMap<String, Object> hashMap = new HashMap<>(map.size());
+        for(Map.Entry<String, String> entry : map.entrySet()){
+            String v = entry.getValue();
+            if (v.equals("true")) {
+                v = "1";
+            } else if (v.equals("false")) {
+                v = "0";
+            }
+            hashMap.put(entry.getKey(), v);
+        }
+        return Collections.unmodifiableMap(hashMap);});
 
     @Override
     public String decompile(final ClassNode classNode) {
         returned = null;
         activeClass = classNode;
-        BaseDecompiler baseDecompiler = new BaseDecompiler(this,customProperties, this);
+        BaseDecompiler baseDecompiler = new BaseDecompiler(this, customProperties.getValue(), this);
         baseDecompiler.addSource(this);
         baseDecompiler.decompileContext();
         return returned;
@@ -133,10 +132,6 @@ public class FernFlowerDecompiler extends IFernflowerLogger implements IDecompil
     @Override
     public void acceptClass(String qualifiedName, String fileName, String content, int[] mapping) {
         this.saveClassFile(null, null, null, content, mapping);
-    }
-
-    static {
-        updateCustomProperties();
     }
 
     @Override public void begin() {}

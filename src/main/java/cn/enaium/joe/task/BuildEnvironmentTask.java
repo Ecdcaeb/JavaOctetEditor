@@ -14,7 +14,7 @@ public class BuildEnvironmentTask extends AbstractTask<Map<String, byte[]>> {
 
     @Override
     public Map<String, byte[]> get() {
-        RecompileEnvironment.environment = RecompileEnvironment.build(jar, this::setProgress);
+        RecompileEnvironment.environment.setValue(RecompileEnvironment.build(jar, this::setProgress));
         this.setProgress(100);
         return RecompileEnvironment.getEnvironment();
     }

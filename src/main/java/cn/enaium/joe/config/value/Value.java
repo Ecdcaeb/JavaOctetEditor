@@ -36,7 +36,7 @@ public abstract class Value<T> {
     public Value(Type type, String name, T value, String description) {
         this.type = type;
         this.name = name;
-        this.value = value;
+        this.setValue(value);
         this.description = description;
     }
 

@@ -16,45 +16,26 @@
 
 package cn.enaium.joe.util;
 
-import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.ApplicationConfig;
-import cn.enaium.joe.config.value.ModeValue;
-import com.google.gson.Gson;
+import cn.enaium.joe.config.util.CachedConfigValue;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.pmw.tinylog.Logger;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 public class LangUtil {
-    public static String lang = null;
-    public static Map<String, String> locales = new HashMap<>();
-
-    public static String getCurrentLang(){
-        String langConfig = JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).language.getValue();
-        if (langConfig.equals("System")) {
+    public static CachedConfigValue<Map<String, String>, String> locales = new CachedConfigValue<>((s, s2) -> {
+        Map<String, String> locales = new HashMap<>();
+        if ("System".equals(s2)){
             Locale locale = Locale.getDefault();
-            return locale.getLanguage() + "_" + locale.getCountry();
-        } else {
-            return langConfig;
+            s2 = locale.getLanguage().toLowerCase() + "_" + locale.getCountry().toUpperCase();
         }
-    }
-
-    public static void reloadLang(){
-        reloadLang(getCurrentLang());
-    }
-
-    public static void reloadLang(String lang){
-        locales.clear();
         try (InputStream stream = LangUtil.class.getResourceAsStream("/lang/en_US.json")){
             for(Map.Entry<String, JsonElement> entry : JsonParser.parseReader(new InputStreamReader(Objects.requireNonNull(stream))).getAsJsonObject().entrySet()) {
                 locales.put(entry.getKey(), entry.getValue().getAsString());
@@ -62,22 +43,19 @@ public class LangUtil {
         } catch (IOException | NullPointerException e) {
             Logger.warn(e);
         }
-        try (InputStream stream = LangUtil.class.getResourceAsStream("/lang/" + lang + ".json")){
+        try (InputStream stream = LangUtil.class.getResourceAsStream("/lang/" + s2 + ".json")){
             for(Map.Entry<String, JsonElement> entry : JsonParser.parseReader(new InputStreamReader(Objects.requireNonNull(stream))).getAsJsonObject().entrySet()) {
                 locales.putIfAbsent(entry.getKey(), entry.getValue().getAsString());
             }
         } catch (IOException | NullPointerException e) {
             Logger.warn(e);
         }
-    }
+        return locales;
+    });
 
     public static String i18n(String key, Object... args) {
-        if (locales.containsKey(key)) {
-            return String.format(locales.get(key), args);
+        if (locales.getValue().containsKey(key)) {
+            return String.format(locales.getValue().get(key), args);
         } else return key;
-    }
-
-    static {
-        reloadLang();
     }
 }

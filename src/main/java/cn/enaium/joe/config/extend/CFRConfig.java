@@ -326,6 +326,6 @@ public class CFRConfig extends Config {
             "Propagate bytecode location info.");
 
     public CFRConfig() {
-        super("CFR", Set.of((value) -> CFRDecompiler.update()));
+        super("CFR", Set.of(CFRDecompiler.options));
     }
 }

@@ -16,12 +16,12 @@
 
 package cn.enaium.joe.config.extend;
 
+import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.annotation.NoUI;
 import cn.enaium.joe.config.Config;
-import cn.enaium.joe.config.value.EnableValue;
-import cn.enaium.joe.config.value.IntegerValue;
-import cn.enaium.joe.config.value.ModeValue;
-import cn.enaium.joe.config.value.StringSetValue;
+import cn.enaium.joe.config.value.*;
+import cn.enaium.joe.util.LangUtil;
+import cn.enaium.joe.util.compiler.environment.RecompileEnvironment;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -42,5 +42,10 @@ public class ApplicationConfig extends Config {
     public EnableValue makeDemoRecompileEnvironment = new EnableValue("makeDemoRecompileEnvironment", false, "[EXP] Make the Demo Recompile Symbol environment.");
     public ApplicationConfig() {
         super("Application");
+        this.language.addListener(LangUtil.locales);
+        this.packagePresentation.addListener((instance, oldValue, newValue) -> {
+            if (!oldValue.equals(newValue) && JavaOctetEditor.getInstance().getJar() != null) JavaOctetEditor.getInstance().fileTree.refresh(JavaOctetEditor.getInstance().getJar());
+        });
+        this.makeDemoRecompileEnvironment.addListener(RecompileEnvironment.environment);
     }
 }
