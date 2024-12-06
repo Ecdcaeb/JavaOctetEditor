@@ -20,15 +20,11 @@ import cn.enaium.joe.annotation.Repeatable;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 
 /**
  * @author Enaium
@@ -36,7 +32,7 @@ import java.util.logging.Logger;
  */
 public class TaskManager {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
-    private final List<Pair<AbstractTask<?>, CompletableFuture<?>>> task = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Pair<AbstractTask<?>, CompletableFuture<?>>> task = new CopyOnWriteArrayList<>();
 
     public <T> CompletableFuture<T> submit(AbstractTask<T> abstractTask) {
         for (Pair<AbstractTask<?>, CompletableFuture<?>> classCompletableFuturePair : task) {
