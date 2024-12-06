@@ -5,7 +5,7 @@ import cn.enaium.joe.config.ConfigManager;
 import cn.enaium.joe.util.MessageUtil;
 import com.google.gson.JsonElement;
 
-public class ConfigValue<T extends Config> extends Value<T>{
+public final class ConfigValue<T extends Config> extends Value<T>{
     public ConfigValue(T config, String description){
         super(config.getClass(), config.getName(), config, description);
     }

@@ -22,7 +22,7 @@ import com.google.gson.JsonElement;
  * @author Enaium
  * @since 0.7.0
  */
-public class StringValue extends Value<String> {
+public final class StringValue extends Value<String> {
     public StringValue(String name, String value, String description) {
         super(String.class, name, value, description);
     }

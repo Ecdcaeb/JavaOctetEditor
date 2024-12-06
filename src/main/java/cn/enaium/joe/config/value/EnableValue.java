@@ -22,7 +22,7 @@ import com.google.gson.JsonElement;
  * @author Enaium
  * @since 0.7.0
  */
-public class EnableValue extends Value<Boolean> {
+public final class EnableValue extends Value<Boolean> {
     public EnableValue(String name, Boolean value, String description) {
         super(Boolean.class, name, value, description);
     }

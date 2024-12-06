@@ -25,7 +25,7 @@ import java.util.List;
  * @author Enaium
  * @since 0.7.0
  */
-public class ModeValue extends Value<String> {
+public final class ModeValue extends Value<String> {
 
     @Expose(deserialize = false)
     private List<String> mode;

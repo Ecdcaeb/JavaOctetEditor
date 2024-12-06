@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 
 import javax.swing.KeyStroke;
 
-public class KeyValue extends Value<KeyStroke> {
+public final class KeyValue extends Value<KeyStroke> {
     public KeyValue(String name, KeyStroke value, String description) {
         super(KeyStroke.class, name, value, description);
     }

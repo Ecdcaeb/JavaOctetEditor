@@ -27,7 +27,7 @@ import java.util.Set;
  * @author Enaium
  * @since 0.9.0
  */
-public class StringSetValue extends Value<Set<String>>{
+public final class StringSetValue extends Value<Set<String>>{
     public static final Type TYPE = TypeToken.getParameterized(Set.class, String.class).getType();//<Set<String>>().getType();
     public StringSetValue(String name, Set<String> value, String description) {
         super(TYPE, name, value, description);
