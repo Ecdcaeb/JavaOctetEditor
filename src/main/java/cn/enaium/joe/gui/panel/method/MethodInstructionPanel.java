@@ -17,7 +17,7 @@
 package cn.enaium.joe.gui.panel.method;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.KeymapConfig;
+import cn.enaium.joe.config.extend.ApplicationConfig;
 import cn.enaium.joe.gui.component.InstructionComboBox;
 import cn.enaium.joe.gui.panel.confirm.InstructionEditPanel;
 import cn.enaium.joe.util.Util;
@@ -57,7 +57,7 @@ public class MethodInstructionPanel extends JPanel {
         }
 
         JPopupMenu jPopupMenu = new JPopupMenu();
-        KeymapConfig keymapConfig = JavaOctetEditor.getInstance().config.getByClass(KeymapConfig.class);
+        ApplicationConfig.KeymapConfig keymapConfig = JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).keymap.getValue();
 
         addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.edit"), () -> {
             InstructionWrapper selectedValue = instructionJList.getSelectedValue();

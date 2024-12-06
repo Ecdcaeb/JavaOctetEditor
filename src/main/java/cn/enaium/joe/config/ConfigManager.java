@@ -27,6 +27,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +42,6 @@ public class ConfigManager {
         addByInstance(new CFRConfig());
         addByInstance(new FernFlowerConfig());
         addByInstance(new ProcyonConfig());
-        addByInstance(new KeymapConfig());
     }
 
     @SuppressWarnings("unchecked")
@@ -114,28 +114,7 @@ public class ConfigManager {
                 File file = new File(System.getProperty("."), config.getName() + ".json");
                 if (file.exists()) {
                     if (JsonParser.parseString(Files.readString(file.toPath())) instanceof JsonObject jsonObject) {
-                        for (Field configField : klass.getDeclaredFields()) {
-                            configField.setAccessible(true);
-                            if (!jsonObject.has(configField.getName())) {
-                                continue;
-                            }
-
-                            if (!jsonObject.get(configField.getName()).isJsonObject()) {
-                                continue;
-                            }
-
-                            if (!jsonObject.get(configField.getName()).getAsJsonObject().has("value")) {
-                                continue;
-                            }
-
-                            JsonElement valueJsonElement = jsonObject.get(configField.getName()).getAsJsonObject().get("value");
-
-                            Object valueObject = configField.get(config);
-                            if (valueObject instanceof Value<?>) {
-                                Value<?> value = (Value<?>) valueObject;
-                                value.decode(valueJsonElement);
-                            }
-                        }
+                        decodeConfig(config, jsonObject);
                     } else {
                         MessageUtil.error("Could not read the config '" + classConfigEntry.getValue().getName() + "'");
                     }
@@ -145,6 +124,38 @@ public class ConfigManager {
             }
             classConfigEntry.getValue().update();
         }
+    }
+
+    public static void decodeConfig(Config config, JsonObject jsonObject){
+        Class<?> klass = config.getClass();
+        for (Field configField : klass.getDeclaredFields()) {
+            configField.setAccessible(true);
+            if (!jsonObject.has(configField.getName())) {
+                continue;
+            }
+
+            if (!jsonObject.get(configField.getName()).isJsonObject()) {
+                continue;
+            }
+
+            if (!jsonObject.get(configField.getName()).getAsJsonObject().has("value")) {
+                continue;
+            }
+
+            JsonElement valueJsonElement = jsonObject.get(configField.getName()).getAsJsonObject().get("value");
+
+            Object valueObject = null;
+            try {
+                valueObject = configField.get(config);
+            } catch (IllegalAccessException e) {
+                MessageUtil.error("Could not access the config '" + config.getName() + "'", e);
+            }
+            if (valueObject instanceof Value<?> value) {
+                value.decode(valueJsonElement);
+            }
+        }
+
+        config.update();
     }
 
     public void save() {

@@ -17,9 +17,9 @@
 package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 import cn.enaium.joe.JavaOctetEditor;
+import cn.enaium.joe.config.extend.ApplicationConfig;
 import cn.enaium.joe.util.compiler.CompileError;
 import cn.enaium.joe.util.compiler.Compiler;
-import cn.enaium.joe.config.extend.KeymapConfig;
 import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
 import cn.enaium.joe.task.DecompileTask;
@@ -39,7 +39,7 @@ public class DecompileTabPanel extends ClassNodeTabPanel {
         super(classNode);
         setLayout(new BorderLayout());
         CodeAreaPanel codeAreaPanel = this.codeAreaPanel = new CodeAreaPanel() {{
-            KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(KeymapConfig.class).save.getValue(), () -> {
+            KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).keymap.getValue().save.getValue(), () -> {
                 try {
                     Compiler compiler = new Compiler();
                     String name = ASMUtil.getReferenceName(classNode);

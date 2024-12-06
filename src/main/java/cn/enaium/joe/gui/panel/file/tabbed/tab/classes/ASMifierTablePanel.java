@@ -17,8 +17,8 @@
 package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 import cn.enaium.joe.JavaOctetEditor;
+import cn.enaium.joe.config.extend.ApplicationConfig;
 import cn.enaium.joe.util.compiler.Compiler;
-import cn.enaium.joe.config.extend.KeymapConfig;
 import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
 import cn.enaium.joe.util.*;
@@ -43,7 +43,7 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
         super(classNode);
         setLayout(new BorderLayout());
         CodeAreaPanel codeAreaPanel = this.codeAreaPanel = new CodeAreaPanel() {{
-            KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(KeymapConfig.class).save.getValue(), () -> {
+            KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).keymap.getValue().save.getValue(), () -> {
                 try {
                     String className = "ASMifier" + Integer.toHexString(classNode.name.hashCode()) + Integer.toHexString(getTextArea().getText().hashCode());
                     String stringBuilder =
