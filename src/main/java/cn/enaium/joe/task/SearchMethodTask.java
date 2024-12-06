@@ -41,7 +41,7 @@ public class SearchMethodTask extends SearchInstructionTask<List<ResultNode>> {
 
 
     public SearchMethodTask(Jar jar, String owner, String name, String description, boolean itf) {
-        super("SearchField", jar);
+        super("SearchMethod", jar);
         this.owner = owner;
         this.name = name;
         this.description = description;
@@ -52,8 +52,7 @@ public class SearchMethodTask extends SearchInstructionTask<List<ResultNode>> {
     public List<ResultNode> get() {
         List<ResultNode> resultNodes = new ArrayList<>();
         searchInstruction((classNode, instruction) -> {
-            if (instruction instanceof MethodInsnNode) {
-                MethodInsnNode methodInsnNode = (MethodInsnNode) instruction;
+            if (instruction instanceof MethodInsnNode methodInsnNode) {
                 if ((methodInsnNode.owner.contains(owner) || StringUtil.isBlank(owner)) &&
                         (methodInsnNode.name.contains(name) || StringUtil.isBlank(name)) &&
                         (methodInsnNode.desc.contains(description) || StringUtil.isBlank(description)) &&

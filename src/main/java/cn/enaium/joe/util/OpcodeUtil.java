@@ -31,7 +31,7 @@ import static org.objectweb.asm.Opcodes.*;
  * @since 0.8.0
  */
 public class OpcodeUtil {
-    public static final Map<Integer, String> API = new HashMap<Integer, String>() {{
+    public static final Map<Integer, String> API = new HashMap<>() {{
         put(Opcodes.ASM4, "ASM4");
         put(Opcodes.ASM5, "ASM5");
         put(Opcodes.ASM6, "ASM6");
@@ -39,7 +39,7 @@ public class OpcodeUtil {
         put(Opcodes.ASM8, "ASM8");
         put(Opcodes.ASM9, "ASM9");
     }};
-    public static final Map<Integer, String> VERSION = new HashMap<Integer, String>() {{
+    public static final Map<Integer, String> VERSION = new HashMap<>() {{
         put(Opcodes.V1_1, "V1_1");
         put(Opcodes.V1_2, "V1_2");
         put(Opcodes.V1_3, "V1_3");
@@ -59,8 +59,13 @@ public class OpcodeUtil {
         put(Opcodes.V17, "V17");
         put(Opcodes.V18, "V18");
         put(Opcodes.V19, "V19");
+        put(Opcodes.V20, "V20");
+        put(Opcodes.V21, "V21");
+        put(Opcodes.V22, "V22");
+        put(Opcodes.V23, "V23");
+        put(Opcodes.V24, "V24");
     }};
-    public static final Map<Integer, String> HANDLE = new HashMap<Integer, String>() {{
+    public static final Map<Integer, String> HANDLE = new HashMap<>() {{
         put(Opcodes.H_GETFIELD, "H_GETFIELD");
         put(Opcodes.H_GETSTATIC, "H_GETSTATIC");
         put(Opcodes.H_PUTFIELD, "H_PUTFIELD");
@@ -73,7 +78,7 @@ public class OpcodeUtil {
     }};
 
 
-    public static final Map<Integer, String> FRAME = new HashMap<Integer, String>() {{
+    public static final Map<Integer, String> FRAME = new HashMap<>() {{
         put(Opcodes.F_NEW, "F_NEW");
         put(Opcodes.F_FULL, "F_FULL");
         put(Opcodes.F_APPEND, "F_APPEND");
@@ -81,7 +86,7 @@ public class OpcodeUtil {
         put(Opcodes.F_SAME, "F_SAME");
         put(Opcodes.F_SAME1, "F_SAME1");
     }};
-    public static final Map<Integer, String> FRAME_ELEMENT = new HashMap<Integer, String>() {{
+    public static final Map<Integer, String> FRAME_ELEMENT = new HashMap<>() {{
         put(Opcodes.INTEGER, "INTEGER");
         put(Opcodes.FLOAT, "FLOAT");
         put(Opcodes.DOUBLE, "DOUBLE");
@@ -90,7 +95,7 @@ public class OpcodeUtil {
         put(Opcodes.UNINITIALIZED_THIS, "UNINITIALIZED_THIS");
     }};
 
-    public static final Map<Integer, String> OPCODE = new HashMap<Integer, String>() {{
+    public static final Map<Integer, String> OPCODE = new HashMap<>() {{
         put(Opcodes.NOP, "NOP");
         put(Opcodes.ACONST_NULL, "ACONST_NULL");
         put(Opcodes.ICONST_M1, "ICONST_M1");

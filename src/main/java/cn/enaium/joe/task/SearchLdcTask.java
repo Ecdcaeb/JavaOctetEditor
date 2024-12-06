@@ -22,7 +22,6 @@ import cn.enaium.joe.util.ColorUtil;
 import cn.enaium.joe.util.HtmlUtil;
 import org.objectweb.asm.tree.LdcInsnNode;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 

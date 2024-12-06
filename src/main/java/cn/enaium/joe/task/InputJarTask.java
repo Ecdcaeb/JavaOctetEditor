@@ -21,17 +21,18 @@ import cn.enaium.joe.config.extend.ApplicationConfig;
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.ASMUtil;
 import cn.enaium.joe.util.IOUtil;
+import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.Util;
 import org.objectweb.asm.ClassReader;
 import org.pmw.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -85,13 +86,14 @@ public class InputJarTask extends AbstractTask<Jar> {
                         ClassReader classReader = new ClassReader(IOUtil.getBytes(Files.newInputStream(path)));
                         jar.classes.put(relative, ASMUtil.acceptClassNode(classReader));
                     } else if (!Files.isDirectory(path)) {
-                        jar.resources.put(relative, IOUtil.getBytes(Files.newInputStream(path));
+                        jar.resources.put(relative, IOUtil.getBytes(Files.newInputStream(path)));
                     }
                     setProgress((int) ((loaded++ / files) * 100f));
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            MessageUtil.error("Could not input jar!", e);
+            return null;
         }
 
         JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).loadRecent.getValue().add(file.getAbsolutePath());
