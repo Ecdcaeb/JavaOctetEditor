@@ -27,16 +27,17 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
 import java.awt.event.*;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.function.Function;
 
 /**
  * @author Enaium
  * @since 0.7.0
  */
 public class ConfigDialog extends Dialog {
-    public ConfigDialog(Config config) {
+    public ConfigDialog(final Config config) {
         super(LangUtil.i18n("menu.config"));
 
         setContentPane(new JScrollPane(new JPanel(new MigLayout("fillx", "[fill][fill]")) {{
@@ -50,89 +51,79 @@ public class ConfigDialog extends Dialog {
 
                     Object o = declaredField.get(config);
 
-                    if (o instanceof Value) {
-                        Value<?> value = (Value<?>) o;
-
+                    if (o instanceof Value<?> value) {
                         add(new JLabel(value.getName()) {{
                             setToolTipText(value.getDescription());
                         }});
-                    }
-
-                    if (o instanceof StringValue) {
-                        StringValue stringValue = (StringValue) o;
-                        add(new JTextField(25) {{
-                            JTextField jTextField = this;
-                            jTextField.setText(stringValue.getValue());
-                            getDocument().addDocumentListener(new DocumentListener() {
-                                @Override
-                                public void insertUpdate(DocumentEvent e) {
-                                    stringValue.setValue(jTextField.getText());
-                                }
-
-                                @Override
-                                public void removeUpdate(DocumentEvent e) {
-                                    stringValue.setValue(jTextField.getText());
-                                }
-
-                                @Override
-                                public void changedUpdate(DocumentEvent e) {
-                                    stringValue.setValue(jTextField.getText());
-                                }
-                            });
-                        }}, "wrap");
-                    } else if (o instanceof IntegerValue) {
-                        IntegerValue integerValue = (IntegerValue) o;
-                        add(new JSpinner() {{
-                            setValue(integerValue.getValue());
-                            addChangeListener(e -> integerValue.setValue(Integer.parseInt(getValue().toString())));
-                        }}, "wrap");
-                    } else if (o instanceof EnableValue) {
-                        EnableValue enableValue = (EnableValue) o;
-                        add(new JCheckBox() {{
-                            JCheckBox jCheckBox = this;
-                            setHorizontalAlignment(JCheckBox.RIGHT);
-                            setSelected(enableValue.getValue());
-                            addActionListener(e -> {
-                                enableValue.setValue(jCheckBox.isSelected());
-                            });
-                        }}, "wrap");
-                    } else if (o instanceof ModeValue) {
-                        add(new JComboBox<String>(new DefaultComboBoxModel<>()) {{
-                            JComboBox<String> jComboBox = this;
-                            ModeValue modeValue = (ModeValue) o;
-                            for (String s : modeValue.getMode()) {
-                                DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) getModel();
-                                model.addElement(s);
-                                model.setSelectedItem(modeValue.getValue());
-                                jComboBox.addActionListener(e -> {
-                                    modeValue.setValue(model.getSelectedItem().toString());
-                                });
-                            }
-                        }}, "wrap");
-                    } else if (o instanceof KeyValue) {
-                        KeyValue keyValue = (KeyValue) o;
-                        add(new JButton(keyValue.getValue().toString()) {{
-                            addKeyListener(new KeyAdapter() {
-                                @Override
-                                public void keyPressed(KeyEvent e) {
-                                    if (e.getKeyChar() != 65535) {
-                                        KeyStroke newKey = KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers());
-                                        keyValue.setValue(newKey);
-                                        setText(newKey.toString());
+                        switch (value) {
+                            case StringValue stringValue -> add(new JTextField(25) {{
+                                JTextField jTextField = this;
+                                jTextField.setText(stringValue.getValue());
+                                getDocument().addDocumentListener(new DocumentListener() {
+                                    @Override
+                                    public void insertUpdate(DocumentEvent e) {
+                                        stringValue.setValue(jTextField.getText());
                                     }
+
+                                    @Override
+                                    public void removeUpdate(DocumentEvent e) {
+                                        stringValue.setValue(jTextField.getText());
+                                    }
+
+                                    @Override
+                                    public void changedUpdate(DocumentEvent e) {
+                                        stringValue.setValue(jTextField.getText());
+                                    }
+                                });
+                            }}, "wrap");
+                            case IntegerValue integerValue -> add(new JSpinner() {{
+                                setValue(integerValue.getValue());
+                                addChangeListener(e -> integerValue.setValue(Integer.parseInt(getValue().toString())));
+                            }}, "wrap");
+                            case EnableValue enableValue -> add(new JCheckBox() {{
+                                JCheckBox jCheckBox = this;
+                                setHorizontalAlignment(JCheckBox.RIGHT);
+                                setSelected(enableValue.getValue());
+                                addActionListener(e -> {
+                                    enableValue.setValue(jCheckBox.isSelected());
+                                });
+                            }}, "wrap");
+                            case ModeValue modeValue -> add(new JComboBox<String>(new DefaultComboBoxModel<>()) {{
+                                JComboBox<String> jComboBox = this;
+                                for (String s : modeValue.getMode()) {
+                                    DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) getModel();
+                                    model.addElement(s);
+                                    model.setSelectedItem(modeValue.getValue());
+                                    jComboBox.addActionListener(e -> {
+                                        modeValue.setValue(model.getSelectedItem().toString());
+                                    });
                                 }
-                            });
-                        }}, "wrap");
-                    } else if (o instanceof ConfigValue<?>){
-                        ConfigValue<?> configValue = (ConfigValue<?>) o;
-                        add(new JButton(configValue.getName()) {{
-                            addMouseListener(new MouseAdapter() {
-                                @Override
-                                public void mouseClicked(MouseEvent e) {
-                                    new ConfigDialog(configValue.getValue()).setVisible(true);
+                            }}, "wrap");
+                            case KeyValue keyValue -> add(new JButton(keyValue.getValue().toString()) {{
+                                addKeyListener(new KeyAdapter() {
+                                    @Override
+                                    public void keyPressed(KeyEvent e) {
+                                        if (e.getKeyChar() != 65535) {
+                                            KeyStroke newKey = KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiersEx());
+                                            keyValue.setValue(newKey);
+                                            setText(newKey.toString());
+                                        }
+                                    }
+                                });
+                            }}, "wrap");
+                            case ConfigValue<?> configValue -> add(new JButton(configValue.getName()) {
+                                {
+                                    addMouseListener(new MouseAdapter() {
+                                        @Override
+                                        public void mouseClicked(MouseEvent e) {
+                                            new ConfigDialog(configValue.getValue()).setVisible(true);
+                                        }
+                                    });
                                 }
-                            });
-                        }}, "wrap");
+                            }, "wrap");
+                            default -> {
+                            }
+                        }
                     }
                 }
             } catch (IllegalAccessException e) {
