@@ -20,6 +20,7 @@ import cn.enaium.joe.JavaOctetEditor;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 
@@ -33,17 +34,7 @@ public class JFileChooserUtil {
     }
 
     public static File show(Type type) {
-        return show(type, new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return file.getName().endsWith(".zip") || file.getName().endsWith(".jar") || file.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "Zip File(*.zip,*.jar)";
-            }
-        });
+        return show(type, new FileNameExtensionFilter("Zip File(*.zip,*.jar)", "zip", "jar"));
     }
 
     public static File show(Type type, FileFilter fileFilter) {

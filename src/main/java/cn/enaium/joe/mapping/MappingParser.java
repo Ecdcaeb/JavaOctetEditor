@@ -183,4 +183,13 @@ public class MappingParser {
     private static boolean isProGuard(MappingFormat mappingFormat) {
         return mappingFormat == MappingFormat.PROGUARD;
     }
+
+    public static MappingFormat isAnyMatched(String name){
+        for(MappingFormat mappingFormat : MappingFormat.values()){
+            if (mappingFormat != null) {
+                if (name.endsWith("." + mappingFormat.fileExt)) return mappingFormat;
+            }
+        }
+        return null;
+    }
 }

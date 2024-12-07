@@ -21,6 +21,7 @@ import cn.enaium.joe.gui.component.RightTabBar;
 import cn.enaium.joe.gui.panel.BorderPanel;
 import cn.enaium.joe.gui.panel.LeftPanel;
 import cn.enaium.joe.gui.panel.file.FileDropTarget;
+import cn.enaium.joe.mapping.MappingParser;
 import cn.enaium.joe.task.InputJarTask;
 import cn.enaium.joe.task.RemappingTask;
 import net.fabricmc.mappingio.format.MappingFormat;
@@ -50,7 +51,7 @@ public class CenterPanel extends BorderPanel {
                         if (file.isDirectory()) return true;
                         else {
                             String name = file.getName().toLowerCase();
-                            return name.endsWith(".jar") || name.endsWith(".zip");
+                            return name.endsWith(".jar") || name.endsWith(".zip") || MappingParser.isAnyMatched(name) != null;
                         }
                     }
                     , files -> {
@@ -63,8 +64,11 @@ public class CenterPanel extends BorderPanel {
                         String name = file.getName().toLowerCase();
                         if (name.endsWith(".jar") || name.endsWith(".zip")){
                             JavaOctetEditor.getInstance().task.submit(new InputJarTask(file));
-                        } else if (name.endsWith(".srg")){
-                            JavaOctetEditor.getInstance().task.submit(new RemappingTask(file, MappingFormat.SRG));
+                        } else {
+                            MappingFormat mappingFormat = MappingParser.isAnyMatched(name);
+                            if (mappingFormat != null) {
+                                JavaOctetEditor.getInstance().task.submit(new RemappingTask(file, MappingFormat.SRG));
+                            }
                         }
                     }
                 }
