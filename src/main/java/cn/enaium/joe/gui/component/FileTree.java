@@ -23,16 +23,20 @@ import cn.enaium.joe.gui.panel.file.tabbed.tab.resources.FileTablePane;
 import cn.enaium.joe.gui.panel.file.tree.FileTreeCellRenderer;
 import cn.enaium.joe.gui.panel.file.tree.node.*;
 import cn.enaium.joe.jar.Jar;
-import cn.enaium.joe.util.JMenuUtil;
-import cn.enaium.joe.util.JTreeUtil;
-import cn.enaium.joe.util.LangUtil;
+import cn.enaium.joe.util.*;
 import cn.enaium.joe.util.classes.ClassNode;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -69,6 +73,7 @@ public class FileTree extends JTree {
                 }
             }
         });
+        KeyStrokeUtil.register(this, JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).keymap.getValue().copy.getValue(), this::copyFile);
 
         JPopupMenu jPopupMenu = new JPopupMenu();
 
@@ -98,6 +103,31 @@ public class FileTree extends JTree {
                 }
             }
             JavaOctetEditor.getInstance().fileTabbedPanel.setSelectedIndex(JavaOctetEditor.getInstance().fileTabbedPanel.getTabCount() - 1);
+        });
+    }
+
+    public void copyFile() {
+        if (getSelectionPath() == null) {
+            return;
+        }
+        Object lastPathComponent = getSelectionPath().getLastPathComponent();
+        SwingUtilities.invokeLater(() -> {
+            if (lastPathComponent instanceof PackageTreeNode packageTreeNode) {
+                if (packageTreeNode instanceof ClassTreeNode) {
+                    ClassNode classNode = ((ClassTreeNode) packageTreeNode).classNode;
+                    try {
+                        final File temp = File.createTempFile(classNode.getSimpleName(), "class");
+                        Files.write(temp.toPath(), classNode.getClassBytes());
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(temp.toPath().toString()), null);
+                    } catch (Throwable e) {
+                        MessageUtil.error("Could Not Copy", e);
+                    }
+                }
+            } else if (lastPathComponent instanceof FolderTreeNode folderTreeNode) {
+                if (folderTreeNode instanceof FileTreeNode fileTreeNode) {
+                    // TODO:
+                }
+            }
         });
     }
 
