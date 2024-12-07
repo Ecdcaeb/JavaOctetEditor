@@ -1,6 +1,5 @@
 package cn.enaium.joe.config.util;
 
-import cn.enaium.joe.config.value.ConfigValueListener;
 import cn.enaium.joe.config.value.Value;
 
 import java.util.function.BiFunction;

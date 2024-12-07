@@ -45,12 +45,7 @@ public class ProcyonDecompiler implements IDecompiler {
                 (s, value) -> {
                     try {
                         FieldAccessor<Object, JavaFormattingOptions> f = ReflectionHelper.getFieldAccessor(JavaFormattingOptions.class, value.getName());
-                        Object defaultValue = f.get(aDefault);
-                        if (defaultValue instanceof Enum<?>) {
-                            f.set(aDefault, Enum.valueOf(((Enum<?>) defaultValue).getDeclaringClass(), (String) value.getValue()));
-                        } else {
-                            f.set(aDefault, value.getValue());
-                        }
+                        f.set(aDefault, value.getValue());
                     } catch (Throwable e) {
                         Logger.error(e);
                     }

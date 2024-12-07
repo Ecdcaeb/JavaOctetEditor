@@ -72,7 +72,7 @@ public class GenerateDecompilerConfigTest {
             if (value instanceof Boolean) {
                 type = "EnableValue";
             } else if (value instanceof Enum<?>) {
-                type = "ModeValue";
+                type = "ModeValue<" + value.getClass().getSimpleName() + ">";
             } else if (value instanceof Integer) {
                 type = "IntegerValue";
             }
@@ -84,33 +84,17 @@ public class GenerateDecompilerConfigTest {
             stringBuilder.append(type);
             stringBuilder.append(" ");
             stringBuilder.append(field.getName());
-            stringBuilder.append("=");
-            stringBuilder.append("new");
-            stringBuilder.append(" ");
+            stringBuilder.append(" = new ");
             stringBuilder.append(type);
             stringBuilder.append("(");
-            stringBuilder.append("\"").append(field.getName()).append("\"").append(",");
+            stringBuilder.append("\"").append(field.getName()).append("\"").append(", ");
+            if (!field.getType().isEnum()) {
+                stringBuilder.append(value);
+            } else stringBuilder.append(field.getType().getSimpleName()).append('.').append(field.getName());
+            stringBuilder.append(", \"").append(field.getName()).append("\"");
             if (value instanceof Enum<?>) {
-                stringBuilder.append("\"").append(value).append("\"").append(",");
-            } else {
-                stringBuilder.append(value).append(",");
-            }
-            stringBuilder.append("\"").append(field.getName()).append("\"");
-            if (value instanceof Enum<?>) {
-                stringBuilder.append(",");
-                stringBuilder.append("Arrays.asList").append("(");
-                int index = 0;
-                Field[] eFields = ((Enum<?>) value).getDeclaringClass().getFields();
-                for (Field e : eFields) {
-                    stringBuilder.append("\"").append(e.getName()).append("\"");
-
-                    if (index != eFields.length - 1) {
-                        stringBuilder.append(",");
-                    }
-
-                    index++;
-                }
-                stringBuilder.append(")");
+                stringBuilder.append(", ");
+                stringBuilder.append("EnumSet.allOf(").append(value.getClass().getSimpleName()).append(".class)");
             }
             stringBuilder.append(");");
             System.out.println(stringBuilder);

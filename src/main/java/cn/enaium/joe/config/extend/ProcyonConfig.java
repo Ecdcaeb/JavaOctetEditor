@@ -21,8 +21,12 @@ import cn.enaium.joe.config.value.EnableValue;
 import cn.enaium.joe.config.value.IntegerValue;
 import cn.enaium.joe.config.value.ModeValue;
 import cn.enaium.joe.service.decompiler.ProcyonDecompiler;
+import com.strobel.decompiler.languages.java.BraceEnforcement;
+import com.strobel.decompiler.languages.java.BraceStyle;
+import com.strobel.decompiler.languages.java.Wrapping;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Set;
 
 /**
@@ -42,27 +46,27 @@ public class ProcyonConfig extends Config {
     public EnableValue IndentBreakStatements = new EnableValue("IndentBreakStatements", true, "IndentBreakStatements");
     public EnableValue AlignEmbeddedUsingStatements = new EnableValue("AlignEmbeddedUsingStatements", true, "AlignEmbeddedUsingStatements");
     public EnableValue AlignEmbeddedIfStatements = new EnableValue("AlignEmbeddedIfStatements", true, "AlignEmbeddedIfStatements");
-    public ModeValue AnonymousClassBraceStyle = new ModeValue("AnonymousClassBraceStyle", "EndOfLine", "AnonymousClassBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue ClassBraceStyle = new ModeValue("ClassBraceStyle", "NextLine", "ClassBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue InterfaceBraceStyle = new ModeValue("InterfaceBraceStyle", "NextLine", "InterfaceBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue AnnotationBraceStyle = new ModeValue("AnnotationBraceStyle", "EndOfLine", "AnnotationBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue EnumBraceStyle = new ModeValue("EnumBraceStyle", "NextLine", "EnumBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue ModuleBraceStyle = new ModeValue("ModuleBraceStyle", "DoNotChange", "ModuleBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue RecordBraceStyle = new ModeValue("RecordBraceStyle", "EndOfLine", "RecordBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue MethodBraceStyle = new ModeValue("MethodBraceStyle", "EndOfLine", "MethodBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue InitializerBlockBraceStyle = new ModeValue("InitializerBlockBraceStyle", "DoNotChange", "InitializerBlockBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue ConstructorBraceStyle = new ModeValue("ConstructorBraceStyle", "EndOfLine", "ConstructorBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue EventBraceStyle = new ModeValue("EventBraceStyle", "EndOfLine", "EventBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue EventAddBraceStyle = new ModeValue("EventAddBraceStyle", "EndOfLine", "EventAddBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue EventRemoveBraceStyle = new ModeValue("EventRemoveBraceStyle", "EndOfLine", "EventRemoveBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
-    public ModeValue StatementBraceStyle = new ModeValue("StatementBraceStyle", "EndOfLine", "StatementBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
+    public ModeValue<BraceStyle> AnonymousClassBraceStyle = new ModeValue<>("AnonymousClassBraceStyle", BraceStyle.EndOfLine, "AnonymousClassBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> ClassBraceStyle = new ModeValue<>("ClassBraceStyle", BraceStyle.NextLine, "ClassBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> InterfaceBraceStyle = new ModeValue<>("InterfaceBraceStyle", BraceStyle.NextLine, "InterfaceBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> AnnotationBraceStyle = new ModeValue<>("AnnotationBraceStyle", BraceStyle.EndOfLine, "AnnotationBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> EnumBraceStyle = new ModeValue<>("EnumBraceStyle", BraceStyle.NextLine, "EnumBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> ModuleBraceStyle = new ModeValue<>("ModuleBraceStyle", BraceStyle.DoNotChange, "ModuleBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> RecordBraceStyle = new ModeValue<>("RecordBraceStyle", BraceStyle.EndOfLine, "RecordBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> MethodBraceStyle = new ModeValue<>("MethodBraceStyle", BraceStyle.EndOfLine, "MethodBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> InitializerBlockBraceStyle = new ModeValue<>("InitializerBlockBraceStyle", BraceStyle.DoNotChange, "InitializerBlockBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> ConstructorBraceStyle = new ModeValue<>("ConstructorBraceStyle", BraceStyle.EndOfLine, "ConstructorBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> EventBraceStyle = new ModeValue<>("EventBraceStyle", BraceStyle.EndOfLine, "EventBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> EventAddBraceStyle = new ModeValue<>("EventAddBraceStyle", BraceStyle.EndOfLine, "EventAddBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> EventRemoveBraceStyle = new ModeValue<>("EventRemoveBraceStyle", BraceStyle.EndOfLine, "EventRemoveBraceStyle", EnumSet.allOf(BraceStyle.class));
+    public ModeValue<BraceStyle> StatementBraceStyle = new ModeValue<>("StatementBraceStyle", BraceStyle.EndOfLine, "StatementBraceStyle", EnumSet.allOf(BraceStyle.class));
     public EnableValue AllowIfBlockInline = new EnableValue("AllowIfBlockInline", false, "AllowIfBlockInline");
-    public ModeValue IfElseBraceEnforcement = new ModeValue("IfElseBraceEnforcement", "DoNotChange", "IfElseBraceEnforcement", Arrays.asList("DoNotChange", "RemoveBraces", "AddBraces"));
-    public ModeValue ForBraceEnforcement = new ModeValue("ForBraceEnforcement", "DoNotChange", "ForBraceEnforcement", Arrays.asList("DoNotChange", "RemoveBraces", "AddBraces"));
-    public ModeValue ForEachBraceEnforcement = new ModeValue("ForEachBraceEnforcement", "DoNotChange", "ForEachBraceEnforcement", Arrays.asList("DoNotChange", "RemoveBraces", "AddBraces"));
-    public ModeValue WhileBraceEnforcement = new ModeValue("WhileBraceEnforcement", "DoNotChange", "WhileBraceEnforcement", Arrays.asList("DoNotChange", "RemoveBraces", "AddBraces"));
-    public ModeValue UsingBraceEnforcement = new ModeValue("UsingBraceEnforcement", "DoNotChange", "UsingBraceEnforcement", Arrays.asList("DoNotChange", "RemoveBraces", "AddBraces"));
-    public ModeValue FixedBraceEnforcement = new ModeValue("FixedBraceEnforcement", "DoNotChange", "FixedBraceEnforcement", Arrays.asList("DoNotChange", "RemoveBraces", "AddBraces"));
+    public ModeValue<BraceEnforcement> IfElseBraceEnforcement = new ModeValue<>("IfElseBraceEnforcement", BraceEnforcement.DoNotChange, "IfElseBraceEnforcement", EnumSet.allOf(BraceEnforcement.class));
+    public ModeValue<BraceEnforcement> ForBraceEnforcement = new ModeValue<>("ForBraceEnforcement", BraceEnforcement.DoNotChange, "ForBraceEnforcement", EnumSet.allOf(BraceEnforcement.class));
+    public ModeValue<BraceEnforcement> ForEachBraceEnforcement = new ModeValue<>("ForEachBraceEnforcement", BraceEnforcement.DoNotChange, "ForEachBraceEnforcement", EnumSet.allOf(BraceEnforcement.class));
+    public ModeValue<BraceEnforcement> WhileBraceEnforcement = new ModeValue<>("WhileBraceEnforcement", BraceEnforcement.DoNotChange, "WhileBraceEnforcement", EnumSet.allOf(BraceEnforcement.class));
+    public ModeValue<BraceEnforcement> UsingBraceEnforcement = new ModeValue<>("UsingBraceEnforcement", BraceEnforcement.DoNotChange, "UsingBraceEnforcement", EnumSet.allOf(BraceEnforcement.class));
+    public ModeValue<BraceEnforcement> FixedBraceEnforcement = new ModeValue<>("FixedBraceEnforcement", BraceEnforcement.DoNotChange, "FixedBraceEnforcement", EnumSet.allOf(BraceEnforcement.class));
     public EnableValue PlaceElseOnNewLine = new EnableValue("PlaceElseOnNewLine", false, "PlaceElseOnNewLine");
     public EnableValue PlaceElseIfOnNewLine = new EnableValue("PlaceElseIfOnNewLine", false, "PlaceElseIfOnNewLine");
     public EnableValue PlaceCatchOnNewLine = new EnableValue("PlaceCatchOnNewLine", false, "PlaceCatchOnNewLine");
@@ -151,10 +155,11 @@ public class ProcyonConfig extends Config {
     public IntegerValue BlankLinesBetweenEventFields = new IntegerValue("BlankLinesBetweenEventFields", 0, "BlankLinesBetweenEventFields");
     public IntegerValue BlankLinesBetweenMembers = new IntegerValue("BlankLinesBetweenMembers", 1, "BlankLinesBetweenMembers");
     public EnableValue KeepCommentsAtFirstColumn = new EnableValue("KeepCommentsAtFirstColumn", true, "KeepCommentsAtFirstColumn");
-    public ModeValue ArrayInitializerWrapping = new ModeValue("ArrayInitializerWrapping", "WrapIfTooLong", "ArrayInitializerWrapping", Arrays.asList("DoNotWrap", "WrapAlways", "WrapIfTooLong"));
-    public ModeValue ArrayInitializerBraceStyle = new ModeValue("ArrayInitializerBraceStyle", "EndOfLine", "ArrayInitializerBraceStyle", Arrays.asList("DoNotChange", "EndOfLine", "EndOfLineWithoutSpace", "NextLine", "NextLineShifted", "NextLineShifted2", "BannerStyle"));
+    public ModeValue<Wrapping> ArrayInitializerWrapping = new ModeValue<>("ArrayInitializerWrapping", Wrapping.WrapIfTooLong, "ArrayInitializerWrapping", EnumSet.allOf(Wrapping.class));
+    public ModeValue<BraceStyle> ArrayInitializerBraceStyle = new ModeValue<>("ArrayInitializerBraceStyle", BraceStyle.EndOfLine, "ArrayInitializerBraceStyle", EnumSet.allOf(BraceStyle.class));
 
     public ProcyonConfig() {
         super("Procyon", Set.of(ProcyonDecompiler.cachedFormattingOptions));
+        this.postInit();
     }
 }

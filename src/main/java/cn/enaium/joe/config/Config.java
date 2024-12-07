@@ -16,7 +16,12 @@
 
 package cn.enaium.joe.config;
 
+import cn.enaium.joe.config.value.Value;
+
+import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -28,6 +33,7 @@ public class Config {
     private final String name;
 
     private transient final Set<Consumer<Config>> listeners;
+    private transient Map<String, Value<?>> values = null;
 
     public Config(String name) {
         this(name, Collections.emptySet());
@@ -36,6 +42,30 @@ public class Config {
     public Config(String name, Set<Consumer<Config>> listeners ) {
         this.name = name;
         this.listeners = listeners;
+    }
+
+    // Must call this in the end of constructor
+    protected void postInit(){
+        Class<?> thisClass = this.getClass();
+        Map<String, Value<?>> map = new HashMap<>();
+        for (Field declaredField : thisClass.getDeclaredFields()) {
+            declaredField.setAccessible(true);
+            if (declaredField.getType().isAssignableFrom(Value.class)) {
+                try {
+                    Object o = declaredField.get(this);
+                    if (o instanceof Value<?>) {
+                        map.put(declaredField.getName(), (Value<?>) o);
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        this.values = map;
+    }
+
+    public Map<String, Value<?>> getConfigMap(){
+        return values;
     }
 
     public void update(){

@@ -18,21 +18,36 @@ package cn.enaium.joe.service;
 
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.extend.ApplicationConfig;
-import cn.enaium.joe.config.value.ModeValue;
-import cn.enaium.joe.service.decompiler.*;
+import cn.enaium.joe.service.decompiler.IDecompiler;
+import cn.enaium.joe.service.decompiler.FernFlowerDecompiler;
+import cn.enaium.joe.service.decompiler.CFRDecompiler;
+import cn.enaium.joe.service.decompiler.ProcyonDecompiler;
+
+import java.util.function.Supplier;
 
 /**
  * @author Enaium
  * @since 0.7.0
  */
 public class DecompileService {
+    public enum Service{
+        VineFlower(FernFlowerDecompiler::new),
+        CFR(CFRDecompiler::new),
+        Procyon(ProcyonDecompiler::new);
+
+
+        private final Supplier<IDecompiler> decompilerSupplier;
+        Service(Supplier<IDecompiler> supplier){
+            this.decompilerSupplier = supplier;
+        }
+
+        public IDecompiler getDecompiler(){
+            return decompilerSupplier.get();
+        }
+    }
+
+
     public static IDecompiler getService() {
-        ModeValue decompilerMode = JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).decompilerMode;
-        return switch (decompilerMode.getValue()) {
-            case "CFR" -> new CFRDecompiler();
-            case "Procyon" -> new ProcyonDecompiler();
-            case "FernFlower" -> new FernFlowerDecompiler();
-            default -> throw new NullPointerException("Not found decompiler");
-        };
+        return JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).decompilerMode.getValue().getDecompiler();
     }
 }

@@ -327,5 +327,6 @@ public class CFRConfig extends Config {
 
     public CFRConfig() {
         super("CFR", Set.of(CFRDecompiler.options));
+        this.postInit();
     }
 }

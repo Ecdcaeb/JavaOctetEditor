@@ -30,12 +30,23 @@ import java.util.Map;
 import java.util.Objects;
 
 public class LangUtil {
-    public static CachedConfigValue<Map<String, String>, String> locales = new CachedConfigValue<>((s, s2) -> {
+    public enum Lang{
+        EN_US("en_US"),
+        ZH_CN("zh_CN"),
+        SYSTEM("System");
+
+        private final String value;
+        Lang(String value){this.value = value;}
+        public String getValue(){return this.value;}
+    }
+    public static CachedConfigValue<Map<String, String>, Lang> locales = new CachedConfigValue<>((s, s2) -> {
         Map<String, String> locales = new HashMap<>();
-        if ("System".equals(s2)){
+        String lang;
+        if (Lang.SYSTEM == s2){
             Locale locale = Locale.getDefault();
-            s2 = locale.getLanguage().toLowerCase() + "_" + locale.getCountry().toUpperCase();
-        }
+            lang = locale.getLanguage().toLowerCase() + "_" + locale.getCountry().toUpperCase();
+        } else lang = s2.getValue();
+
         try (InputStream stream = LangUtil.class.getResourceAsStream("/lang/en_US.json")){
             for(Map.Entry<String, JsonElement> entry : JsonParser.parseReader(new InputStreamReader(Objects.requireNonNull(stream))).getAsJsonObject().entrySet()) {
                 locales.put(entry.getKey(), entry.getValue().getAsString());
@@ -43,13 +54,15 @@ public class LangUtil {
         } catch (IOException | NullPointerException e) {
             Logger.warn(e);
         }
-        try (InputStream stream = LangUtil.class.getResourceAsStream("/lang/" + s2 + ".json")){
+
+        try (InputStream stream = LangUtil.class.getResourceAsStream("/lang/" + lang + ".json")){
             for(Map.Entry<String, JsonElement> entry : JsonParser.parseReader(new InputStreamReader(Objects.requireNonNull(stream))).getAsJsonObject().entrySet()) {
                 locales.putIfAbsent(entry.getKey(), entry.getValue().getAsString());
             }
         } catch (IOException | NullPointerException e) {
             Logger.warn(e);
         }
+
         return locales;
     });
 

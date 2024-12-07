@@ -20,6 +20,8 @@ import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.annotation.NoUI;
 import cn.enaium.joe.config.Config;
 import cn.enaium.joe.config.value.*;
+import cn.enaium.joe.gui.component.FileTree;
+import cn.enaium.joe.service.DecompileService;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.compiler.environment.RecompileEnvironment;
 
@@ -27,6 +29,7 @@ import javax.swing.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 
 /**
@@ -34,9 +37,9 @@ import java.util.HashSet;
  * @since 0.7.0
  */
 public class ApplicationConfig extends Config {
-    public ModeValue decompilerMode = new ModeValue("Decompiler", "CFR", "Java Decompiler", Arrays.asList("CFR", "Procyon", "FernFlower"));
-    public ModeValue language = new ModeValue("Language", "System", "UI language", Arrays.asList("System", "zh_CN", "en_US"));
-    public ModeValue packagePresentation = new ModeValue("Package Presentation", "Hierarchical", "Package Mode", Arrays.asList("Flat", "Hierarchical"));
+    public ModeValue<DecompileService.Service> decompilerMode = new ModeValue<>("Decompiler", DecompileService.Service.VineFlower, "Java Decompiler", EnumSet.allOf(DecompileService.Service.class));
+    public ModeValue<LangUtil.Lang> language = new ModeValue<>("Language", LangUtil.Lang.SYSTEM, "UI language", EnumSet.allOf(LangUtil.Lang.class));
+    public ModeValue<FileTree.PackagePresentation> packagePresentation = new ModeValue<>("Package Presentation", FileTree.PackagePresentation.HIERARCHICAL, "Package Mode", EnumSet.allOf(FileTree.PackagePresentation.class));
     public EnableValue compactMiddlePackage = new EnableValue("Compact Middle Package", true, "Only Hierarchical Mode");
     @NoUI
     public final StringSetValue loadRecent = new StringSetValue("Load Recent", new HashSet<>(), "");
@@ -52,6 +55,8 @@ public class ApplicationConfig extends Config {
             if (!oldValue.equals(newValue) && JavaOctetEditor.getInstance().getJar() != null) JavaOctetEditor.getInstance().fileTree.refresh(JavaOctetEditor.getInstance().getJar());
         });
         this.makeDemoRecompileEnvironment.addListener(RecompileEnvironment.environment);
+
+        this.postInit();
     }
 
     /**
@@ -72,6 +77,7 @@ public class ApplicationConfig extends Config {
 
         public KeymapConfig() {
             super("keymap");
+            this.postInit();
         }
     }
 }

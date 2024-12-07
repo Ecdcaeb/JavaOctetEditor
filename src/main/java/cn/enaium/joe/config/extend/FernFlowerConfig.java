@@ -22,8 +22,11 @@ import cn.enaium.joe.config.value.IntegerValue;
 import cn.enaium.joe.config.value.ModeValue;
 import cn.enaium.joe.config.value.StringValue;
 import cn.enaium.joe.service.decompiler.FernFlowerDecompiler;
+import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 
+import java.security.Security;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Set;
 
 /**
@@ -71,7 +74,7 @@ public class FernFlowerConfig extends Config {
     public EnableValue jrt = new EnableValue("Include Java Runtime", false, "Give the decompiler information about the Java runtime.");
     public EnableValue ega = new EnableValue("Explicit Generic Arguments", false, "Put explicit diamond generic arguments on method calls.");
     public EnableValue isl = new EnableValue("Inline Simple Lambdas", true, "Remove braces on simple, one line, lambda expressions.");
-    public ModeValue log = new ModeValue("Logging Level", "INFO", "Logging level. Must be one of: 'info', 'debug', 'warn', 'error'.", Arrays.asList("INFO", "DEBUG", "WARN", "ERROR"));
+    public ModeValue<IFernflowerLogger.Severity> log = new ModeValue<>("Logging Level", IFernflowerLogger.Severity.INFO, "Logging level. Must be one of: 'info', 'debug', 'warn', 'error'.", EnumSet.allOf(IFernflowerLogger.Severity.class));
     public EnableValue mpm = new EnableValue("[DEPRECATED] Max time to process method", false, "Maximum time in seconds to process a method. This is deprecated, do not use.");
     public EnableValue ren = new EnableValue("Rename Members", false, "Rename classes, fields, and methods with a number suffix to help in deobfuscation.");
     public StringValue urc = new StringValue("User Renamer Class", "", "Path to a class that implements IIdentifierRenamer.");
@@ -89,5 +92,6 @@ public class FernFlowerConfig extends Config {
 
     public FernFlowerConfig() {
         super("FernFlower", Set.of(FernFlowerDecompiler.customProperties));
+        this.postInit();
     }
 }

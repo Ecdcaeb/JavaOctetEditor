@@ -40,6 +40,15 @@ import java.util.*;
  */
 public class FileTree extends JTree {
 
+    public enum PackagePresentation{
+        HIERARCHICAL("Hierarchical"),
+        FLAT("Flat");
+
+        private final String value;
+        PackagePresentation(String value){this.value = value;}
+        public String getValue(){return this.value;}
+    }
+
     public static final DefaultTreeNode classesRoot = new DefaultTreeNode("classes");
     public static final DefaultTreeNode resourceRoot = new DefaultTreeNode("resources");
 
@@ -104,9 +113,9 @@ public class FileTree extends JTree {
         ApplicationConfig config = JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class);
 
 
-        String packagePresentationValue = config.packagePresentation.getValue();
+        PackagePresentation packagePresentationValue = config.packagePresentation.getValue();
 
-        if (packagePresentationValue.equals("Hierarchical")) {
+        if (packagePresentationValue == PackagePresentation.HIERARCHICAL) {
             Map<String, DefaultTreeNode> hasMap = new HashMap<>();
 
             for (ClassNode classNode : jar.classes.values()) {
@@ -182,7 +191,7 @@ public class FileTree extends JTree {
             }
             compact(model, classesRoot);
             sort(model, resourceRoot);
-        } else if (packagePresentationValue.equals("Flat")) {
+        } else if (packagePresentationValue == PackagePresentation.FLAT) {
             Map<String, DefaultTreeNode> hasMap = new HashMap<>();
             for (ClassNode value : jar.classes.values()) {
                 String packageName = "";

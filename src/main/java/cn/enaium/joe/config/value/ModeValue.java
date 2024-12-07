@@ -16,55 +16,59 @@
 
 package cn.enaium.joe.config.value;
 
+import cn.enaium.joe.util.Util;
 import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
+import java.util.EnumSet;
 
 /**
  * @author Enaium
  * @since 0.7.0
  */
-public final class ModeValue extends Value<String> {
+public final class ModeValue<T extends Enum<T>> extends Value<T>{
 
     @Expose(deserialize = false)
-    private List<String> mode;
+    private EnumSet<T> mode;
+    private final Class<T> enumClass;
 
-    public ModeValue(String name, String value, String description, List<String> mode) {
-        super(String.class, name, value, description);
+    public ModeValue(String name, T value, String description, EnumSet<T> mode) {
+        super(value.getClass(), name, value, description);
         this.mode = mode;
+        this.enumClass = Util.cast(value.getClass());
     }
 
-    public List<String> getMode() {
+    public EnumSet<T> getMode() {
         return mode;
     }
 
-    public void setMode(List<String> mode) {
+    public void setMode(EnumSet<T> mode) {
         this.mode = mode;
     }
 
     @Override
     public void decode(JsonElement jsonElement) {
-        if (this.getMode().contains(jsonElement.getAsString())) {
-            this.setValue(jsonElement.getAsString());
-        } else {
-            this.setValue(this.getMode().getFirst());
+        T enum_ = Enum.valueOf(enumClass, jsonElement.getAsString());
+        if (this.mode.contains(enum_)) {
+            this.setValue(enum_);
         }
     }
 
-    public static Component createGui(ModeValue modeValue){
-        return new JComboBox<String>(new DefaultComboBoxModel<>()) {{
-            JComboBox<String> jComboBox = this;
-            for (String s : modeValue.getMode()) {
-                DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) getModel();
-                model.addElement(s);
+    public static Component createGui(ModeValue<?> modeValue){
+        return new JComboBox<>(new DefaultComboBoxModel<>()) {{
+            JComboBox<Object> jComboBox = this;
+            for (Object s : modeValue.getMode()) {
+                DefaultComboBoxModel<?> model = Util.cast(getModel());
+                model.addElement(Util.cast(s));
                 model.setSelectedItem(modeValue.getValue());
                 jComboBox.addActionListener(e -> {
-                    modeValue.setValue(model.getSelectedItem().toString());
+                    modeValue.setValue(Util.cast(model.getSelectedItem()));
                 });
             }
         }};
     }
+
+    public interface DisplayableEnum{ default String getDisplayName(){ return String.valueOf(this); } }
 }

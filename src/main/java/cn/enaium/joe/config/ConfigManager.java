@@ -103,19 +103,7 @@ public class ConfigManager {
     }
 
     public Map<String, Value<?>> getConfigMap(Class<? extends Config> config) {
-        Map<String, Value<?>> map = new HashMap<>();
-        for (Field declaredField : config.getDeclaredFields()) {
-            declaredField.setAccessible(true);
-            try {
-                Object o = declaredField.get(getByClass(config));
-                if (o instanceof Value<?>) {
-                    map.put(declaredField.getName(), (Value<?>)o);
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return map;
+        return getByClass(config).getConfigMap();
     }
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();

@@ -16,6 +16,7 @@
 
 package cn.enaium.joe.config.value;
 
+import cn.enaium.joe.config.util.ConfigValueListener;
 import com.google.gson.JsonElement;
 
 import java.lang.reflect.Type;
