@@ -23,9 +23,9 @@ import cn.enaium.joe.gui.panel.file.tree.node.MethodTreeNode;
 import cn.enaium.joe.util.JMenuUtil;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.Pair;
+import cn.enaium.joe.util.classes.ClassNode;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -74,16 +74,16 @@ public class CallTreeDialog extends Dialog {
         for (AbstractInsnNode instruction : methodNode.instructions) {
             if (instruction instanceof MethodInsnNode) {
                 MethodInsnNode methodInsnNode = (MethodInsnNode) instruction;
-                if (!(methodTreeNode.classNode.name + "." + methodNode.name + methodNode.desc).equals(methodInsnNode.owner + "." + methodInsnNode.name + methodInsnNode.desc)) {
+                if (!(methodTreeNode.classNode.getInternalName() + "." + methodNode.name + methodNode.desc).equals(methodInsnNode.owner + "." + methodInsnNode.name + methodInsnNode.desc)) {
                     Map<String, ClassNode> classes = JavaOctetEditor.getInstance().getJar().classes;
                     String key = methodInsnNode.owner + ".class";
                     if (classes.containsKey(key)) {
                         ClassNode classNode = classes.get(key);
                         //Find target method
-                        for (MethodNode method : classNode.methods) {
-                            if ((classNode.name + "." + method.name + method.desc).equals(methodInsnNode.owner + "." + methodInsnNode.name + methodInsnNode.desc)) {
+                        for (MethodNode method : classNode.getMethods()) {
+                            if ((classNode.getInternalName() + "." + method.name + method.desc).equals(methodInsnNode.owner + "." + methodInsnNode.name + methodInsnNode.desc)) {
                                 //Deduplication
-                                map.put(classNode.name + "." + method.name + method.desc, new Pair<>(classNode, method));
+                                map.put(classNode.getInternalName() + "." + method.name + method.desc, new Pair<>(classNode, method));
                                 break;
                             }
                         }

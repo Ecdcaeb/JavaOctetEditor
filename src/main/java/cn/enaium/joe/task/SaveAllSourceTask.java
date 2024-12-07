@@ -16,12 +16,10 @@
 
 package cn.enaium.joe.task;
 
-import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.service.DecompileService;
-import cn.enaium.joe.service.decompiler.ProcyonDecompiler;
 import cn.enaium.joe.util.MessageUtil;
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,10 +52,10 @@ public class SaveAllSourceTask extends AbstractTask<Boolean> {
             ZipOutputStream zipOutputStream = new ZipOutputStream(Files.newOutputStream(out.toPath()));
 
             for (ClassNode value : jar.classes.values()) {
-                String name = value.name + ".java";
+                String name = value.getInternalName() + ".java";
                 name = "src/main/java/" + name;
                 zipOutputStream.putNextEntry(new ZipEntry(name));
-                zipOutputStream.write(DecompileService.getService().decompile(cn.enaium.joe.util.classes.ClassNode.of(value)).getBytes(StandardCharsets.UTF_8));
+                zipOutputStream.write(DecompileService.getService().decompile(value).getBytes(StandardCharsets.UTF_8));
                 setProgress((int) ((loaded++ / files) * 100f));
             }
 

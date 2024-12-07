@@ -16,12 +16,7 @@
 
 package cn.enaium.joe.mapping;
 
-import net.fabricmc.mappingio.MappedElementKind;
-import net.fabricmc.mappingio.MappingVisitor;
-
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

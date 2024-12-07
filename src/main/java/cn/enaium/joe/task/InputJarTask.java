@@ -23,6 +23,7 @@ import cn.enaium.joe.util.ASMUtil;
 import cn.enaium.joe.util.IOUtil;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.Util;
+import cn.enaium.joe.util.classes.ClassNode;
 import org.objectweb.asm.ClassReader;
 import org.pmw.tinylog.Logger;
 
@@ -63,10 +64,9 @@ public class InputJarTask extends AbstractTask<Jar> {
                 while (entries.hasMoreElements()) {
                     ZipEntry jarEntry = entries.nextElement();
                     if (jarEntry.getName().endsWith(".class")) {
-                        ClassReader classReader = new ClassReader(IOUtil.getBytes(jarFile.getInputStream(new ZipEntry(jarEntry.getName()))));
-                        jar.classes.put(jarEntry.getName(), ASMUtil.acceptClassNode(classReader));
+                        jar.classes.put(jarEntry.getName(), ClassNode.of(IOUtil.getBytes(jarFile.getInputStream(jarEntry))));
                     } else if (!jarEntry.isDirectory()) {
-                        jar.resources.put(jarEntry.getName(), IOUtil.getBytes(jarFile.getInputStream(new ZipEntry(jarEntry.getName()))));
+                        jar.resources.put(jarEntry.getName(), IOUtil.getBytes(jarFile.getInputStream(jarEntry)));
                     }
                     setProgress((int) ((loaded++ / files) * 100f));
                 }
@@ -83,8 +83,7 @@ public class InputJarTask extends AbstractTask<Jar> {
                 for(Path path : paths){
                     String relative = root.relativize(path).toString();
                     if (relative.endsWith(".class")) {
-                        ClassReader classReader = new ClassReader(IOUtil.getBytes(Files.newInputStream(path)));
-                        jar.classes.put(relative, ASMUtil.acceptClassNode(classReader));
+                        jar.classes.put(relative, ClassNode.of(IOUtil.getBytes(Files.newInputStream(path))));
                     } else if (!Files.isDirectory(path)) {
                         jar.resources.put(relative, IOUtil.getBytes(Files.newInputStream(path)));
                     }

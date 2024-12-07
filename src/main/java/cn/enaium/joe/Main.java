@@ -18,9 +18,9 @@ package cn.enaium.joe;
 
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.*;
+import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.reflection.ReflectionHelper;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
 import org.pmw.tinylog.Configurator;
 import org.pmw.tinylog.Logger;
 import org.pmw.tinylog.writers.ConsoleWriter;
@@ -64,10 +64,7 @@ public final class Main {
                 continue;
             }
 
-            ClassNode classNode = new ClassNode();
-            ClassReader classReader = new ClassReader(IOUtil.getBytes(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".class"))));
-            classReader.accept(classNode, 0);
-            jar.classes.put(allLoadedClass.getName(), classNode);
+            jar.classes.put(allLoadedClass.getName(), ClassNode.of(IOUtil.getBytes(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".class")))));
         }
         JavaOctetEditor.getInstance().setJar(jar);
     }

@@ -18,6 +18,7 @@ package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.extend.ApplicationConfig;
+import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.compiler.Compiler;
 import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
@@ -26,7 +27,6 @@ import cn.enaium.joe.util.classes.ASMClassLoader;
 import cn.enaium.joe.util.reflection.ReflectionHelper;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 
@@ -45,7 +45,7 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
         CodeAreaPanel codeAreaPanel = this.codeAreaPanel = new CodeAreaPanel() {{
             KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).keymap.getValue().save.getValue(), () -> {
                 try {
-                    String className = "ASMifier" + Integer.toHexString(classNode.name.hashCode()) + Integer.toHexString(getTextArea().getText().hashCode());
+                    String className = "ASMifier" + Integer.toHexString(classNode.getInternalName().hashCode()) + Integer.toHexString(getTextArea().getText().hashCode());
                     String stringBuilder =
                             "import org.objectweb.asm.AnnotationVisitor;" +
                             "import org.objectweb.asm.Attribute;" +
@@ -75,9 +75,9 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
                         MessageUtil.error(errorTracer.toString());
                     }
                     byte[] dumps = (byte[])new ASMClassLoader().defineClass(className, dumpClazz).getMethod("dump").invoke(null);
-                    ReflectionHelper.copyAllMember(classNode, ASMUtil.acceptClassNode(new ClassReader(dumps)));
+                    classNode.accept(ClassNode.of(dumps));
                     MessageUtil.info(LangUtil.i18n("success"));
-                    EditSaveSuccessEvent.trigger(classNode.name);
+                    EditSaveSuccessEvent.trigger(classNode.getInternalName());
                 } catch (Throwable e) {
                     MessageUtil.error(e);
                 }
@@ -100,7 +100,7 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
         StringWriter stringWriter = new StringWriter();
 
         ASyncUtil.execute(() -> {
-            this.getClassNode().accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(stringWriter)));
+            this.getClassNode().trace(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(stringWriter)));
         }, () -> {
             String trim = getMiddle(getMiddle(stringWriter.toString())).trim();
             codeAreaPanel.getTextArea().setText(trim.substring(0, trim.lastIndexOf("\n")));

@@ -17,8 +17,8 @@
 package cn.enaium.joe.task;
 
 import cn.enaium.joe.jar.Jar;
+import cn.enaium.joe.util.classes.ClassNode;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.util.Map;
@@ -41,13 +41,13 @@ public abstract class SearchInstructionTask<T> extends AbstractTask<T> {
         float loaded = 0;
         float total = 0;
         for (Map.Entry<String, ClassNode> stringClassNodeEntry : jar.classes.entrySet()) {
-            for (MethodNode method : stringClassNodeEntry.getValue().methods) {
+            for (MethodNode method : stringClassNodeEntry.getValue().getMethods()) {
                 total += method.instructions.size();
             }
         }
 
         for (Map.Entry<String, ClassNode> stringClassNodeEntry : jar.classes.entrySet()) {
-            for (MethodNode method : stringClassNodeEntry.getValue().methods) {
+            for (MethodNode method : stringClassNodeEntry.getValue().getMethods()) {
                 for (AbstractInsnNode instruction : method.instructions) {
                     consumer.accept(stringClassNodeEntry.getValue(), instruction);
                     setProgress((int) ((loaded++ / total) * 100f));

@@ -25,9 +25,9 @@ import cn.enaium.joe.gui.panel.file.tree.node.PackageTreeNode;
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.ASMUtil;
 import cn.enaium.joe.util.JTreeUtil;
+import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.reflection.ReflectionHelper;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -58,7 +58,7 @@ public class InheritPanel extends BorderPanel {
                             if (lastPathComponent instanceof PackageTreeNode packageTreeNode) {
                                 if (packageTreeNode instanceof ClassTreeNode) {
                                     ClassNode classNode = ((ClassTreeNode) packageTreeNode).classNode;
-                                    JavaOctetEditor.getInstance().fileTabbedPanel.addTab(classNode.name.substring(classNode.name.lastIndexOf("/") + 1), new ClassTabPanel(classNode));
+                                    JavaOctetEditor.getInstance().fileTabbedPanel.addTab(classNode.getSimpleName(), new ClassTabPanel(classNode));
                                 }
                             }
                         }
@@ -96,17 +96,13 @@ public class InheritPanel extends BorderPanel {
         ClassNode classNode = classTreeNode.classNode;
         Jar jar = JavaOctetEditor.getInstance().getJar();
         if (parent) {
-            for (String s : ASMUtil.getParentClass(classNode)) {
+            for (String s : classNode.getParents()) {
                 Map<String, ClassNode> classes = jar.classes;
                 ClassTreeNode newChild = null;
                 if (classes.containsKey(s + ".class")) {
                     newChild = new ClassTreeNode(classes.get(s + ".class"));
                 } else if (ReflectionHelper.isClassExist(s.replace("/", "."))) {
-                    try {
-                        newChild = new ClassTreeNode(ASMUtil.acceptClassNode(new ClassReader(s)));
-                    } catch (IOException ignored) {
-
-                    }
+                    newChild = new ClassTreeNode(ClassNode.of(s.getBytes()));
                 }
                 if (newChild != null) {
                     classTreeNode.add(newChild);
@@ -115,8 +111,8 @@ public class InheritPanel extends BorderPanel {
             }
         } else {
             for (ClassNode value : jar.classes.values()) {
-                Set<String> parentClass = ASMUtil.getParentClass(value);
-                if (parentClass.contains(classNode.name)) {
+                Set<String> parentClass = value.getParents();
+                if (parentClass.contains(classNode.getInternalName())) {
                     ClassTreeNode newChild = new ClassTreeNode(value);
                     classTreeNode.add(newChild);
                     recursion(newChild, false);

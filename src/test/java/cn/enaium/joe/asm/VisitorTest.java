@@ -1,12 +1,11 @@
 package cn.enaium.joe.asm;
 
+import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.compiler.Compiler;
-import cn.enaium.joe.util.ASMUtil;
 import cn.enaium.joe.util.ImagineBreakerHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 
@@ -35,9 +34,8 @@ class VisitorTest {
             System.out.println(errorTracer);
         }
         Assertions.assertNotNull(clazz);
-        ClassNode classNode = ASMUtil.acceptClassNode(new ClassReader(clazz));
         StringWriter out = new StringWriter();
-        classNode.accept(new TraceClassVisitor(new PrintWriter(out)));
+        ClassNode.of(clazz).trace(new TraceClassVisitor(new PrintWriter(out)));
         System.out.println(out);
     }
 }

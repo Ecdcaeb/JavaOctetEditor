@@ -20,7 +20,7 @@ import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.gui.panel.file.tree.node.*;
 import cn.enaium.joe.gui.panel.search.ResultNode;
 import cn.enaium.joe.util.JMenuUtil;
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -67,10 +67,8 @@ public class ResultList extends JList<ResultNode> {
     public boolean selectEntry(JTree jTree, ClassNode classNode, DefaultTreeModel defaultTreeModel, DefaultTreeNode defaultTreeNode) {
         for (int i = 0; i < defaultTreeModel.getChildCount(defaultTreeNode); i++) {
             DefaultTreeNode child = ((DefaultTreeNode) defaultTreeModel.getChild(defaultTreeNode, i));
-            if (child instanceof PackageTreeNode) {
-                PackageTreeNode packageTreeNode = (PackageTreeNode) child;
-                if (packageTreeNode instanceof ClassTreeNode) {
-                    ClassTreeNode classTreeNode = (ClassTreeNode) packageTreeNode;
+            if (child instanceof PackageTreeNode packageTreeNode) {
+                if (packageTreeNode instanceof ClassTreeNode classTreeNode) {
                     if (classNode.equals(classTreeNode.classNode)) {
                         TreePath treePath = new TreePath(defaultTreeModel.getPathToRoot(classTreeNode));
                         jTree.setSelectionPath(treePath);

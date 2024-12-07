@@ -69,7 +69,7 @@ public class RemappingTask extends AbstractTask<Boolean> {
 
             oldJar.classes.values().forEach(this::analyze);
 
-            for (Map.Entry<String, ClassNode> stringClassNodeEntry : oldJar.classes.entrySet()) {
+            for (Map.Entry<String, cn.enaium.joe.util.classes.ClassNode> stringClassNodeEntry : oldJar.classes.entrySet()) {
                 ClassNode classNode = new ClassNode();
                 ClassRemapper classRemapper = new ClassRemapper(new ClassVisitor(Opcodes.ASM9, classNode) {
                 }, new SimpleRemapper(read.MAP) {
@@ -106,8 +106,8 @@ public class RemappingTask extends AbstractTask<Boolean> {
                         return remappedName == null ? name : remappedName;
                     }
                 });
-                stringClassNodeEntry.getValue().accept(classRemapper);
-                jar.classes.put(stringClassNodeEntry.getKey(), classNode);
+                stringClassNodeEntry.getValue().editVisitor(classRemapper);
+                jar.classes.put(stringClassNodeEntry.getKey(), cn.enaium.joe.util.classes.ClassNode.of(classNode));
             }
             JavaOctetEditor.getInstance().setJar(jar);
         } catch (IOException ex) {
@@ -116,8 +116,8 @@ public class RemappingTask extends AbstractTask<Boolean> {
         return true;
     }
 
-    public void analyze(ClassNode classNode) {
-        classNode.accept(new ClassVisitor(Opcodes.ASM9) {
+    public void analyze(cn.enaium.joe.util.classes.ClassNode classNode) {
+        classNode.analyzeVisitor(new ClassVisitor(Opcodes.ASM9) {
             @Override
             public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
                 Set<String> strings = new HashSet<>();

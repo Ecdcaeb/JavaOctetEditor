@@ -19,7 +19,7 @@ package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.util.LangUtil;
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,7 +51,7 @@ public class ClassTabPanel extends JPanel {
         jTabbedPane.addTab(LangUtil.i18n("class.tab.visitorEdit"), asmTablePanel = new ASMifierTablePanel(classNode));
         jTabbedPane.addTab(LangUtil.i18n("class.tab.infoEdit"), classInfoTabPanel = new ClassInfoTabPanel(classNode));
         jTabbedPane.setSelectedIndex(classTabIndex);
-        internalName2panel.put(classNode.name, this);
+        internalName2panel.put(classNode.getInternalName(), this);
         jTabbedPane.addChangeListener(e -> {
             classTabIndex = jTabbedPane.getSelectedIndex();
             for (ClassTabPanel panel : internalName2panel.values()){
@@ -67,6 +67,7 @@ public class ClassTabPanel extends JPanel {
         if (forced || classTabIndex != 0) traceBytecodeTabPanel.update();
         if (forced || classTabIndex != 1) decompileTabPanel.update();
         if (forced || classTabIndex != 2) asmTablePanel.update();
+        if (forced || classTabIndex != 3) classInfoTabPanel.update();
     }
 
     static {

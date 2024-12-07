@@ -16,7 +16,7 @@
 
 package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 
 import javax.swing.*;
 

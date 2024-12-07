@@ -19,19 +19,11 @@ package cn.enaium.joe.gui.panel.menu.file;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.task.OutputJarTask;
-import cn.enaium.joe.util.ASyncUtil;
 import cn.enaium.joe.util.JFileChooserUtil;
 import cn.enaium.joe.util.LangUtil;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * @author Enaium

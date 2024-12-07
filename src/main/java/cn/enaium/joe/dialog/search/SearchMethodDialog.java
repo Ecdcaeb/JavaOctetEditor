@@ -25,6 +25,7 @@ import cn.enaium.joe.util.ASyncUtil;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.StringUtil;
+import cn.enaium.joe.util.classes.ClassNode;
 import org.objectweb.asm.tree.*;
 
 import javax.swing.*;
@@ -92,7 +93,7 @@ public class SearchMethodDialog extends SearchDialog {
     public SearchMethodDialog(ClassNode classNode, MethodNode fieldInsnNode){
         this();
         this.name.setText(fieldInsnNode.name);
-        this.owner.setText(classNode.name);
+        this.owner.setText(classNode.getInternalName());
         this.desc.setText(fieldInsnNode.desc);
         JavaOctetEditor.getInstance().task
                 .submit(new SearchMethodTask(JavaOctetEditor.getInstance().getJar(), owner.getText(), name.getText(), desc.getText()))

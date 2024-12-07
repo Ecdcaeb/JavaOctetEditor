@@ -16,13 +16,12 @@
 
 package cn.enaium.joe.util;
 
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.ClassNode;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -30,12 +29,6 @@ import java.util.Set;
  * @since 1.2.0
  */
 public class ASMUtil {
-
-    public static String resolvePkgName(String className){
-        if (className.indexOf('.') > 0){
-            return className.substring(0, className.lastIndexOf('.') -1);
-        } else return className.substring(0, className.lastIndexOf('/') -1);
-    }
 
     /**
      * converts a string value to a value of that type
@@ -56,51 +49,5 @@ public class ASMUtil {
                 return text;
             }
         }
-    }
-
-
-    /**
-     * accept as class node
-     *
-     * @param classReader class reader
-     * @return class node
-     */
-    public static ClassNode acceptClassNode(ClassReader classReader) {
-        ClassNode classNode = new ClassNode();
-        try {
-            classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
-        } catch (Throwable throwable) {
-            try {
-                classReader.accept(classNode, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
-            } catch (Throwable ignored) {
-
-            }
-        }
-        return classNode;
-    }
-
-    /**
-     * get all parents, include interfaces
-     *
-     * @param classNode class node
-     * @return all interfaces and superclasses
-     */
-    public static Set<String> getParentClass(ClassNode classNode) {
-        Set<String> parent = new HashSet<>();
-        if (classNode.superName != null && !classNode.superName.equals(Object.class.getName().replace(".", "/"))) {
-            parent.add(classNode.superName);
-        }
-        parent.addAll(classNode.interfaces);
-        return parent;
-    }
-
-    /**
-     * replace all `/` to `.`
-     *
-     * @param classNode class node
-     * @return reference name
-     */
-    public static String getReferenceName(ClassNode classNode) {
-        return classNode.name.replace("/", ".");
     }
 }

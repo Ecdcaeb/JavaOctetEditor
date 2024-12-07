@@ -18,7 +18,7 @@ package cn.enaium.joe.task;
 
 import cn.enaium.joe.annotation.Repeatable;
 import cn.enaium.joe.service.DecompileService;
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 import org.pmw.tinylog.Logger;
 
 /**
@@ -37,7 +37,7 @@ public class DecompileTask extends AbstractTask<String> {
 
     @Override
     public String get() {
-        Logger.info("DECOMPILE:{}", classNode.name);
-        return DecompileService.getService().decompile(cn.enaium.joe.util.classes.ClassNode.of(classNode));
+        Logger.info("DECOMPILE:{}", classNode.getInternalName());
+        return DecompileService.getService().decompile(classNode);
     }
 }

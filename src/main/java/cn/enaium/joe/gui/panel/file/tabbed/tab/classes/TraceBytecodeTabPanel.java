@@ -18,7 +18,7 @@ package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
 import cn.enaium.joe.util.ASyncUtil;
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.awt.*;
@@ -44,7 +44,7 @@ public class TraceBytecodeTabPanel extends ClassNodeTabPanel {
     public void update(){
         final StringWriter stringWriter = new StringWriter();
         ASyncUtil.execute(() -> {
-            this.getClassNode().accept(new TraceClassVisitor(new PrintWriter(stringWriter)));
+            this.getClassNode().trace(new TraceClassVisitor(new PrintWriter(stringWriter)));
         }, () -> {
             codeAreaPanel.getTextArea().setText(new String(stringWriter.toString().getBytes(StandardCharsets.UTF_8)));
             codeAreaPanel.getTextArea().setCaretPosition(0);

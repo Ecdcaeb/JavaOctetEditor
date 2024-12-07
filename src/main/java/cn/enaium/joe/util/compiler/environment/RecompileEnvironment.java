@@ -37,8 +37,8 @@ public class RecompileEnvironment {
         Map<String, ClassCatch> classes = new HashMap<>();
         int total = jar.classes.size();
         int done = 0;
-        for(ClassNode classNode : jar.classes.values()){
-            applyClassNode(classes, classNode);
+        for(cn.enaium.joe.util.classes.ClassNode classNode : jar.classes.values()){
+            applyClassNode(classes, classNode.getClassNode());
             done ++;
             progress.accept((int) ((double) done / total * 70f));
         }

@@ -17,7 +17,7 @@
 package cn.enaium.joe.dialog;
 
 import cn.enaium.joe.gui.panel.method.MethodTabPanel;
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.awt.*;
@@ -28,7 +28,7 @@ import java.awt.*;
  */
 public class MethodDialog extends Dialog {
     public MethodDialog(ClassNode classNode, MethodNode methodNode) {
-        super(classNode.name + "#" + methodNode.name);
+        super(classNode.getInternalName() + "#" + methodNode.name);
         setLayout(new BorderLayout());
         add(new MethodTabPanel(methodNode), BorderLayout.CENTER);
     }

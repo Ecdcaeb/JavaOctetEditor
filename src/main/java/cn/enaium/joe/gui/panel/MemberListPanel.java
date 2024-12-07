@@ -28,18 +28,15 @@ import cn.enaium.joe.util.JMenuUtil;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.OpcodeUtil;
 import cn.enaium.joe.util.Pair;
+import cn.enaium.joe.util.classes.ClassNode;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.function.Consumer;
 
 /**
  * @author Enaium
@@ -97,16 +94,16 @@ public class MemberListPanel extends BorderPanel {
             add(new JLabel(name));
         }});
 
-        JavaOctetEditor.getInstance().event.register(FileTabbedSelectEvent.class, (Consumer<FileTabbedSelectEvent>) event -> {
+        JavaOctetEditor.getInstance().event.register(FileTabbedSelectEvent.class, event -> {
             if (event.getSelect() instanceof ClassTabPanel) {
                 ClassTabPanel select = (ClassTabPanel) event.getSelect();
                 ClassNode classNode = select.classNode;
-                memberList.setModel(new DefaultListModel<Pair<ClassNode, Object>>() {{
-                    for (FieldNode field : classNode.fields) {
+                memberList.setModel(new DefaultListModel<>() {{
+                    for (FieldNode field : classNode.getFields()) {
                         addElement(new Pair<>(classNode, field));
                     }
 
-                    for (MethodNode method : classNode.methods) {
+                    for (MethodNode method : classNode.getMethods()) {
                         addElement(new Pair<>(classNode, method));
                     }
                 }});

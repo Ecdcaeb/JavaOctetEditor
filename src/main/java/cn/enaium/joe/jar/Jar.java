@@ -16,7 +16,7 @@
 
 package cn.enaium.joe.jar;
 
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
