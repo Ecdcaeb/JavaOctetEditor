@@ -24,13 +24,13 @@ import javax.swing.*;
  * @author Enaium
  */
 public class ClassNodeTabPanel extends JPanel {
-    private final cn.enaium.joe.util.classes.ClassNode classNode;
+    private final ClassNode classNode;
 
     public ClassNodeTabPanel(ClassNode classNode) {
         this.classNode = classNode;
     }
 
-    public cn.enaium.joe.util.classes.ClassNode getClassNode() {
+    public ClassNode getClassNode() {
         return classNode;
     }
 }

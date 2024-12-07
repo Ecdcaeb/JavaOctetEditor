@@ -35,11 +35,8 @@ import org.objectweb.asm.tree.MethodNode;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.function.Consumer;
 
 /**
  * @author Enaium
@@ -48,7 +45,7 @@ import java.util.function.Consumer;
 public class MemberListPanel extends BorderPanel {
     public MemberListPanel() {
 
-        JList<Pair<cn.enaium.joe.util.classes.ClassNode, Object>> memberList = new JList<>(new DefaultListModel<>());
+        JList<Pair<ClassNode, Object>> memberList = new JList<>(new DefaultListModel<>());
 
         memberList.addMouseListener(new MouseAdapter() {
             @Override
@@ -100,18 +97,18 @@ public class MemberListPanel extends BorderPanel {
         JavaOctetEditor.getInstance().event.register(FileTabbedSelectEvent.class, event -> {
             if (event.getSelect() instanceof ClassTabPanel) {
                 ClassTabPanel select = (ClassTabPanel) event.getSelect();
-                cn.enaium.joe.util.classes.ClassNode classNode = select.classNode;
+                ClassNode classNode = select.classNode;
                 memberList.setModel(new DefaultListModel<>() {{
-                    for (FieldNode field : classNode.getClassNode().fields) {
+                    for (FieldNode field : classNode.getFields()) {
                         addElement(new Pair<>(classNode, field));
                     }
 
-                    for (MethodNode method : classNode.getClassNode().methods) {
+                    for (MethodNode method : classNode.getMethods()) {
                         addElement(new Pair<>(classNode, method));
                     }
                 }});
             } else {
-                ((DefaultListModel<Pair<cn.enaium.joe.util.classes.ClassNode, Object>>) memberList.getModel()).clear();
+                ((DefaultListModel<Pair<ClassNode, Object>>) memberList.getModel()).clear();
             }
             memberList.repaint();
         });
@@ -142,7 +139,7 @@ public class MemberListPanel extends BorderPanel {
         }};
     }
 
-    private static void edit(Pair<cn.enaium.joe.util.classes.ClassNode, Object> value) {
+    private static void edit(Pair<ClassNode, Object> value) {
         if (value.getValue() instanceof MethodNode) {
             new MethodDialog(value.getKey(), ((MethodNode) value.getValue())).setVisible(true);
         } else if (value.getValue() instanceof FieldNode) {

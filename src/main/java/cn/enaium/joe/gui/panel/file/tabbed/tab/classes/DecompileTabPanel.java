@@ -46,7 +46,7 @@ public class DecompileTabPanel extends ClassNodeTabPanel {
                     if (clazz == null) {
                         MessageUtil.error("Compile failed \n" + tracer);
                     }
-                    classNode.accept(cn.enaium.joe.util.classes.ClassNode.of(clazz));
+                    classNode.accept(ClassNode.of(clazz));
                     MessageUtil.info(LangUtil.i18n("success"));
                     EditSaveSuccessEvent.trigger(classNode.getInternalName());
                 } catch (Throwable e) {

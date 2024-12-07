@@ -18,7 +18,6 @@ package cn.enaium.joe.gui.panel.search;
 
 import cn.enaium.joe.util.HtmlUtil;
 import cn.enaium.joe.util.classes.ClassNode;
-import org.jetbrains.java.decompiler.main.ClassesProcessor;
 
 import java.awt.*;
 
@@ -26,7 +25,7 @@ import java.awt.*;
  * @author Enaium
  */
 public class ResultNode {
-    private cn.enaium.joe.util.classes.ClassNode classNode;
+    private ClassNode classNode;
 
     private final String text;
 
@@ -34,7 +33,7 @@ public class ResultNode {
         text = " ";
     }
 
-    public ResultNode(cn.enaium.joe.util.classes.ClassNode classNode, String result) {
+    public ResultNode(ClassNode classNode, String result) {
         this.classNode = classNode;
         text = HtmlUtil.toHtml(HtmlUtil.setColor(classNode.getInternalName(), Color.WHITE) + "#" + result);
     }

@@ -26,7 +26,7 @@ public class MethodTreeNode extends PackageTreeNode {
     public ClassNode classNode;
     public MethodNode methodNode;
 
-    public MethodTreeNode(cn.enaium.joe.util.classes.ClassNode classNode, MethodNode methodNode) {
+    public MethodTreeNode(ClassNode classNode, MethodNode methodNode) {
         super(classNode.getInternalName() + "." + methodNode.name + methodNode.desc);
         this.classNode = classNode;
         this.methodNode = methodNode;

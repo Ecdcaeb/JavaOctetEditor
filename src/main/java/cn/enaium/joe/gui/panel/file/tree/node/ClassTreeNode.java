@@ -25,7 +25,7 @@ public class ClassTreeNode extends PackageTreeNode {
     public cn.enaium.joe.util.classes.ClassNode classNode;
 
     public ClassTreeNode(ClassNode classNode) {
-        super(classNode.getInternalName().substring(classNode.getInternalName().lastIndexOf("/") + 1));
+        super(classNode.getSimpleName());
         this.classNode = classNode;
     }
 }

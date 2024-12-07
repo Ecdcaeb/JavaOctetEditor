@@ -69,18 +69,18 @@ public class CallTreeDialog extends Dialog {
 
     private void recursion(MethodTreeNode methodTreeNode) {
         MethodNode methodNode = methodTreeNode.methodNode;
-        Map<String, Pair<cn.enaium.joe.util.classes.ClassNode, MethodNode>> map = new HashMap<>();
+        Map<String, Pair<ClassNode, MethodNode>> map = new HashMap<>();
 
         for (AbstractInsnNode instruction : methodNode.instructions) {
             if (instruction instanceof MethodInsnNode) {
                 MethodInsnNode methodInsnNode = (MethodInsnNode) instruction;
                 if (!(methodTreeNode.classNode.getInternalName() + "." + methodNode.name + methodNode.desc).equals(methodInsnNode.owner + "." + methodInsnNode.name + methodInsnNode.desc)) {
-                    Map<String, cn.enaium.joe.util.classes.ClassNode> classes = JavaOctetEditor.getInstance().getJar().classes;
+                    Map<String, ClassNode> classes = JavaOctetEditor.getInstance().getJar().classes;
                     String key = methodInsnNode.owner + ".class";
                     if (classes.containsKey(key)) {
-                        cn.enaium.joe.util.classes.ClassNode classNode = classes.get(key);
+                        ClassNode classNode = classes.get(key);
                         //Find target method
-                        for (MethodNode method : classNode.getClassNode().methods) {
+                        for (MethodNode method : classNode.getMethods()) {
                             if ((classNode.getInternalName() + "." + method.name + method.desc).equals(methodInsnNode.owner + "." + methodInsnNode.name + methodInsnNode.desc)) {
                                 //Deduplication
                                 map.put(classNode.getInternalName() + "." + method.name + method.desc, new Pair<>(classNode, method));
@@ -92,7 +92,7 @@ public class CallTreeDialog extends Dialog {
             }
         }
 
-        for (Pair<cn.enaium.joe.util.classes.ClassNode, MethodNode> value : map.values()) {
+        for (Pair<ClassNode, MethodNode> value : map.values()) {
             MethodTreeNode newChild = new MethodTreeNode(value.getKey(), value.getValue());
             methodTreeNode.add(newChild);
             if (!set.contains(value.getValue())) {

@@ -16,18 +16,11 @@
 
 package cn.enaium.joe.dialog;
 
-import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.gui.component.ResultList;
-import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.LangUtil;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 /**
  * @author Enaium

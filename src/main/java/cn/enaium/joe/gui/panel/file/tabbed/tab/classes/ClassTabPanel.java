@@ -41,7 +41,7 @@ public class ClassTabPanel extends JPanel {
     public final ClassNode classNode;
     protected final JTabbedPane jTabbedPane;
 
-    public ClassTabPanel(cn.enaium.joe.util.classes.ClassNode classNode) {
+    public ClassTabPanel(ClassNode classNode) {
         super(new BorderLayout());
         this.classNode = classNode;
         JTabbedPane jTabbedPane = new JTabbedPane();

@@ -106,7 +106,7 @@ public class RemappingTask extends AbstractTask<Boolean> {
                         return remappedName == null ? name : remappedName;
                     }
                 });
-                stringClassNodeEntry.getValue().getClassNode().accept(classRemapper);
+                stringClassNodeEntry.getValue().editVisitor(classRemapper);
                 jar.classes.put(stringClassNodeEntry.getKey(), cn.enaium.joe.util.classes.ClassNode.of(classNode));
             }
             JavaOctetEditor.getInstance().setJar(jar);
@@ -117,7 +117,7 @@ public class RemappingTask extends AbstractTask<Boolean> {
     }
 
     public void analyze(cn.enaium.joe.util.classes.ClassNode classNode) {
-        classNode.getClassNode().accept(new ClassVisitor(Opcodes.ASM9) {
+        classNode.analyzeVisitor(new ClassVisitor(Opcodes.ASM9) {
             @Override
             public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
                 Set<String> strings = new HashSet<>();

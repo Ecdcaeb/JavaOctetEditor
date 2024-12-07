@@ -100,7 +100,7 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
         StringWriter stringWriter = new StringWriter();
 
         ASyncUtil.execute(() -> {
-            this.getClassNode().getClassNode().accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(stringWriter)));
+            this.getClassNode().trace(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(stringWriter)));
         }, () -> {
             String trim = getMiddle(getMiddle(stringWriter.toString())).trim();
             codeAreaPanel.getTextArea().setText(trim.substring(0, trim.lastIndexOf("\n")));

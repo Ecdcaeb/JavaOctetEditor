@@ -16,13 +16,11 @@
 
 package cn.enaium.joe.compiler;
 
-import cn.enaium.joe.util.ASMUtil;
 import cn.enaium.joe.util.classes.ASMClassLoader;
+import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.compiler.Compiler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.PrintWriter;
@@ -40,9 +38,8 @@ class CompilerTest {
             System.out.println(stringWriter);
         }
         Assertions.assertNotNull(clazz);
-        ClassNode classNode = ASMUtil.acceptClassNode(new ClassReader(clazz));
         StringWriter out = new StringWriter();
-        classNode.accept(new TraceClassVisitor(new PrintWriter(out)));
+        ClassNode.of(clazz).trace(new TraceClassVisitor(new PrintWriter(out)));
         Assertions.assertTrue(() -> {
             try {
                 return (boolean) new ASMClassLoader().defineClass("CompilerTestFooClass", clazz).getMethod("foo").invoke(null);

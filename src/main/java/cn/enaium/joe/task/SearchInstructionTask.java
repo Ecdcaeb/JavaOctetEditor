@@ -40,14 +40,14 @@ public abstract class SearchInstructionTask<T> extends AbstractTask<T> {
     public void searchInstruction(BiConsumer<ClassNode, AbstractInsnNode> consumer) {
         float loaded = 0;
         float total = 0;
-        for (Map.Entry<String, cn.enaium.joe.util.classes.ClassNode> stringClassNodeEntry : jar.classes.entrySet()) {
-            for (MethodNode method : stringClassNodeEntry.getValue().getClassNode().methods) {
+        for (Map.Entry<String, ClassNode> stringClassNodeEntry : jar.classes.entrySet()) {
+            for (MethodNode method : stringClassNodeEntry.getValue().getMethods()) {
                 total += method.instructions.size();
             }
         }
 
-        for (Map.Entry<String, cn.enaium.joe.util.classes.ClassNode> stringClassNodeEntry : jar.classes.entrySet()) {
-            for (MethodNode method : stringClassNodeEntry.getValue().getClassNode().methods) {
+        for (Map.Entry<String, ClassNode> stringClassNodeEntry : jar.classes.entrySet()) {
+            for (MethodNode method : stringClassNodeEntry.getValue().getMethods()) {
                 for (AbstractInsnNode instruction : method.instructions) {
                     consumer.accept(stringClassNodeEntry.getValue(), instruction);
                     setProgress((int) ((loaded++ / total) * 100f));

@@ -90,7 +90,7 @@ public class FileTree extends JTree {
             if (lastPathComponent instanceof PackageTreeNode packageTreeNode) {
                 if (packageTreeNode instanceof ClassTreeNode) {
                     ClassNode classNode = ((ClassTreeNode) packageTreeNode).classNode;
-                    JavaOctetEditor.getInstance().fileTabbedPanel.addTab(classNode.getInternalName().substring(classNode.getInternalName().lastIndexOf("/") + 1), new ClassTabPanel(classNode));
+                    JavaOctetEditor.getInstance().fileTabbedPanel.addTab(classNode.getSimpleName(), new ClassTabPanel(classNode));
                 }
             } else if (lastPathComponent instanceof FolderTreeNode folderTreeNode) {
                 if (folderTreeNode instanceof FileTreeNode fileTreeNode) {
@@ -115,7 +115,7 @@ public class FileTree extends JTree {
         if (packagePresentationValue == PackagePresentation.HIERARCHICAL) {
             Map<String, DefaultTreeNode> hasMap = new HashMap<>();
 
-            for (cn.enaium.joe.util.classes.ClassNode classNode : jar.classes.values()) {
+            for (ClassNode classNode : jar.classes.values()) {
                 String[] split = classNode.getInternalName().split("/");
                 DefaultTreeNode prev = null;
                 StringBuilder stringBuilder = new StringBuilder();
@@ -190,10 +190,10 @@ public class FileTree extends JTree {
             sort(model, resourceRoot);
         } else if (packagePresentationValue == PackagePresentation.FLAT) {
             Map<String, DefaultTreeNode> hasMap = new HashMap<>();
-            for (cn.enaium.joe.util.classes.ClassNode value : jar.classes.values()) {
+            for (ClassNode value : jar.classes.values()) {
                 String packageName = "";
                 if (value.getInternalName().contains("/")) {
-                    packageName = value.getInternalName().substring(0, value.getInternalName().lastIndexOf("/")).replace("/", ".");
+                    packageName = value.getCanonicalPackageName();
                 }
 
                 ClassTreeNode classTreeNode = new ClassTreeNode(value);

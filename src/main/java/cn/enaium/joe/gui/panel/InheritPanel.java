@@ -43,7 +43,7 @@ import java.util.Set;
  */
 public class InheritPanel extends BorderPanel {
 
-    private cn.enaium.joe.util.classes.ClassNode current;
+    private ClassNode current;
 
     public InheritPanel() {
         JTree inheritance = new JTree() {{
@@ -57,8 +57,8 @@ public class InheritPanel extends BorderPanel {
                             Object lastPathComponent = getSelectionPath().getLastPathComponent();
                             if (lastPathComponent instanceof PackageTreeNode packageTreeNode) {
                                 if (packageTreeNode instanceof ClassTreeNode) {
-                                    cn.enaium.joe.util.classes.ClassNode classNode = ((ClassTreeNode) packageTreeNode).classNode;
-                                    JavaOctetEditor.getInstance().fileTabbedPanel.addTab(classNode.getInternalName().substring(classNode.getInternalName().lastIndexOf("/") + 1), new ClassTabPanel(classNode));
+                                    ClassNode classNode = ((ClassTreeNode) packageTreeNode).classNode;
+                                    JavaOctetEditor.getInstance().fileTabbedPanel.addTab(classNode.getSimpleName(), new ClassTabPanel(classNode));
                                 }
                             }
                         }
@@ -93,16 +93,16 @@ public class InheritPanel extends BorderPanel {
     }
 
     private void recursion(ClassTreeNode classTreeNode, boolean parent) {
-        cn.enaium.joe.util.classes.ClassNode classNode = classTreeNode.classNode;
+        ClassNode classNode = classTreeNode.classNode;
         Jar jar = JavaOctetEditor.getInstance().getJar();
         if (parent) {
-            for (String s : ASMUtil.getParentClass(classNode.getClassNode())) {
-                Map<String, cn.enaium.joe.util.classes.ClassNode> classes = jar.classes;
+            for (String s : classNode.getParents()) {
+                Map<String, ClassNode> classes = jar.classes;
                 ClassTreeNode newChild = null;
                 if (classes.containsKey(s + ".class")) {
                     newChild = new ClassTreeNode(classes.get(s + ".class"));
                 } else if (ReflectionHelper.isClassExist(s.replace("/", "."))) {
-                    newChild = new ClassTreeNode(cn.enaium.joe.util.classes.ClassNode.of(s.getBytes()));
+                    newChild = new ClassTreeNode(ClassNode.of(s.getBytes()));
                 }
                 if (newChild != null) {
                     classTreeNode.add(newChild);
@@ -111,7 +111,7 @@ public class InheritPanel extends BorderPanel {
             }
         } else {
             for (ClassNode value : jar.classes.values()) {
-                Set<String> parentClass = ASMUtil.getParentClass(value.getClassNode());
+                Set<String> parentClass = value.getParents();
                 if (parentClass.contains(classNode.getInternalName())) {
                     ClassTreeNode newChild = new ClassTreeNode(value);
                     classTreeNode.add(newChild);

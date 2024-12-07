@@ -30,7 +30,7 @@ public class DecompileTask extends AbstractTask<String> {
 
     private final ClassNode classNode;
 
-    public DecompileTask(cn.enaium.joe.util.classes.ClassNode classNode) {
+    public DecompileTask(ClassNode classNode) {
         super("Decompile");
         this.classNode = classNode;
     }
