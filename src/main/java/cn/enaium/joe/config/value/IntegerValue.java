@@ -18,6 +18,9 @@ package cn.enaium.joe.config.value;
 
 import com.google.gson.JsonElement;
 
+import javax.swing.*;
+import java.awt.*;
+
 /**
  * @author Enaium
  * @since 0.7.0
@@ -30,5 +33,12 @@ public final class IntegerValue extends Value<Integer> {
     @Override
     public void decode(JsonElement jsonElement) {
         this.setValue(jsonElement.getAsInt());
+    }
+
+    public static Component createGui(final IntegerValue integerValue){
+        return new JSpinner() {{
+            setValue(integerValue.getValue());
+            addChangeListener(e -> integerValue.setValue(Integer.parseInt(getValue().toString())));
+        }};
     }
 }

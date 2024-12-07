@@ -18,6 +18,11 @@ package cn.enaium.joe.config.value;
 
 import com.google.gson.JsonElement;
 
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+
 /**
  * @author Enaium
  * @since 0.7.0
@@ -30,5 +35,28 @@ public final class StringValue extends Value<String> {
     @Override
     public void decode(JsonElement jsonElement) {
         this.setValue(jsonElement.getAsString());
+    }
+
+    public static Component createGui(StringValue stringValue){
+        return new JTextField(25) {{
+            JTextField jTextField = this;
+            jTextField.setText(stringValue.getValue());
+            getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    stringValue.setValue(jTextField.getText());
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    stringValue.setValue(jTextField.getText());
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    stringValue.setValue(jTextField.getText());
+                }
+            });
+        }};
     }
 }

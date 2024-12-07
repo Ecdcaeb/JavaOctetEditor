@@ -19,6 +19,8 @@ package cn.enaium.joe.config.value;
 import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
 /**
@@ -50,5 +52,19 @@ public final class ModeValue extends Value<String> {
         } else {
             this.setValue(this.getMode().getFirst());
         }
+    }
+
+    public static Component createGui(ModeValue modeValue){
+        return new JComboBox<String>(new DefaultComboBoxModel<>()) {{
+            JComboBox<String> jComboBox = this;
+            for (String s : modeValue.getMode()) {
+                DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) getModel();
+                model.addElement(s);
+                model.setSelectedItem(modeValue.getValue());
+                jComboBox.addActionListener(e -> {
+                    modeValue.setValue(model.getSelectedItem().toString());
+                });
+            }
+        }};
     }
 }

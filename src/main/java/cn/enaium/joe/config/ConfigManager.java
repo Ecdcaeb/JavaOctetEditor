@@ -19,8 +19,10 @@ package cn.enaium.joe.config;
 import cn.enaium.joe.config.extend.*;
 import cn.enaium.joe.config.value.*;
 import cn.enaium.joe.util.MessageUtil;
+import cn.enaium.joe.util.Util;
 import com.google.gson.*;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -35,6 +37,8 @@ import java.util.stream.Collectors;
  * @since 0.7.0
  */
 public class ConfigManager {
+    public final HashMap<Class<? extends Value<?>>, Function<? extends Value<?>, Component>> GUI_FACTORY = new HashMap<>();
+
     private final Map<Class<? extends Config>, Config> configMap = new LinkedHashMap<>();
 
     public ConfigManager() {
@@ -42,6 +46,21 @@ public class ConfigManager {
         addByInstance(new CFRConfig());
         addByInstance(new FernFlowerConfig());
         addByInstance(new ProcyonConfig());
+
+        addGuiFactory(IntegerValue.class, IntegerValue::createGui);
+        addGuiFactory(StringValue.class, StringValue::createGui);
+        addGuiFactory(EnableValue.class, EnableValue::createGui);
+        addGuiFactory(ConfigValue.class, ConfigValue::createGui);
+        addGuiFactory(KeyValue.class, KeyValue::createGui);
+        addGuiFactory(ModeValue.class, ModeValue::createGui);
+    }
+
+    public <T extends Value<?>> void addGuiFactory(Class<T> klass, Function<T, Component> function){
+        this.GUI_FACTORY.put(klass, function);
+    }
+
+    public Component createGuiComponent(Value<?> config){
+        return this.GUI_FACTORY.get(config.getClass()).apply(Util.cast(config));
     }
 
     @SuppressWarnings("unchecked")

@@ -18,6 +18,9 @@ package cn.enaium.joe.config.value;
 
 import com.google.gson.JsonElement;
 
+import javax.swing.*;
+import java.awt.*;
+
 /**
  * @author Enaium
  * @since 0.7.0
@@ -30,5 +33,16 @@ public final class EnableValue extends Value<Boolean> {
     @Override
     public void decode(JsonElement jsonElement) {
         this.setValue(jsonElement.getAsBoolean());
+    }
+
+    public static Component createGui(EnableValue enableValue){
+        return new JCheckBox() {{
+            JCheckBox jCheckBox = this;
+            setHorizontalAlignment(JCheckBox.RIGHT);
+            setSelected(enableValue.getValue());
+            addActionListener(e -> {
+                enableValue.setValue(jCheckBox.isSelected());
+            });
+        }};
     }
 }
