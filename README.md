@@ -8,11 +8,12 @@ Keep the latest library, remove upstream problems and absorb upstream ideas.
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/Ecdcaeb/JavaOctetEditor?include_prereleases&style=flat-square)
 ![GitHub](https://img.shields.io/github/license/Ecdcaeb/JavaOctetEditor?style=flat-square)
 
-![](https://user-images.githubusercontent.com/32991121/190947407-bbc6642e-2c9d-46f3-921c-6558c74272cf.png)
+![](https://github.com/user-attachments/assets/e6d24406-59bb-43b2-8a02-935f2eb0891e)
+![](https://github.com/user-attachments/assets/2f6e9319-9891-47f4-b583-94a65beb73fa)
 ![](https://user-images.githubusercontent.com/32991121/190947409-9df48d03-e1b7-4c0a-ae1d-08e1ca2bc9aa.png)
-![](https://user-images.githubusercontent.com/32991121/190947408-df6c6818-ea79-4a42-8b90-101b6daa3099.png)
 ![](https://user-images.githubusercontent.com/32991121/190947401-fc08fc4f-3714-49ca-a064-913e7312b191.png)
 ![](https://user-images.githubusercontent.com/32991121/190947410-4b8f224a-c589-4998-950a-e19618ce5734.png)
+![image](https://github.com/user-attachments/assets/2e5ba3a6-2c09-4ae3-a087-ae3735216479)
 
 ## Usage
 
