@@ -21,20 +21,24 @@ import cn.enaium.joe.dialog.SearchDialog;
 import cn.enaium.joe.gui.panel.search.ResultNode;
 import cn.enaium.joe.task.SearchLdcTask;
 import cn.enaium.joe.util.LangUtil;
+import org.objectweb.asm.tree.LdcInsnNode;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 /**
  * @author Enaium
  */
 public class SearchLdcDialog extends SearchDialog {
+    protected JTextField jTextField;
+    protected JButton jButton;
     public SearchLdcDialog() {
         setTitle(LangUtil.i18n("search.ldc.title"));
         add(new JPanel(new FlowLayout()) {{
-            JTextField text = new JTextField(15);
+            JTextField text = jTextField =  new JTextField(15);
             add(text);
-            add(new JButton(LangUtil.i18n("button.search")) {{
+            add(jButton = new JButton(LangUtil.i18n("button.search")) {{
                 addActionListener(e -> {
                     if (!text.getText().isEmpty()) {
                         ((DefaultListModel<ResultNode>) resultList.getModel()).clear();
@@ -50,5 +54,13 @@ public class SearchLdcDialog extends SearchDialog {
                 });
             }});
         }}, BorderLayout.SOUTH);
+    }
+
+    public SearchLdcDialog(LdcInsnNode ldcInsnNode) {
+        this();
+        this.jTextField.setText(String.valueOf(ldcInsnNode.cst));
+        for(ActionListener listener : this.jButton.getListeners(ActionListener.class)){
+            listener.actionPerformed(null);
+        }
     }
 }

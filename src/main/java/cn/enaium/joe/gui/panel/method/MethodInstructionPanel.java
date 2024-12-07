@@ -18,6 +18,10 @@ package cn.enaium.joe.gui.panel.method;
 
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.extend.ApplicationConfig;
+import cn.enaium.joe.dialog.search.SearchFieldDialog;
+import cn.enaium.joe.dialog.search.SearchInstructionDialog;
+import cn.enaium.joe.dialog.search.SearchLdcDialog;
+import cn.enaium.joe.dialog.search.SearchMethodDialog;
 import cn.enaium.joe.gui.component.InstructionComboBox;
 import cn.enaium.joe.gui.panel.confirm.InstructionEditPanel;
 import cn.enaium.joe.util.Util;
@@ -98,6 +102,19 @@ public class MethodInstructionPanel extends JPanel {
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(HtmlUtil.remove(selectedValue.toString())), null);
             }
         }, keymapConfig.copy.getValue());
+        addItem(instructionJList, jPopupMenu, LangUtil.i18n("button.search"), () -> {
+            InstructionWrapper selectedValue = instructionJList.getSelectedValue();
+            if (instructionJList.getSelectedIndex() != -1 || selectedValue != null) {
+                AbstractInsnNode node = selectedValue.getWrapper();
+                if (node instanceof LdcInsnNode){
+                    new SearchLdcDialog(((LdcInsnNode)node)).setVisible(true);
+                } else if (node instanceof FieldInsnNode){
+                    new SearchFieldDialog((FieldInsnNode) node).setVisible(true);
+                } else if (node instanceof MethodInsnNode){
+                    new SearchMethodDialog((MethodInsnNode) node).setVisible(true);
+                }
+            }
+        });
 
         addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.insertBefore"), () -> insert(methodNode, instructionJList, true), keymapConfig.insertBefore.getValue());
         addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.insertAfter"), () -> insert(methodNode, instructionJList, false), keymapConfig.insertAfter.getValue());
@@ -106,6 +123,12 @@ public class MethodInstructionPanel extends JPanel {
 
         JMenuUtil.addPopupMenu(instructionJList, () -> jPopupMenu, () -> instructionJList.getSelectedValue() != null);
         add(new JScrollPane(instructionJList), BorderLayout.CENTER);
+    }
+
+    private void addItem(JList<InstructionWrapper> instructionJList, JPopupMenu jPopupMenu, String text, Runnable runnable) {
+        jPopupMenu.add(new JMenuItem(text) {{
+            addActionListener(Util.ofAction(runnable));
+        }});
     }
 
     private void addItem(JList<InstructionWrapper> instructionJList, JPopupMenu jPopupMenu, String text, Runnable runnable, KeyStroke key) {

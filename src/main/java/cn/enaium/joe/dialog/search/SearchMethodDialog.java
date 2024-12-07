@@ -29,27 +29,33 @@ import org.objectweb.asm.tree.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 /**
  * @author Enaium
  * @since 0.5.0
  */
 public class SearchMethodDialog extends SearchDialog {
+    protected JTextField owner;
+    protected JTextField name;
+    protected JTextField desc;
+    protected JButton jButton;
+    protected JCheckBox itf;
     public SearchMethodDialog() {
         setTitle(LangUtil.i18n("search.method.title"));
         add(new JPanel(new FlowLayout()) {{
             add(new JLabel(LangUtil.i18n("search.owner")));
-            JTextField owner = new JTextField();
+            JTextField owner = SearchMethodDialog.this.owner = new JTextField();
             add(owner);
             add(new JLabel(LangUtil.i18n("search.name")));
-            JTextField name = new JTextField();
+            JTextField name = SearchMethodDialog.this.name = new JTextField();
             add(name);
             add(new JLabel(LangUtil.i18n("search.description")));
-            JTextField description = new JTextField();
+            JTextField description = SearchMethodDialog.this.desc = new JTextField();
             add(description);
-            JCheckBox anInterface = new JCheckBox(LangUtil.i18n("search.interface"));
+            JCheckBox anInterface = SearchMethodDialog.this.itf =  new JCheckBox(LangUtil.i18n("search.interface"));
             add(anInterface);
-            add(new JButton(LangUtil.i18n("button.search")) {{
+            add(SearchMethodDialog.this.jButton = new JButton(LangUtil.i18n("button.search")) {{
                 addActionListener(e -> {
 
 
@@ -70,5 +76,31 @@ public class SearchMethodDialog extends SearchDialog {
                 });
             }});
         }}, BorderLayout.SOUTH);
+    }
+
+    public SearchMethodDialog(MethodInsnNode methodInsnNode){
+        this();
+        this.owner.setText(methodInsnNode.owner);
+        this.name.setText(methodInsnNode.name);
+        this.desc.setText(methodInsnNode.desc);
+        this.itf.setSelected(methodInsnNode.itf);
+        for(ActionListener listener : this.jButton.getListeners(ActionListener.class)){
+            listener.actionPerformed(null);
+        }
+    }
+
+    public SearchMethodDialog(ClassNode classNode, MethodNode fieldInsnNode){
+        this();
+        this.name.setText(fieldInsnNode.name);
+        this.owner.setText(classNode.name);
+        this.desc.setText(fieldInsnNode.desc);
+        JavaOctetEditor.getInstance().task
+                .submit(new SearchMethodTask(JavaOctetEditor.getInstance().getJar(), owner.getText(), name.getText(), desc.getText()))
+                .thenAccept(it -> {
+                    ((DefaultListModel<ResultNode>) resultList.getModel()).clear();
+                    for (ResultNode resultNode : it) {
+                        ((DefaultListModel<ResultNode>) resultList.getModel()).addElement(resultNode);
+                    }
+                });
     }
 }

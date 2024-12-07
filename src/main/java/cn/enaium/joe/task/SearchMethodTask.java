@@ -21,11 +21,11 @@ import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.ColorUtil;
 import cn.enaium.joe.util.HtmlUtil;
 import cn.enaium.joe.util.StringUtil;
-import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author Enaium
@@ -38,7 +38,29 @@ public class SearchMethodTask extends SearchInstructionTask<List<ResultNode>> {
     private final String description;
 
     private final boolean itf;
+    private final Predicate<MethodInsnNode> predicate;
 
+    public SearchMethodTask(Jar jar, Predicate<MethodInsnNode> predicate) {
+        super("SearchMethod", jar);
+        this.predicate = predicate;
+        this.name = null;
+        this.owner = null;
+        this.description = null;
+        this.itf = false;
+    }
+
+    public SearchMethodTask(Jar jar, String owner, String name, String description) {
+        super("SearchMethod", jar);
+        this.owner = owner;
+        this.name = name;
+        this.description = description;
+        this.itf = false;
+        this.predicate = (methodInsnNode) ->
+            (methodInsnNode.owner.contains(this.owner) || StringUtil.isBlank(this.owner)) &&
+                    (methodInsnNode.name.contains(this.name) || StringUtil.isBlank(this.name)) &&
+                    (methodInsnNode.desc.contains(this.description) || StringUtil.isBlank(this.description));
+
+    }
 
     public SearchMethodTask(Jar jar, String owner, String name, String description, boolean itf) {
         super("SearchMethod", jar);
@@ -46,6 +68,11 @@ public class SearchMethodTask extends SearchInstructionTask<List<ResultNode>> {
         this.name = name;
         this.description = description;
         this.itf = itf;
+        this.predicate = (methodInsnNode) ->
+                (methodInsnNode.owner.contains(this.owner) || StringUtil.isBlank(this.owner)) &&
+                        (methodInsnNode.name.contains(this.name) || StringUtil.isBlank(this.name)) &&
+                        (methodInsnNode.desc.contains(this.description) || StringUtil.isBlank(this.description)) &&
+                        (methodInsnNode.itf || !this.itf);
     }
 
     @Override
@@ -53,11 +80,7 @@ public class SearchMethodTask extends SearchInstructionTask<List<ResultNode>> {
         List<ResultNode> resultNodes = new ArrayList<>();
         searchInstruction((classNode, instruction) -> {
             if (instruction instanceof MethodInsnNode methodInsnNode) {
-                if ((methodInsnNode.owner.contains(owner) || StringUtil.isBlank(owner)) &&
-                        (methodInsnNode.name.contains(name) || StringUtil.isBlank(name)) &&
-                        (methodInsnNode.desc.contains(description) || StringUtil.isBlank(description)) &&
-                        (methodInsnNode.itf || !itf)
-                ) {
+                if (this.predicate.test(methodInsnNode)) {
                     resultNodes.add(new ResultNode(classNode, HtmlUtil.setColor(methodInsnNode.name, ColorUtil.name)
                             + HtmlUtil.setColor(":", ColorUtil.opcode)
                             + HtmlUtil.setColor(methodInsnNode.desc, ColorUtil.desc)

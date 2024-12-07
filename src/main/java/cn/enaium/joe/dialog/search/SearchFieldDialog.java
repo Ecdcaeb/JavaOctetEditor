@@ -23,28 +23,37 @@ import cn.enaium.joe.task.SearchFieldTask;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.StringUtil;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 /**
  * @author Enaium
  * @since 0.5.0
  */
 public class SearchFieldDialog extends SearchDialog {
+    protected JTextField owner;
+    protected JTextField name;
+    protected JTextField desc;
+    protected JButton jButton;
+
     public SearchFieldDialog() {
         setTitle(LangUtil.i18n("search.field.title"));
         add(new JPanel(new FlowLayout()) {{
             add(new JLabel(LangUtil.i18n("search.owner")));
-            JTextField owner = new JTextField();
+            JTextField owner = SearchFieldDialog.this.owner =  new JTextField();
             add(owner);
             add(new JLabel(LangUtil.i18n("search.name")));
-            JTextField name = new JTextField();
+            JTextField name = SearchFieldDialog.this.name = new JTextField();
             add(name);
             add(new JLabel(LangUtil.i18n("search.description")));
-            JTextField description = new JTextField();
+            JTextField description = SearchFieldDialog.this.desc =  new JTextField();
             add(description);
-            add(new JButton(LangUtil.i18n("button.search")) {{
+            add(SearchFieldDialog.this.jButton = new JButton(LangUtil.i18n("button.search")) {{
                 addActionListener(e -> {
 
                     if (StringUtil.isBlank(owner.getText()) && StringUtil.isBlank(name.getText()) && StringUtil.isBlank(description.getText())) {
@@ -65,4 +74,25 @@ public class SearchFieldDialog extends SearchDialog {
             }});
         }}, BorderLayout.SOUTH);
     }
+
+    public SearchFieldDialog(FieldInsnNode fieldInsnNode){
+        this();
+        this.name.setText(fieldInsnNode.name);
+        this.owner.setText(fieldInsnNode.owner);
+        this.desc.setText(fieldInsnNode.desc);
+        for(ActionListener listener : this.jButton.getListeners(ActionListener.class)){
+            listener.actionPerformed(null);
+        }
+    }
+
+    public SearchFieldDialog(ClassNode classNode, FieldNode fieldInsnNode){
+        this();
+        this.name.setText(fieldInsnNode.name);
+        this.owner.setText(classNode.name);
+        this.desc.setText(fieldInsnNode.desc);
+        for(ActionListener listener : this.jButton.getListeners(ActionListener.class)){
+            listener.actionPerformed(null);
+        }
+    }
+
 }

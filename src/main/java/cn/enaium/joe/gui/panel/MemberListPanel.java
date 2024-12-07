@@ -20,6 +20,8 @@ import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.dialog.CallTreeDialog;
 import cn.enaium.joe.dialog.FieldDialog;
 import cn.enaium.joe.dialog.MethodDialog;
+import cn.enaium.joe.dialog.search.SearchFieldDialog;
+import cn.enaium.joe.dialog.search.SearchMethodDialog;
 import cn.enaium.joe.event.events.FileTabbedSelectEvent;
 import cn.enaium.joe.gui.panel.file.tabbed.tab.classes.ClassTabPanel;
 import cn.enaium.joe.util.JMenuUtil;
@@ -125,6 +127,15 @@ public class MemberListPanel extends BorderPanel {
                 addActionListener(e -> {
                     if (selectedValue.getValue() instanceof MethodNode) {
                         new CallTreeDialog(selectedValue.getKey(), (MethodNode) selectedValue.getValue()).setVisible(true);
+                    }
+                });
+            }});
+            add(new JMenuItem(LangUtil.i18n("button.search")){{
+                addActionListener(e -> {
+                    if (selectedValue.getValue() instanceof MethodNode) {
+                        new SearchMethodDialog(selectedValue.getKey(), (MethodNode)selectedValue.getValue()).setVisible(true);
+                    } else if (selectedValue.getValue() instanceof FieldNode){
+                        new SearchFieldDialog(selectedValue.getKey(), (FieldNode)selectedValue.getValue()).setVisible(true);
                     }
                 });
             }});
