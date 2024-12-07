@@ -16,11 +16,9 @@
 
 package cn.enaium.joe.task;
 
-import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.MessageUtil;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,10 +49,8 @@ public class OutputJarTask extends AbstractTask<Boolean> {
         try {
             ZipOutputStream zipOutputStream = new ZipOutputStream(Files.newOutputStream(out.toPath()));
             for (Map.Entry<String, ClassNode> stringClassNodeEntry : jar.classes.entrySet()) {
-                zipOutputStream.putNextEntry(new JarEntry(stringClassNodeEntry.getValue().name + ".class"));
-                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-                stringClassNodeEntry.getValue().accept(classWriter);
-                zipOutputStream.write(classWriter.toByteArray());
+                zipOutputStream.putNextEntry(new JarEntry(stringClassNodeEntry.getValue().getInternalName()+ ".class"));
+                zipOutputStream.write(stringClassNodeEntry.getValue().getClassBytes());
                 setProgress((int) ((loaded++ / files) * 100f));
             }
 

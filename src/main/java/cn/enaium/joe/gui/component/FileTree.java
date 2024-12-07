@@ -26,7 +26,7 @@ import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.JMenuUtil;
 import cn.enaium.joe.util.JTreeUtil;
 import cn.enaium.joe.util.LangUtil;
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -87,16 +87,13 @@ public class FileTree extends JTree {
         }
         Object lastPathComponent = getSelectionPath().getLastPathComponent();
         SwingUtilities.invokeLater(() -> {
-            if (lastPathComponent instanceof PackageTreeNode) {
-                PackageTreeNode packageTreeNode = (PackageTreeNode) lastPathComponent;
+            if (lastPathComponent instanceof PackageTreeNode packageTreeNode) {
                 if (packageTreeNode instanceof ClassTreeNode) {
                     ClassNode classNode = ((ClassTreeNode) packageTreeNode).classNode;
-                    JavaOctetEditor.getInstance().fileTabbedPanel.addTab(classNode.name.substring(classNode.name.lastIndexOf("/") + 1), new ClassTabPanel(classNode));
+                    JavaOctetEditor.getInstance().fileTabbedPanel.addTab(classNode.getInternalName().substring(classNode.getInternalName().lastIndexOf("/") + 1), new ClassTabPanel(classNode));
                 }
-            } else if (lastPathComponent instanceof FolderTreeNode) {
-                FolderTreeNode folderTreeNode = (FolderTreeNode) lastPathComponent;
-                if (folderTreeNode instanceof FileTreeNode) {
-                    FileTreeNode fileTreeNode = (FileTreeNode) folderTreeNode;
+            } else if (lastPathComponent instanceof FolderTreeNode folderTreeNode) {
+                if (folderTreeNode instanceof FileTreeNode fileTreeNode) {
                     JavaOctetEditor.getInstance().fileTabbedPanel.addTab(fileTreeNode.toString().substring(fileTreeNode.toString().lastIndexOf("/") + 1), new FileTablePane(fileTreeNode));
                 }
             }
@@ -118,8 +115,8 @@ public class FileTree extends JTree {
         if (packagePresentationValue == PackagePresentation.HIERARCHICAL) {
             Map<String, DefaultTreeNode> hasMap = new HashMap<>();
 
-            for (ClassNode classNode : jar.classes.values()) {
-                String[] split = classNode.name.split("/");
+            for (cn.enaium.joe.util.classes.ClassNode classNode : jar.classes.values()) {
+                String[] split = classNode.getInternalName().split("/");
                 DefaultTreeNode prev = null;
                 StringBuilder stringBuilder = new StringBuilder();
                 int i = 0;
@@ -193,10 +190,10 @@ public class FileTree extends JTree {
             sort(model, resourceRoot);
         } else if (packagePresentationValue == PackagePresentation.FLAT) {
             Map<String, DefaultTreeNode> hasMap = new HashMap<>();
-            for (ClassNode value : jar.classes.values()) {
+            for (cn.enaium.joe.util.classes.ClassNode value : jar.classes.values()) {
                 String packageName = "";
-                if (value.name.contains("/")) {
-                    packageName = value.name.substring(0, value.name.lastIndexOf("/")).replace("/", ".");
+                if (value.getInternalName().contains("/")) {
+                    packageName = value.getInternalName().substring(0, value.getInternalName().lastIndexOf("/")).replace("/", ".");
                 }
 
                 ClassTreeNode classTreeNode = new ClassTreeNode(value);

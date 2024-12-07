@@ -8,6 +8,7 @@ public interface ClassNode {
     String getCanonicalName();
     byte[] getClassBytes();
     org.objectweb.asm.tree.ClassNode getClassNode();
+    void accept(ClassNode newNode);
 
     static ClassNode of(final byte[] classIn){
         ClassReader classReader = new ClassReader(classIn);
@@ -17,27 +18,7 @@ public interface ClassNode {
         final String internalName = classNode.name;
         final String canonicalName = internalName.replace('/', '.');
 
-        return new ClassNode() {
-            @Override
-            public String getInternalName() {
-                return internalName;
-            }
-
-            @Override
-            public String getCanonicalName() {
-                return canonicalName;
-            }
-
-            @Override
-            public byte[] getClassBytes() {
-                return classIn;
-            }
-
-            @Override
-            public org.objectweb.asm.tree.ClassNode getClassNode() {
-                return classNode;
-            }
-        };
+        return new Impl(internalName, canonicalName, classIn, classNode);
     }
 
     static ClassNode of(final org.objectweb.asm.tree.ClassNode classNode){
@@ -48,26 +29,44 @@ public interface ClassNode {
         final String internalName = classNode.name;
         final String canonicalName = internalName.replace('/', '.');
 
-        return new ClassNode() {
-            @Override
-            public String getInternalName() {
-                return internalName;
-            }
+        return new Impl(internalName, canonicalName, bytes, classNode);
+    }
 
-            @Override
-            public String getCanonicalName() {
-                return canonicalName;
-            }
+    class Impl implements ClassNode{
+        String internalName; String canonicalName; byte[] clazz; org.objectweb.asm.tree.ClassNode node;
+        public Impl(String internalName, String canonicalName, byte[] clazz, org.objectweb.asm.tree.ClassNode node){
+            this.internalName = internalName;
+            this.canonicalName = canonicalName;
+            this.clazz = clazz;
+            this.node = node;
+        }
 
-            @Override
-            public byte[] getClassBytes() {
-                return bytes;
-            }
+        @Override
+        public String getInternalName() {
+            return this.internalName;
+        }
 
-            @Override
-            public org.objectweb.asm.tree.ClassNode getClassNode() {
-                return classNode;
-            }
-        };
+        @Override
+        public String getCanonicalName() {
+            return this.canonicalName;
+        }
+
+        @Override
+        public byte[] getClassBytes() {
+            return this.clazz;
+        }
+
+        @Override
+        public org.objectweb.asm.tree.ClassNode getClassNode() {
+            return this.node;
+        }
+
+        @Override
+        public void accept(ClassNode newNode) {
+            this.internalName = newNode.getInternalName();
+            this.canonicalName = newNode.getCanonicalName();
+            this.clazz = newNode.getClassBytes();
+            this.node = newNode.getClassNode();
+        }
     }
 }

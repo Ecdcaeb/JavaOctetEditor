@@ -16,7 +16,7 @@
 
 package cn.enaium.joe.gui.panel.file.tree.node;
 
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
@@ -26,8 +26,8 @@ public class MethodTreeNode extends PackageTreeNode {
     public ClassNode classNode;
     public MethodNode methodNode;
 
-    public MethodTreeNode(ClassNode classNode, MethodNode methodNode) {
-        super(classNode.name + "." + methodNode.name + methodNode.desc);
+    public MethodTreeNode(cn.enaium.joe.util.classes.ClassNode classNode, MethodNode methodNode) {
+        super(classNode.getInternalName() + "." + methodNode.name + methodNode.desc);
         this.classNode = classNode;
         this.methodNode = methodNode;
     }

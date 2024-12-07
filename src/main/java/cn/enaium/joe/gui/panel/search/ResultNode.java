@@ -16,9 +16,9 @@
 
 package cn.enaium.joe.gui.panel.search;
 
-import cn.enaium.joe.util.ColorUtil;
 import cn.enaium.joe.util.HtmlUtil;
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
+import org.jetbrains.java.decompiler.main.ClassesProcessor;
 
 import java.awt.*;
 
@@ -26,7 +26,7 @@ import java.awt.*;
  * @author Enaium
  */
 public class ResultNode {
-    private ClassNode classNode;
+    private cn.enaium.joe.util.classes.ClassNode classNode;
 
     private final String text;
 
@@ -34,9 +34,9 @@ public class ResultNode {
         text = " ";
     }
 
-    public ResultNode(ClassNode classNode, String result) {
+    public ResultNode(cn.enaium.joe.util.classes.ClassNode classNode, String result) {
         this.classNode = classNode;
-        text = HtmlUtil.toHtml(HtmlUtil.setColor(classNode.name, Color.WHITE) + "#" + result);
+        text = HtmlUtil.toHtml(HtmlUtil.setColor(classNode.getInternalName(), Color.WHITE) + "#" + result);
     }
 
     public ClassNode getClassNode() {

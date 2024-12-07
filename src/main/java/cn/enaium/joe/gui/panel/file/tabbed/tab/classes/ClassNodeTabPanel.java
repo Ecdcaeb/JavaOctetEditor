@@ -16,7 +16,7 @@
 
 package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 
 import javax.swing.*;
 
@@ -24,13 +24,13 @@ import javax.swing.*;
  * @author Enaium
  */
 public class ClassNodeTabPanel extends JPanel {
-    private final ClassNode classNode;
+    private final cn.enaium.joe.util.classes.ClassNode classNode;
 
     public ClassNodeTabPanel(ClassNode classNode) {
         this.classNode = classNode;
     }
 
-    public ClassNode getClassNode() {
+    public cn.enaium.joe.util.classes.ClassNode getClassNode() {
         return classNode;
     }
 }

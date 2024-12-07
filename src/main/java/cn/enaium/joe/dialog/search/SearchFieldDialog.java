@@ -23,7 +23,7 @@ import cn.enaium.joe.task.SearchFieldTask;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.StringUtil;
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 
@@ -88,7 +88,7 @@ public class SearchFieldDialog extends SearchDialog {
     public SearchFieldDialog(ClassNode classNode, FieldNode fieldInsnNode){
         this();
         this.name.setText(fieldInsnNode.name);
-        this.owner.setText(classNode.name);
+        this.owner.setText(classNode.getInternalName());
         this.desc.setText(fieldInsnNode.desc);
         for(ActionListener listener : this.jButton.getListeners(ActionListener.class)){
             listener.actionPerformed(null);

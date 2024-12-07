@@ -16,16 +16,16 @@
 
 package cn.enaium.joe.gui.panel.file.tree.node;
 
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 
 /**
  * @author Enaium
  */
 public class ClassTreeNode extends PackageTreeNode {
-    public ClassNode classNode;
+    public cn.enaium.joe.util.classes.ClassNode classNode;
 
     public ClassTreeNode(ClassNode classNode) {
-        super(classNode.name.substring(classNode.name.lastIndexOf("/") + 1));
+        super(classNode.getInternalName().substring(classNode.getInternalName().lastIndexOf("/") + 1));
         this.classNode = classNode;
     }
 }

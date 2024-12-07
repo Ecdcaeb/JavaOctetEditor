@@ -17,7 +17,7 @@
 package cn.enaium.joe.dialog;
 
 import cn.enaium.joe.gui.panel.FieldInfoPanel;
-import org.objectweb.asm.tree.ClassNode;
+import cn.enaium.joe.util.classes.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 
 import java.awt.*;
@@ -28,7 +28,7 @@ import java.awt.*;
  */
 public class FieldDialog extends Dialog {
     public FieldDialog(ClassNode classNode, FieldNode fieldNode) {
-        super(classNode.name + "#" + fieldNode.name);
+        super(classNode.getInternalName() + "#" + fieldNode.name);
         setLayout(new BorderLayout());
         add(new FieldInfoPanel(fieldNode), BorderLayout.CENTER);
     }
