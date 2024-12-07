@@ -32,7 +32,7 @@ public final class ModeValue<T extends Enum<T>> extends Value<T>{
 
     @Expose(deserialize = false)
     private EnumSet<T> mode;
-    private final Class<T> enumClass;
+    private transient final Class<T> enumClass;
 
     public ModeValue(String name, T value, String description, EnumSet<T> mode) {
         super(value.getClass(), name, value, description);

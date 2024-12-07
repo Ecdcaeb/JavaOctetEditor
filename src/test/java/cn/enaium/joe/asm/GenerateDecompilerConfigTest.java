@@ -18,6 +18,7 @@ package cn.enaium.joe.asm;
 
 import cn.enaium.joe.util.ImagineBreakerHelper;
 import com.strobel.decompiler.languages.java.JavaFormattingOptions;
+import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.junit.jupiter.api.Test;
 
@@ -36,68 +37,87 @@ public class GenerateDecompilerConfigTest {
 
     @Test
     public void fernFlower() throws IllegalAccessException {
+        System.out.println("fernFlower config");
         Map<String, Object> defaults = IFernflowerPreferences.getDefaults();
         for (Field field : IFernflowerPreferences.class.getFields()) {
             if (field.isAnnotationPresent(IFernflowerPreferences.Name.class) && field.isAnnotationPresent(IFernflowerPreferences.Description.class)) {
-                String f = field.getName();
-                String name = field.getAnnotation(IFernflowerPreferences.Name.class).value();
-                String description = field.getAnnotation(IFernflowerPreferences.Description.class).value();
-                Object value = field.get(null);
-                Object o = defaults.get(value);
+                try{
+                    String name = field.getAnnotation(IFernflowerPreferences.Name.class).value();
+                    String fieldName = field.getAnnotation(IFernflowerPreferences.ShortName.class).value();
+                    String description = field.getAnnotation(IFernflowerPreferences.Description.class).value();
+                    String type = field.getAnnotation(IFernflowerPreferences.Type.class).value();
+                    Object o = defaults.get((String)field.get(null));
 
-                if (o != null) {
-                    if (o.equals("1")) {
-                        o = true;
-                    } else if (o.equals("0")) {
-                        o = false;
-                    } else if (o instanceof String) {
-                        o = "\"" + o + "\"";
+                    if (o != null) {
+                        if ("bool".equals(type)){
+                            if ("1".equals(o)) {
+                                o = Boolean.TRUE;
+                            } else if ("0".equals(o)) {
+                                o = Boolean.FALSE;
+                            }
+                        } else if ("string".equals(type)){
+                            if ("log".equals(fieldName))
+                                o = IFernflowerLogger.Severity.INFO;
+                            else o = String.valueOf(o);
+                        } else if ("int".equals(type)){
+                            o = Integer.parseInt(String.valueOf(o));
+                        }
+                        System.out.println(buildConfig(fieldName, name, description, o));
                     }
-                } else {
-                    System.out.println("NULL:" + f);
+                }catch (Throwable e){
+                    e.printStackTrace();
                 }
-
-
-                System.out.printf("public EnableValue %s = new EnableValue(\"%s\", %s,\"%s\");%n", value, name, o, description);
             }
         }
     }
 
+    public static String buildConfig(String fieldName, String name, String desc, Object defaultValue){
+        String type = null;
+        if (defaultValue instanceof Boolean) {
+            type = "EnableValue";
+        } else if (defaultValue instanceof Enum<?>) {
+            type = "ModeValue<" + defaultValue.getClass().getSimpleName() + ">";
+        } else if (defaultValue instanceof Integer) {
+            type = "IntegerValue";
+        } else if (defaultValue instanceof String){
+            type = "StringValue";
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append("public");
+        stringBuilder.append(" ");
+        stringBuilder.append(type);
+        stringBuilder.append(" ");
+        stringBuilder.append(fieldName);
+        stringBuilder.append(" = new ");
+        stringBuilder.append(type);
+        stringBuilder.append("(");
+        stringBuilder.append("\"").append(name).append("\"").append(", ");
+        if (!defaultValue.getClass().isEnum()) {
+            if (defaultValue instanceof String){
+                defaultValue = '\"' + String.valueOf(defaultValue).replace("\"", "\\\"") + '\"';
+            }
+            stringBuilder.append(defaultValue);
+        } else stringBuilder.append(defaultValue.getClass().getSimpleName()).append('.').append(defaultValue);
+        stringBuilder.append(", \"").append(desc).append("\"");
+        if (defaultValue instanceof Enum<?>) {
+            stringBuilder.append(", ");
+            stringBuilder.append("EnumSet.allOf(").append(defaultValue.getClass().getSimpleName()).append(".class)");
+        }
+        stringBuilder.append(");");
+
+        return stringBuilder.toString();
+    }
+
     @Test
     public void procyon() throws IllegalAccessException {
+        System.out.println("procyon config");
+
         JavaFormattingOptions aDefault = JavaFormattingOptions.createDefault();
         for (Field field : JavaFormattingOptions.class.getFields()) {
-            String type = null;
             Object value = field.get(aDefault);
-            if (value instanceof Boolean) {
-                type = "EnableValue";
-            } else if (value instanceof Enum<?>) {
-                type = "ModeValue<" + value.getClass().getSimpleName() + ">";
-            } else if (value instanceof Integer) {
-                type = "IntegerValue";
-            }
-
-            StringBuilder stringBuilder = new StringBuilder();
-
-            stringBuilder.append("public");
-            stringBuilder.append(" ");
-            stringBuilder.append(type);
-            stringBuilder.append(" ");
-            stringBuilder.append(field.getName());
-            stringBuilder.append(" = new ");
-            stringBuilder.append(type);
-            stringBuilder.append("(");
-            stringBuilder.append("\"").append(field.getName()).append("\"").append(", ");
-            if (!field.getType().isEnum()) {
-                stringBuilder.append(value);
-            } else stringBuilder.append(field.getType().getSimpleName()).append('.').append(field.getName());
-            stringBuilder.append(", \"").append(field.getName()).append("\"");
-            if (value instanceof Enum<?>) {
-                stringBuilder.append(", ");
-                stringBuilder.append("EnumSet.allOf(").append(value.getClass().getSimpleName()).append(".class)");
-            }
-            stringBuilder.append(");");
-            System.out.println(stringBuilder);
+            System.out.println(buildConfig(field.getName(), field.getName(), field.getName(), value));
         }
     }
 }

@@ -64,7 +64,9 @@ public class ConfigDialog extends Dialog {
             } catch (IllegalAccessException e) {
                 MessageUtil.error(e);
             }
-        }}));
+        }}){{
+            this.getVerticalScrollBar().setUnitIncrement(16);
+        }});
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
