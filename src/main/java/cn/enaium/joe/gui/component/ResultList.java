@@ -19,7 +19,6 @@ package cn.enaium.joe.gui.component;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.gui.panel.file.tree.node.*;
 import cn.enaium.joe.gui.panel.search.ResultNode;
-import cn.enaium.joe.util.ASyncUtil;
 import cn.enaium.joe.util.JMenuUtil;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -27,8 +26,6 @@ import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /**
  * @author Enaium

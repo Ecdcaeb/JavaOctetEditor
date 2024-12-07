@@ -41,7 +41,7 @@ public class BottomPanel extends JPanel {
     public BottomPanel() {
         super(new GridLayout(1, 2));
         this.setBorder(new EmptyBorder(5, 5, 5, 5));
-        add(new JLabel("\u00A9 Enaium 2022"));
+        add(new JLabel("\u00A9 JavaOctetEditor 2024"));
         TaskListPopup taskListPopup = new TaskListPopup();
         JProgressBar jProgressBar = new JProgressBar() {{
 
