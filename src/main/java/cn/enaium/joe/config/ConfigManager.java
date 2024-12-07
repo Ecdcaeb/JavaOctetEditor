@@ -44,7 +44,7 @@ public class ConfigManager {
     public ConfigManager() {
         addByInstance(new ApplicationConfig());
         addByInstance(new CFRConfig());
-        addByInstance(new FernFlowerConfig());
+        addByInstance(new VineFlowerConfig());
         addByInstance(new ProcyonConfig());
 
         addGuiFactory(IntegerValue.class, IntegerValue::createGui);

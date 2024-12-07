@@ -19,7 +19,7 @@ package cn.enaium.joe.service;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.extend.ApplicationConfig;
 import cn.enaium.joe.service.decompiler.IDecompiler;
-import cn.enaium.joe.service.decompiler.FernFlowerDecompiler;
+import cn.enaium.joe.service.decompiler.VineFlowerDecompiler;
 import cn.enaium.joe.service.decompiler.CFRDecompiler;
 import cn.enaium.joe.service.decompiler.ProcyonDecompiler;
 
@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  */
 public class DecompileService {
     public enum Service{
-        VineFlower(FernFlowerDecompiler::new),
+        VineFlower(VineFlowerDecompiler::new),
         CFR(CFRDecompiler::new),
         Procyon(ProcyonDecompiler::new);
 

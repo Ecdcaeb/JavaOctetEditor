@@ -35,7 +35,7 @@ import java.util.jar.Manifest;
  * @author Enaium
  * @since 1.0.0
  */
-public class FernFlowerDecompiler extends IFernflowerLogger implements IDecompiler, IResultSaver, IContextSource, IContextSource.IOutputSink {
+public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompiler, IResultSaver, IContextSource, IContextSource.IOutputSink {
     private String returned;
     private ClassNode activeClass;
     public static final CachedGlobalValue<Map<String, Object>> customProperties = new CachedGlobalValue<>(config -> {

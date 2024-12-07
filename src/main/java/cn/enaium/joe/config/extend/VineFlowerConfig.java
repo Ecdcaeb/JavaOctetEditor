@@ -21,7 +21,7 @@ import cn.enaium.joe.config.value.EnableValue;
 import cn.enaium.joe.config.value.IntegerValue;
 import cn.enaium.joe.config.value.ModeValue;
 import cn.enaium.joe.config.value.StringValue;
-import cn.enaium.joe.service.decompiler.FernFlowerDecompiler;
+import cn.enaium.joe.service.decompiler.VineFlowerDecompiler;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger.Severity;
 
 import java.util.EnumSet;
@@ -32,7 +32,7 @@ import java.util.Set;
  * @since 1.1.0
  */
 @SuppressWarnings("unused")
-public class FernFlowerConfig extends Config {
+public class VineFlowerConfig extends Config {
     public EnableValue rbr = new EnableValue("Remove Bridge Methods", true, "Removes any methods that are marked as bridge from the decompiled output.");
     public EnableValue rsy = new EnableValue("Remove Synthetic Methods And Fields", true, "Removes any methods and fields that are marked as synthetic from the decompiled output.");
     public EnableValue din = new EnableValue("Decompile Inner Classes", true, "Process inner classes and add them to the decompiled output.");
@@ -94,8 +94,8 @@ public class FernFlowerConfig extends Config {
     public EnableValue rim = new EnableValue("Remove Imports", false, "Remove import statements from the decompiled code");
     public EnableValue mcs = new EnableValue("Mark Corresponding Synthetics", false, "Mark lambdas and anonymous and local classes with their respective synthetic constructs"); // not auto, might be fixed at https://github.com/Vineflower/vineflower/pull/443 or other operate, now we just human-bot
 
-    public FernFlowerConfig() {
-        super("FernFlower", Set.of(FernFlowerDecompiler.customProperties));
+    public VineFlowerConfig() {
+        super("VineFlower", Set.of(VineFlowerDecompiler.customProperties));
         this.postInit();
     }
 }
