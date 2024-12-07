@@ -71,4 +71,8 @@ public class LangUtil {
             return String.format(locales.getValue().get(key), args);
         } else return key;
     }
+
+    static {
+        locales.update(null, Lang.SYSTEM, Lang.SYSTEM);
+    }
 }
