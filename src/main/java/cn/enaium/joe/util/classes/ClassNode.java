@@ -31,19 +31,19 @@ public interface ClassNode {
     }
 
     default String getSuperClass(){
-        return this.getClassNode().superName;
+        return this.getNodeInternal().superName;
     }
 
     default String[] getInterfaces(){
-        return this.getClassNode().interfaces.toArray(String[]::new);
+        return this.getNodeInternal().interfaces.toArray(String[]::new);
     }
 
     default int getAccess(){
-        return this.getClassNode().access;
+        return this.getNodeInternal().access;
     }
 
     default int getVersion(){
-        return this.getClassNode().version;
+        return this.getNodeInternal().version;
     }
 
     default MethodNode[] getMethods(){
@@ -55,17 +55,19 @@ public interface ClassNode {
     }
 
     default void trace(TraceClassVisitor traceClassVisitor){
-        this.getClassNode().accept(traceClassVisitor);
+        this.getNodeInternal().accept(traceClassVisitor);
     }
 
     default void analyzeVisitor(ClassVisitor classVisitor){
-        this.getClassNode().accept(classVisitor);
+        this.getNodeInternal().accept(classVisitor);
     }
 
     default void editVisitor(ClassVisitor classVisitor){
-        this.getClassNode().accept(classVisitor);
+        this.getNodeInternal().accept(classVisitor);
         this.updateBytes();
     }
+
+    org.objectweb.asm.tree.ClassNode getNodeInternal();
 
     default Set<String> getParents(){
         Set<String> parent = new HashSet<>();
@@ -99,6 +101,9 @@ public interface ClassNode {
     }
 
     class Impl implements ClassNode{
+
+        boolean isDir = false;
+
         String internalName; String canonicalName; byte[] clazz; org.objectweb.asm.tree.ClassNode node;
         public Impl(String internalName, String canonicalName, byte[] clazz, org.objectweb.asm.tree.ClassNode node){
             this.internalName = internalName;
@@ -109,28 +114,31 @@ public interface ClassNode {
 
         @Override
         public String getInternalName() {
-            return this.internalName;
+            return this.node.name;
         }
 
         @Override
         public String getCanonicalName() {
-            return this.canonicalName;
+            return this.node.name.replace('/', '.');
         }
 
         @Override
         public byte[] getClassBytes() {
+            if (this.isDir) updateBytes();
             return this.clazz;
         }
 
         @Override
         public org.objectweb.asm.tree.ClassNode getClassNode() {
+            this.isDir = true;
             return this.node;
         }
 
         @Override
         public void updateBytes() {ClassWriter classWriter = new ClassWriter(0);
-            getClassNode().accept(classWriter);
+            node.accept(classWriter);
             this.clazz = classWriter.toByteArray();
+            this.isDir = false;
         }
 
         @Override
@@ -144,6 +152,11 @@ public interface ClassNode {
         @Override
         public ClassNode clone() {
             return ClassNode.of(this.getClassBytes().clone());
+        }
+
+        @Override
+        public org.objectweb.asm.tree.ClassNode getNodeInternal() {
+            return this.node;
         }
     }
 }
