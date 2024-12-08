@@ -25,6 +25,7 @@ import cn.enaium.joe.gui.panel.file.tree.node.*;
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.*;
 import cn.enaium.joe.util.classes.ClassNode;
+import cn.enaium.joe.util.file.FIleTransferable;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -37,6 +38,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -115,12 +117,16 @@ public class FileTree extends JTree {
             if (lastPathComponent instanceof PackageTreeNode packageTreeNode) {
                 if (packageTreeNode instanceof ClassTreeNode) {
                     ClassNode classNode = ((ClassTreeNode) packageTreeNode).classNode;
+                    Path tempFolder = null;
                     try {
-                        final File temp = File.createTempFile(classNode.getSimpleName(), "class");
-                        Files.write(temp.toPath(), classNode.getClassBytes());
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(temp.toPath().toString()), null);
+                        tempFolder = Files.createTempDirectory("cn.enaium.joe");
+                        final File file = new File(tempFolder.toFile(), classNode.getSimpleName() + ".class");
+                        Files.write(file.toPath(), classNode.getClassBytes());
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new FIleTransferable(file), null);
                     } catch (Throwable e) {
                         MessageUtil.error("Could Not Copy", e);
+                    } finally {
+                        if (tempFolder != null) tempFolder.toFile().deleteOnExit();
                     }
                 }
             } else if (lastPathComponent instanceof FolderTreeNode folderTreeNode) {

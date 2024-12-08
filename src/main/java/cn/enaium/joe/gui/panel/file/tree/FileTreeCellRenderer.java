@@ -60,10 +60,8 @@ public class FileTreeCellRenderer extends DefaultTreeCellRenderer {
                     setIcon(new FlatSVGIcon("icons/class.svg"));
                 }
             }
-        } else if (defaultTreeNode instanceof FolderTreeNode) {
+        } else if (defaultTreeNode instanceof FolderTreeNode folderTreeNode) {
             setIcon(new FlatSVGIcon("icons/folder.svg"));
-
-            FolderTreeNode folderTreeNode = (FolderTreeNode) defaultTreeNode;
             if (folderTreeNode instanceof FileTreeNode) {
                 setIcon(new FlatSVGIcon("icons/file.svg"));
             }
