@@ -102,7 +102,7 @@ public class CodeAreaPanel extends BorderPanel implements ActionListener {
         // Create an object defining our search parameters.
         SearchContext context = new SearchContext();
         String text = searchField.getText();
-        if (text.length() == 0) {
+        if (text.isEmpty()) {
             return;
         }
         context.setSearchFor(text);

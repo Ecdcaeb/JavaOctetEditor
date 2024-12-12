@@ -46,15 +46,15 @@ public class FileTreeCellRenderer extends DefaultTreeCellRenderer {
             setIcon(new FlatSVGIcon("icons/package.svg"));
             if (packageTreeNode instanceof ClassTreeNode) {
                 ClassNode classNode = ((ClassTreeNode) packageTreeNode).classNode;
-                if (classNode.getClassNode().access == (Opcodes.ACC_PUBLIC | Opcodes.ACC_ANNOTATION | Opcodes.ACC_ABSTRACT | Opcodes.ACC_INTERFACE)) {
+                if (classNode.getAccess() == (Opcodes.ACC_PUBLIC | Opcodes.ACC_ANNOTATION | Opcodes.ACC_ABSTRACT | Opcodes.ACC_INTERFACE)) {
                     setIcon(new FlatSVGIcon("icons/annotation.svg"));
-                } else if (classNode.getClassNode().access == (Opcodes.ACC_PUBLIC | Opcodes.ACC_ABSTRACT | Opcodes.ACC_INTERFACE)) {
+                } else if (classNode.getAccess() == (Opcodes.ACC_PUBLIC | Opcodes.ACC_ABSTRACT | Opcodes.ACC_INTERFACE)) {
                     setIcon(new FlatSVGIcon("icons/interface.svg"));
-                } else if (classNode.getClassNode().access == (Opcodes.ACC_PUBLIC | Opcodes.ACC_SUPER | Opcodes.ACC_ABSTRACT)) {
+                } else if (classNode.getAccess() == (Opcodes.ACC_PUBLIC | Opcodes.ACC_SUPER | Opcodes.ACC_ABSTRACT)) {
                     setIcon(new FlatSVGIcon("icons/abstractClass.svg"));
-                } else if (classNode.getClassNode().access == (Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SUPER | Opcodes.ACC_ENUM)) {
+                } else if (classNode.getAccess() == (Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SUPER | Opcodes.ACC_ENUM)) {
                     setIcon(new FlatSVGIcon("icons/enum.svg"));
-                } else if (classNode.getClassNode().access == (Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SUPER)) {
+                } else if (classNode.getAccess() == (Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SUPER)) {
                     setIcon(new FlatSVGIcon("icons/finalClass.svg"));
                 } else {
                     setIcon(new FlatSVGIcon("icons/class.svg"));

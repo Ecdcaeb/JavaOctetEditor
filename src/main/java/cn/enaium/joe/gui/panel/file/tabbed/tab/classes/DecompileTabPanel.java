@@ -40,17 +40,19 @@ public class DecompileTabPanel extends ClassNodeTabPanel {
         setLayout(new BorderLayout());
         CodeAreaPanel codeAreaPanel = this.codeAreaPanel = new CodeAreaPanel() {{
             KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).keymap.getValue().save.getValue(), () -> {
-                try {
-                    StringWriter tracer = new StringWriter();
-                    byte[] clazz = Compiler.compileSingle(classNode.getCanonicalName(), getTextArea().getText(), tracer);
-                    if (clazz == null) {
-                        MessageUtil.error("Compile failed \n" + tracer);
+                if (ClassTabPanel.classTabIndex == 1) {
+                    try {
+                        StringWriter tracer = new StringWriter();
+                        byte[] clazz = Compiler.compileSingle(classNode.getCanonicalName(), getTextArea().getText(), tracer);
+                        if (clazz == null) {
+                            MessageUtil.error("Compile failed \n" + tracer);
+                        }
+                        classNode.accept(ClassNode.of(clazz));
+                        MessageUtil.info(LangUtil.i18n("success"));
+                        EditSaveSuccessEvent.trigger(classNode.getInternalName());
+                    } catch (Throwable e) {
+                        MessageUtil.error(e);
                     }
-                    classNode.accept(ClassNode.of(clazz));
-                    MessageUtil.info(LangUtil.i18n("success"));
-                    EditSaveSuccessEvent.trigger(classNode.getInternalName());
-                } catch (Throwable e) {
-                    MessageUtil.error(e);
                 }
             });
         }};
