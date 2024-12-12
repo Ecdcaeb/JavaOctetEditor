@@ -20,6 +20,7 @@ import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.util.CachedGlobalValue;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.classes.ClassNode;
+import cn.enaium.joe.util.classes.JarHelper;
 import org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler;
 import org.jetbrains.java.decompiler.main.extern.IContextSource;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
@@ -37,7 +38,7 @@ import java.util.jar.Manifest;
  */
 public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompiler, IResultSaver, IContextSource, IContextSource.IOutputSink {
     private String returned;
-    private ClassNode activeClass;
+    private HashMap<String, ClassNode> activeClass;
     public static final CachedGlobalValue<Map<String, Object>> customProperties = new CachedGlobalValue<>(config -> {
         Map<String, String> map = JavaOctetEditor.getInstance().config.getConfigMapStrings(config);
         HashMap<String, Object> hashMap = new HashMap<>(map.size());
@@ -55,7 +56,7 @@ public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompil
     @Override
     public String decompile(final ClassNode classNode) {
         returned = null;
-        activeClass = classNode;
+        activeClass = JarHelper.getAllNodes(classNode);
         BaseDecompiler baseDecompiler = new BaseDecompiler(this, customProperties.getValue(), this);
         baseDecompiler.addSource(this);
         baseDecompiler.decompileContext();
@@ -101,7 +102,7 @@ public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompil
 
     @Override
     public Entries getEntries() {
-        return new Entries(List.of(Entry.atBase(activeClass.getInternalName())), List.of(), List.of());
+        return new Entries(activeClass.keySet().stream().map(Entry::atBase).toList(), List.of(), List.of());
     }
 
     @Override
@@ -111,17 +112,19 @@ public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompil
 
     @Override
     public InputStream getInputStream(String resource) {
-        return new ByteArrayInputStream(activeClass.getClassBytes());
+        if (activeClass.containsKey(resource)) return new ByteArrayInputStream(activeClass.get(resource).getClassBytes());
+        return null;
     }
 
     @Override
     public byte[] getClassBytes(String className) {
-        return activeClass.getClassBytes();
+        if (activeClass.containsKey(className)) return activeClass.get(className).getClassBytes();
+        return null;
     }
 
     @Override
     public boolean hasClass(String className) {
-        return className.equals(activeClass.getInternalName()) || className.equals(activeClass.getCanonicalName());
+        return activeClass.containsKey(className);
     }
 
     @Override

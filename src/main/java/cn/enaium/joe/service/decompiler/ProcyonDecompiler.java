@@ -19,6 +19,7 @@ package cn.enaium.joe.service.decompiler;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.util.CachedGlobalValue;
 import cn.enaium.joe.util.classes.ClassNode;
+import cn.enaium.joe.util.classes.JarHelper;
 import cn.enaium.joe.util.reflection.FieldAccessor;
 import cn.enaium.joe.util.reflection.ReflectionHelper;
 import com.strobel.assembler.InputTypeLoader;
@@ -32,6 +33,7 @@ import com.strobel.decompiler.languages.java.JavaFormattingOptions;
 import org.pmw.tinylog.Logger;
 
 import java.io.StringWriter;
+import java.util.HashMap;
 
 /**
  * @author Enaium
@@ -54,16 +56,18 @@ public class ProcyonDecompiler implements IDecompiler {
         return aDefault;
     });
 
+    public HashMap<String, ClassNode> activeNodes;
     @Override
     public String decompile(ClassNode classNode) {
         DecompilerSettings decompilerSettings = new DecompilerSettings();
+        this.activeNodes = JarHelper.getAllNodes(classNode);
         MetadataSystem metadataSystem = new MetadataSystem(new ITypeLoader() {
             private final InputTypeLoader backLoader = new InputTypeLoader();
 
             @Override
             public boolean tryLoadType(String s, Buffer buffer) {
-                if (s.equals(classNode.getInternalName())) {
-                    byte[] b = classNode.getClassBytes();
+                if (ProcyonDecompiler.this.activeNodes.containsKey(s)) {
+                    byte[] b = ProcyonDecompiler.this.activeNodes.get(s).getClassBytes();
                     buffer.putByteArray(b, 0, b.length);
                     buffer.position(0);
                     return true;

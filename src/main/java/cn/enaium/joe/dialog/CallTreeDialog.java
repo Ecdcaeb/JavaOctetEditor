@@ -72,8 +72,7 @@ public class CallTreeDialog extends Dialog {
         Map<String, Pair<ClassNode, MethodNode>> map = new HashMap<>();
 
         for (AbstractInsnNode instruction : methodNode.instructions) {
-            if (instruction instanceof MethodInsnNode) {
-                MethodInsnNode methodInsnNode = (MethodInsnNode) instruction;
+            if (instruction instanceof MethodInsnNode methodInsnNode) {
                 if (!(methodTreeNode.classNode.getInternalName() + "." + methodNode.name + methodNode.desc).equals(methodInsnNode.owner + "." + methodInsnNode.name + methodInsnNode.desc)) {
                     Map<String, ClassNode> classes = JavaOctetEditor.getInstance().getJar().classes;
                     String key = methodInsnNode.owner + ".class";

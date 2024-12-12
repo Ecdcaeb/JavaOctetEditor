@@ -12,8 +12,12 @@ import java.util.List;
 import java.util.Set;
 
 public interface ClassNode {
-    String getInternalName();
-    String getCanonicalName();
+    default String getInternalName(){
+        return this.getNodeInternal().name;
+    }
+    default String getCanonicalName(){
+        return this.getNodeInternal().name.replace('/', '.');
+    }
     byte[] getClassBytes();
     org.objectweb.asm.tree.ClassNode getClassNode();
     void accept(ClassNode newNode);
@@ -28,6 +32,14 @@ public interface ClassNode {
 
     default String getInternalPackageName(){
         return this.getInternalName().substring(0, this.getInternalName().lastIndexOf('/') - 1);
+    }
+
+    default String[] getInnerClassesInternalName(){
+        return this.getNodeInternal().innerClasses.stream().map((v) -> v.name).toArray(String[]::new);
+    }
+
+    default String[] getInnerClassesCanonicalName(){
+        return this.getNodeInternal().innerClasses.stream().map((v) -> v.name.replace('/', '.')).toArray(String[]::new);
     }
 
     default String getSuperClass(){
@@ -66,6 +78,8 @@ public interface ClassNode {
         this.getNodeInternal().accept(classVisitor);
         this.updateBytes();
     }
+
+    void mkdir();
 
     org.objectweb.asm.tree.ClassNode getNodeInternal();
 
@@ -113,16 +127,6 @@ public interface ClassNode {
         }
 
         @Override
-        public String getInternalName() {
-            return this.node.name;
-        }
-
-        @Override
-        public String getCanonicalName() {
-            return this.node.name.replace('/', '.');
-        }
-
-        @Override
         public byte[] getClassBytes() {
             if (this.isDir) updateBytes();
             return this.clazz;
@@ -157,6 +161,11 @@ public interface ClassNode {
         @Override
         public org.objectweb.asm.tree.ClassNode getNodeInternal() {
             return this.node;
+        }
+
+        @Override
+        public void mkdir() {
+            this.isDir = true;
         }
     }
 }

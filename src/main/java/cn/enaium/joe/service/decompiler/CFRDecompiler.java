@@ -20,6 +20,7 @@ import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.config.util.CachedGlobalValue;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.classes.ClassNode;
+import cn.enaium.joe.util.classes.JarHelper;
 import org.benf.cfr.reader.Main;
 import org.benf.cfr.reader.apiunreleased.ClassFileSource2;
 import org.benf.cfr.reader.apiunreleased.JarContent;
@@ -34,6 +35,7 @@ import org.benf.cfr.reader.util.output.*;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * @author Enaium
@@ -43,14 +45,16 @@ public class CFRDecompiler implements IDecompiler {
 
     public static final CachedGlobalValue<Options> options = new CachedGlobalValue<>(config -> OptionsImpl.getFactory().create(JavaOctetEditor.getInstance().config.getConfigMapStrings(config)));
 
+    public HashMap<String, ClassNode> activeNodes;
     @Override
     public String decompile(final ClassNode classNode) {
+        this.activeNodes = JarHelper.getAllNodes(classNode);
         DCCommonState state = new DCCommonState(options.getValue(), new ClassFileSource2() {
             @Override
             public Pair<byte[], String> getClassFileContent(String path) {
                 String name = path.substring(0, path.length() - 6);
-                if (name.equals(classNode.getInternalName())) {
-                    return Pair.make(classNode.getClassBytes(), name);
+                if (activeNodes.containsKey(name)) {
+                    return Pair.make(activeNodes.get(name).getClassBytes(), name);
                 } else {
                     if (JavaOctetEditor.getInstance().getJar().classes.get(path) != null) {
                         return Pair.make(JavaOctetEditor.getInstance().getJar().classes.get(path).getClassBytes(), name);
@@ -63,12 +67,12 @@ public class CFRDecompiler implements IDecompiler {
             @Override public String getPossiblyRenamedPath(String path) {return path;}
             @Override public Collection<String> addJar(String arg0) {return Collections.emptySet();}
         });
-        return decompile(state, classNode);
+        return decompile(state, classNode.getInternalName());
     }
 
-    public static String decompile(DCCommonState state, ClassNode classNode){
+    public static String decompile(DCCommonState state, String internalName){
         try {
-            Main.doClass(state, classNode.getInternalName(), false, PluginDumperFactory.INSTANCE);
+            Main.doClass(state, internalName, false, PluginDumperFactory.INSTANCE);
             return PluginDumperFactory.INSTANCE.getResult();
         } catch (Exception e) {
             MessageUtil.error(e);
