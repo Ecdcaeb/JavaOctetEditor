@@ -56,7 +56,6 @@ public class VirtualFileManager extends ForwardingJavaFileManager<StandardJavaFi
                 }
             }
         }
-        System.out.println(Arrays.toString(ret.toArray()));
         Iterable<JavaFileObject> superList = super.list(location, packageName, kinds, recurse);
         if (superList != null) for (JavaFileObject f : superList)
             ret.add(f);

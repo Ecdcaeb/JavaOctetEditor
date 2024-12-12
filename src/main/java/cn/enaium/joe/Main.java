@@ -20,7 +20,6 @@ import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.*;
 import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.reflection.ReflectionHelper;
-import org.objectweb.asm.ClassReader;
 import org.pmw.tinylog.Configurator;
 import org.pmw.tinylog.Logger;
 import org.pmw.tinylog.writers.ConsoleWriter;
