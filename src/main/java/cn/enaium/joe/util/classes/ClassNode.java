@@ -92,6 +92,10 @@ public interface ClassNode {
         return parent;
     }
 
+    default String getOuterClassInternalName(){
+        return this.getNodeInternal().outerClass;
+    }
+
     static ClassNode of(final byte[] classIn){
         ClassReader classReader = new ClassReader(classIn);
         final org.objectweb.asm.tree.ClassNode classNode = new org.objectweb.asm.tree.ClassNode();

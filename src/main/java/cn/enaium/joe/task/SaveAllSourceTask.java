@@ -20,6 +20,7 @@ import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.service.DecompileService;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.classes.ClassNode;
+import org.objectweb.asm.Opcodes;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +53,10 @@ public class SaveAllSourceTask extends AbstractTask<Boolean> {
             ZipOutputStream zipOutputStream = new ZipOutputStream(Files.newOutputStream(out.toPath()));
 
             for (ClassNode value : jar.classes.values()) {
+                if (value.getOuterClassInternalName() != null) {
+                    setProgress((int) ((loaded++ / files) * 100f));
+                    continue;
+                }
                 String name = value.getInternalName() + ".java";
                 name = "src/main/java/" + name;
                 zipOutputStream.putNextEntry(new ZipEntry(name));
