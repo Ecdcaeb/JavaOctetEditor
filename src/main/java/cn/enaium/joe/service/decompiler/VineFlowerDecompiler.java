@@ -65,6 +65,10 @@ public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompil
 
     @Override
     public void saveClassFile(String path, String qualifiedName, String entryName, String content, int[] mapping) {
+        System.out.println("---  " + path);
+        System.out.println("---  " + qualifiedName);
+        System.out.println("---  " + entryName);
+        System.out.println("---  " + content);
         if (returned == null){
             returned = content;
         }

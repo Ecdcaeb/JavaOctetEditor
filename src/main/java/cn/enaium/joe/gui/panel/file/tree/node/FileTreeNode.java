@@ -30,6 +30,10 @@ public class FileTreeNode extends FolderTreeNode {
         this.file = file;
     }
 
+    public String getName(){
+        return this.file;
+    }
+
     public byte[] getData() {
         return JavaOctetEditor.getInstance().getJar().resources.get(file);
     }

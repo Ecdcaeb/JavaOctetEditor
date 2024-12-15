@@ -31,12 +31,9 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -128,10 +125,24 @@ public class FileTree extends JTree {
                     } finally {
                         if (tempFolder != null) tempFolder.toFile().deleteOnExit();
                     }
+                } else {
+
                 }
             } else if (lastPathComponent instanceof FolderTreeNode folderTreeNode) {
                 if (folderTreeNode instanceof FileTreeNode fileTreeNode) {
-                    // TODO:
+                    Path tempFolder = null;
+                    try {
+                        tempFolder = Files.createTempDirectory("cn.enaium.joe");
+                        final File file = new File(tempFolder.toFile(), fileTreeNode.getName());
+                        Files.write(file.toPath(), fileTreeNode.getData());
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new FIleTransferable(file), null);
+                    } catch (Throwable e) {
+                        MessageUtil.error("Could Not Copy", e);
+                    } finally {
+                        if (tempFolder != null) tempFolder.toFile().deleteOnExit();
+                    }
+                } else {
+
                 }
             }
         });
