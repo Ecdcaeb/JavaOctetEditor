@@ -33,6 +33,7 @@ import java.util.Set;
  */
 @SuppressWarnings("unused")
 public class VineFlowerConfig extends Config {
+
     public EnableValue rbr = new EnableValue("Remove Bridge Methods", true, "Removes any methods that are marked as bridge from the decompiled output.");
     public EnableValue rsy = new EnableValue("Remove Synthetic Methods And Fields", true, "Removes any methods and fields that are marked as synthetic from the decompiled output.");
     public EnableValue din = new EnableValue("Decompile Inner Classes", true, "Process inner classes and add them to the decompiled output.");
@@ -69,6 +70,7 @@ public class VineFlowerConfig extends Config {
     public EnableValue ovr = new EnableValue("Override Annotation", true, "Display override annotations for methods known to the decompiler.");
     public EnableValue ssp = new EnableValue("Second-Pass Stack Simplification", true, "Simplify variables across stack bounds to resugar complex statements.");
     public EnableValue vvm = new EnableValue("[Experimental] Verify Variable Merges", false, "Tries harder to verify the validity of variable merges. If there are strange variable recompilation issues, this is a good place to start.");
+    public EnableValue old_try_dedup = new EnableValue("[Experimental] Use old try deduplication", false, "Use the old try deduplication algorithm for methods with obfuscated exceptions, which inserts dummy exception handlers instead of duplicating blocks");
     public EnableValue iec = new EnableValue("Include Entire Classpath", false, "Give the decompiler information about every jar on the classpath.");
     public StringValue jrt = new StringValue("Include Java Runtime", "", "Give the decompiler information about the Java runtime, either 1 or current for the current runtime, or a path to another runtime");
     public EnableValue ega = new EnableValue("Explicit Generic Arguments", false, "Put explicit diamond generic arguments on method calls.");
@@ -92,7 +94,9 @@ public class VineFlowerConfig extends Config {
     public EnableValue fji = new EnableValue("Force JSR inline", false, "Forces the processing of JSR instructions even if the class files shouldn't contain it (Java 7+)");
     public EnableValue dtt = new EnableValue("Dump Text Tokens", false, "Dump Text Tokens on each class file");
     public EnableValue rim = new EnableValue("Remove Imports", false, "Remove import statements from the decompiled code");
-    public EnableValue mcs = new EnableValue("Mark Corresponding Synthetics", false, "Mark lambdas and anonymous and local classes with their respective synthetic constructs"); // not auto, might be fixed at https://github.com/Vineflower/vineflower/pull/443 or other operate, now we just human-bot
+    public EnableValue mcs = new EnableValue("Mark Corresponding Synthetics", false, "Mark lambdas and anonymous and local classes with their respective synthetic constructs");
+    public StringValue excluded_classes = new StringValue("Excluded Classes", "", "Exclude classes from decompilation if their fully qualified names match the specified regular expression.");
+    public StringValue validate_inner_classes_names = new StringValue("Validate inner classes names", "1", "Validates that the inner class name is correct (if it is separated using '$' for example BaseClass$InnerClass). If not then inner class won't be processed.");
 
     public VineFlowerConfig() {
         super("VineFlower", Set.of(VineFlowerDecompiler.customProperties));

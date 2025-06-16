@@ -18,9 +18,11 @@ package cn.enaium.joe.asm;
 
 import cn.enaium.joe.util.ImagineBreakerHelper;
 import com.strobel.decompiler.languages.java.JavaFormattingOptions;
+import org.jetbrains.java.decompiler.api.DecompilerOption;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.junit.jupiter.api.Test;
+import org.tinylog.Logger;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -43,35 +45,46 @@ public class GenerateDecompilerConfigTest {
             if (field.isAnnotationPresent(IFernflowerPreferences.Name.class) && field.isAnnotationPresent(IFernflowerPreferences.Description.class)) {
                 try{
                     String name = field.getAnnotation(IFernflowerPreferences.Name.class).value();
-                    String fieldName = field.getAnnotation(IFernflowerPreferences.ShortName.class).value();
+                    String fieldName = field.isAnnotationPresent(IFernflowerPreferences.ShortName.class) ? field.getAnnotation(IFernflowerPreferences.ShortName.class).value() : ((String)field.get(null)).replace('-', '_');
                     String description = field.getAnnotation(IFernflowerPreferences.Description.class).value();
-                    String type = field.getAnnotation(IFernflowerPreferences.Type.class).value();
-                    Object o = defaults.get((String)field.get(null));
+                    DecompilerOption.Type type = field.isAnnotationPresent(IFernflowerPreferences.Type.class) ? field.getAnnotation(IFernflowerPreferences.Type.class).value() : null;
+                    Object defaultValue = defaults.get((String)field.get(null));
+                    String extra = null;
 
-                    if (o != null) {
-                        if ("bool".equals(type)){
-                            if ("1".equals(o)) {
-                                o = Boolean.TRUE;
-                            } else if ("0".equals(o)) {
-                                o = Boolean.FALSE;
-                            }
-                        } else if ("string".equals(type)){
-                            if ("log".equals(fieldName))
-                                o = IFernflowerLogger.Severity.INFO;
-                            else o = String.valueOf(o);
-                        } else if ("int".equals(type)){
-                            o = Integer.parseInt(String.valueOf(o));
+                    if (defaultValue != null) {
+                        if ("mcs".equals(fieldName)) {
+                            type = DecompilerOption.Type.BOOLEAN;
+                            extra = " not auto, might be fixed at https://github.com/Vineflower/vineflower/pull/443 or other operate, now we just human-bot";
                         }
-                        System.out.println(buildConfig(fieldName, name, description, o));
+                        if (type == DecompilerOption.Type.BOOLEAN) {
+                            if ("1".equals(defaultValue)) {
+                                defaultValue = Boolean.TRUE;
+                            } else if ("0".equals(defaultValue)) {
+                                defaultValue = Boolean.FALSE;
+                            }
+                        }
+                        else if (DecompilerOption.Type.STRING == type){
+                            if ("log".equals(fieldName))
+                                defaultValue = IFernflowerLogger.Severity.INFO;
+                            else defaultValue = String.valueOf(defaultValue);
+                        } else if (DecompilerOption.Type.INTEGER == type){
+                            defaultValue = Integer.parseInt(String.valueOf(defaultValue));
+                        }
+                        System.out.println(buildConfig(fieldName, name, description, defaultValue));
                     }
                 }catch (Throwable e){
-                    e.printStackTrace();
+                    Logger.error(e);
                 }
             }
         }
     }
-
     public static String buildConfig(String fieldName, String name, String desc, Object defaultValue){
+        return buildConfig(fieldName, name, desc, defaultValue, null);
+    }
+
+    public static String buildConfig(String fieldName, String name, String desc, Object defaultValue, String extra){
+        desc = desc.replace('\"', '\'');
+
         String type = null;
         if (defaultValue instanceof Boolean) {
             type = "EnableValue";
@@ -106,6 +119,10 @@ public class GenerateDecompilerConfigTest {
             stringBuilder.append("EnumSet.allOf(").append(defaultValue.getClass().getSimpleName()).append(".class)");
         }
         stringBuilder.append(");");
+
+        if (extra != null) {
+            stringBuilder.append("  //").append(extra);
+        }
 
         return stringBuilder.toString();
     }

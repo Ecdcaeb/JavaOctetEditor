@@ -49,7 +49,7 @@ public class VineFlowerDecompiler implements IDecompiler{
             } else if (v.equals("false")) {
                 v = "0";
             }
-            hashMap.put(entry.getKey(), v);
+            hashMap.put(entry.getKey().replace('_', '-'), v);
         }
         return Collections.unmodifiableMap(hashMap);});
 
