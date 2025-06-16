@@ -17,7 +17,7 @@
 package cn.enaium.joe.service.decompiler;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.util.CachedGlobalValue;
+import cn.enaium.joe.util.config.util.CachedGlobalValue;
 import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.classes.JarHelper;
 import cn.enaium.joe.util.reflection.FieldAccessor;
@@ -43,7 +43,7 @@ public class ProcyonDecompiler implements IDecompiler {
     public static final CachedGlobalValue<JavaFormattingOptions> cachedFormattingOptions = new CachedGlobalValue<>(config -> {
         JavaFormattingOptions aDefault = JavaFormattingOptions.createDefault();
 
-        JavaOctetEditor.getInstance().config.getConfigMap(config).forEach(
+        JavaOctetEditor.getInstance().CONFIG.getConfigMap(config).forEach(
                 (s, value) -> {
                     try {
                         FieldAccessor<Object, JavaFormattingOptions> f = ReflectionHelper.getFieldAccessor(JavaFormattingOptions.class, value.getName());

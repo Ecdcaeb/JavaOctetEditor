@@ -7,6 +7,7 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.util.TraceClassVisitor;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,9 @@ public interface ClassNode {
     }
     default String getCanonicalName(){
         return this.getNodeInternal().name.replace('/', '.');
+    }
+    default ClassNode copy() {
+        return ClassNode.of(this.getClassBytes());
     }
     byte[] getClassBytes();
     org.objectweb.asm.tree.ClassNode getClassNode();
@@ -116,6 +120,16 @@ public interface ClassNode {
         final String canonicalName = internalName.replace('/', '.');
 
         return new Impl(internalName, canonicalName, bytes, classNode);
+    }
+
+    static ClassNode of(final String internalName) {
+        org.objectweb.asm.tree.ClassNode classNode = new org.objectweb.asm.tree.ClassNode();
+        try {
+            new ClassReader(internalName).accept(classNode, 0);
+        } catch (IOException e) {
+            return null;
+        }
+        return of(classNode);
     }
 
     class Impl implements ClassNode{

@@ -17,16 +17,14 @@
 package cn.enaium.joe.gui.panel.menu.file;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.ApplicationConfig;
-import cn.enaium.joe.task.InputJarTask;
+import cn.enaium.joe.util.config.extend.ApplicationConfig;
+import cn.enaium.joe.util.task.tasks.InputJarTask;
 import cn.enaium.joe.util.LangUtil;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Set;
 
@@ -41,14 +39,14 @@ public class LoadRecentMenu extends JMenu {
             @Override
             public void menuSelected(MenuEvent e) {
                 removeAll();
-                Set<String> loadRecent = JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).loadRecent.getValue();
+                Set<String> loadRecent = JavaOctetEditor.getInstance().CONFIG.getByClass(ApplicationConfig.class).loadRecent.getValue();
                 for (String s : loadRecent) {
                     add(new JMenuItem(s) {{
                         setIcon(new FlatSVGIcon("icons/jar.svg"));
                         addActionListener(e -> {
                             File file = new File(s);
                             if (file.exists()) {
-                                JavaOctetEditor.getInstance().task.submit(new InputJarTask(file));
+                                JavaOctetEditor.getInstance().TASKS.submit(new InputJarTask(file));
                             } else {
                                 loadRecent.remove(s);
                             }

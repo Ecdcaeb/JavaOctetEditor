@@ -16,8 +16,6 @@
 
 package cn.enaium.joe.gui.panel.instruction;
 
-import cn.enaium.joe.util.OpcodeUtil;
-import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 
 import java.lang.reflect.Field;

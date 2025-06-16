@@ -24,6 +24,6 @@ import java.util.List;
  */
 public class ListUtil {
     public static Class<?> getType(List<Object> list) {
-        return list.get(0).getClass();
+        return list.getFirst().getClass();
     }
 }

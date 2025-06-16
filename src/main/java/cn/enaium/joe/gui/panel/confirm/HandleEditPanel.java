@@ -16,8 +16,8 @@
 
 package cn.enaium.joe.gui.panel.confirm;
 
-import cn.enaium.joe.util.OpcodeUtil;
-import cn.enaium.joe.wrapper.Wrapper;
+import cn.enaium.joe.util.asm.OpcodeUtil;
+import cn.enaium.joe.util.wrapper.Wrapper;
 import org.objectweb.asm.Handle;
 
 import javax.swing.*;

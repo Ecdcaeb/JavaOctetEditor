@@ -20,11 +20,7 @@ import cn.enaium.joe.gui.component.LabelNodeComboBox;
 import cn.enaium.joe.gui.panel.confirm.LookupSwitchEditPanel;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
-import cn.enaium.joe.util.OpcodeUtil;
-import cn.enaium.joe.wrapper.LabelNodeWrapper;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.LabelNode;
+import cn.enaium.joe.util.wrapper.LabelNodeWrapper;
 import org.objectweb.asm.tree.LookupSwitchInsnNode;
 
 import javax.swing.*;

@@ -3,9 +3,9 @@ package cn.enaium.joe.dialog.search;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.dialog.SearchDialog;
 import cn.enaium.joe.gui.panel.search.ResultNode;
-import cn.enaium.joe.task.SearchOpcodeTask;
+import cn.enaium.joe.util.task.tasks.SearchOpcodeTask;
 import cn.enaium.joe.util.LangUtil;
-import cn.enaium.joe.util.OpcodeUtil;
+import cn.enaium.joe.util.asm.OpcodeUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +20,7 @@ public class SearchInstructionDialog extends SearchDialog {
                 addActionListener(e -> {
                     if (opcodeBox.getSelectedItem() != null) {
                         ((DefaultListModel<ResultNode>) resultList.getModel()).clear();
-                        JavaOctetEditor.getInstance().task
+                        JavaOctetEditor.getInstance().TASKS
                                 .submit(new SearchOpcodeTask(JavaOctetEditor.getInstance().getJar(), (String) opcodeBox.getSelectedItem()))
                                 .thenAccept(it -> {
                                     ((DefaultListModel<ResultNode>) resultList.getModel()).clear();

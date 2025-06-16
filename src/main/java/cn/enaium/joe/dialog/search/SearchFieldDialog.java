@@ -19,7 +19,7 @@ package cn.enaium.joe.dialog.search;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.dialog.SearchDialog;
 import cn.enaium.joe.gui.panel.search.ResultNode;
-import cn.enaium.joe.task.SearchFieldTask;
+import cn.enaium.joe.util.task.tasks.SearchFieldTask;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.StringUtil;
@@ -63,7 +63,7 @@ public class SearchFieldDialog extends SearchDialog {
 
                     ((DefaultListModel<ResultNode>) resultList.getModel()).clear();
 
-                    JavaOctetEditor.getInstance().task
+                    JavaOctetEditor.getInstance().TASKS
                             .submit(new SearchFieldTask(JavaOctetEditor.getInstance().getJar(), owner.getText(), name.getText(), description.getText()))
                             .thenAccept(it -> {
                                 for (ResultNode resultNode : it) {

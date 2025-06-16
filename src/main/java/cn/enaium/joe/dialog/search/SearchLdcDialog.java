@@ -19,7 +19,7 @@ package cn.enaium.joe.dialog.search;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.dialog.SearchDialog;
 import cn.enaium.joe.gui.panel.search.ResultNode;
-import cn.enaium.joe.task.SearchLdcTask;
+import cn.enaium.joe.util.task.tasks.SearchLdcTask;
 import cn.enaium.joe.util.LangUtil;
 import org.objectweb.asm.tree.LdcInsnNode;
 
@@ -42,7 +42,7 @@ public class SearchLdcDialog extends SearchDialog {
                 addActionListener(e -> {
                     if (!text.getText().isEmpty()) {
                         ((DefaultListModel<ResultNode>) resultList.getModel()).clear();
-                        JavaOctetEditor.getInstance().task
+                        JavaOctetEditor.getInstance().TASKS
                                 .submit(new SearchLdcTask(JavaOctetEditor.getInstance().getJar(), text.getText()))
                                 .thenAccept(it -> {
                                     ((DefaultListModel<ResultNode>) resultList.getModel()).clear();

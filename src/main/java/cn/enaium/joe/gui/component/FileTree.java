@@ -17,7 +17,7 @@
 package cn.enaium.joe.gui.component;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.ApplicationConfig;
+import cn.enaium.joe.util.config.extend.ApplicationConfig;
 import cn.enaium.joe.gui.panel.file.tabbed.tab.classes.ClassTabPanel;
 import cn.enaium.joe.gui.panel.file.tabbed.tab.resources.FileTablePane;
 import cn.enaium.joe.gui.panel.file.tree.FileTreeCellRenderer;
@@ -72,7 +72,7 @@ public class FileTree extends JTree {
                 }
             }
         });
-        KeyStrokeUtil.register(this, JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).keymap.getValue().copy.getValue(), this::copyFile);
+        KeyStrokeUtil.register(this, JavaOctetEditor.getInstance().CONFIG.getByClass(ApplicationConfig.class).keymap.getValue().copy.getValue(), this::copyFile);
 
         JPopupMenu jPopupMenu = new JPopupMenu();
 
@@ -154,7 +154,7 @@ public class FileTree extends JTree {
         classesRoot.removeAllChildren();
         resourceRoot.removeAllChildren();
 
-        ApplicationConfig config = JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class);
+        ApplicationConfig config = JavaOctetEditor.getInstance().CONFIG.getByClass(ApplicationConfig.class);
 
 
         PackagePresentation packagePresentationValue = config.packagePresentation.getValue();
@@ -162,7 +162,7 @@ public class FileTree extends JTree {
         if (packagePresentationValue == PackagePresentation.HIERARCHICAL) {
             Map<String, DefaultTreeNode> hasMap = new HashMap<>();
 
-            for (ClassNode classNode : jar.classes.values()) {
+            for (ClassNode classNode : jar.getClasses()) {
                 String[] split = classNode.getInternalName().split("/");
                 DefaultTreeNode prev = null;
                 StringBuilder stringBuilder = new StringBuilder();
@@ -200,7 +200,7 @@ public class FileTree extends JTree {
 
             hasMap.clear();
 
-            for (Map.Entry<String, byte[]> stringEntry : jar.resources.entrySet()) {
+            for (Map.Entry<String, byte[]> stringEntry : jar.getResources().entrySet()) {
                 String[] split = stringEntry.getKey().split("/");
                 DefaultTreeNode prev = null;
                 StringBuilder stringBuilder = new StringBuilder();
@@ -237,7 +237,7 @@ public class FileTree extends JTree {
             sort(model, resourceRoot);
         } else if (packagePresentationValue == PackagePresentation.FLAT) {
             Map<String, DefaultTreeNode> hasMap = new HashMap<>();
-            for (ClassNode value : jar.classes.values()) {
+            for (ClassNode value : jar.getClasses()) {
                 String packageName = "";
                 if (value.getInternalName().contains("/")) {
                     packageName = value.getCanonicalPackageName();
@@ -261,7 +261,7 @@ public class FileTree extends JTree {
             }
             hasMap.clear();
 
-            for (Map.Entry<String, byte[]> stringEntry : jar.resources.entrySet()) {
+            for (Map.Entry<String, byte[]> stringEntry : jar.getResources().entrySet()) {
                 String folderName = "";
                 String name = stringEntry.getKey();
                 if (stringEntry.getKey().contains("/")) {
@@ -295,7 +295,7 @@ public class FileTree extends JTree {
 
     public void compact(DefaultTreeModel defaultTreeModel, DefaultTreeNode defaultTreeNode) {
 
-        if (!JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).compactMiddlePackage.getValue()) {
+        if (!JavaOctetEditor.getInstance().CONFIG.getByClass(ApplicationConfig.class).compactMiddlePackage.getValue()) {
             return;
         }
 

@@ -17,15 +17,15 @@
 package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.ApplicationConfig;
+import cn.enaium.joe.util.config.extend.ApplicationConfig;
 import cn.enaium.joe.util.KeyStrokeUtil;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.compiler.Compiler;
-import cn.enaium.joe.event.events.EditSaveSuccessEvent;
+import cn.enaium.joe.util.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
-import cn.enaium.joe.task.DecompileTask;
+import cn.enaium.joe.util.task.tasks.DecompileTask;
 
 import java.awt.*;
 import java.io.StringWriter;
@@ -39,7 +39,7 @@ public class DecompileTabPanel extends ClassNodeTabPanel {
         super(classNode);
         setLayout(new BorderLayout());
         CodeAreaPanel codeAreaPanel = this.codeAreaPanel = new CodeAreaPanel() {{
-            KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).keymap.getValue().save.getValue(), () -> {
+            KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().CONFIG.getByClass(ApplicationConfig.class).keymap.getValue().save.getValue(), () -> {
                 if (ClassTabPanel.classTabIndex == 1) {
                     try {
                         StringWriter tracer = new StringWriter();
@@ -63,7 +63,7 @@ public class DecompileTabPanel extends ClassNodeTabPanel {
     }
 
     public void update(){
-        JavaOctetEditor.getInstance().task.submit(new DecompileTask(this.getClassNode())).thenAccept(it -> {
+        JavaOctetEditor.getInstance().TASKS.submit(new DecompileTask(this.getClassNode())).thenAccept(it -> {
             codeAreaPanel.getTextArea().setText(it);
         });
     }

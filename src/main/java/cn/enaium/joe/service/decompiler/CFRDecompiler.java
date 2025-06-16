@@ -17,7 +17,7 @@
 package cn.enaium.joe.service.decompiler;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.util.CachedGlobalValue;
+import cn.enaium.joe.util.config.util.CachedGlobalValue;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.classes.JarHelper;
@@ -43,7 +43,7 @@ import java.util.HashMap;
  */
 public class CFRDecompiler implements IDecompiler {
 
-    public static final CachedGlobalValue<Options> options = new CachedGlobalValue<>(config -> OptionsImpl.getFactory().create(JavaOctetEditor.getInstance().config.getConfigMapStrings(config)));
+    public static final CachedGlobalValue<Options> options = new CachedGlobalValue<>(config -> OptionsImpl.getFactory().create(JavaOctetEditor.getInstance().CONFIG.getConfigMapStrings(config)));
 
     public HashMap<String, ClassNode> activeNodes;
     @Override
@@ -56,8 +56,8 @@ public class CFRDecompiler implements IDecompiler {
                 if (activeNodes.containsKey(name)) {
                     return Pair.make(activeNodes.get(name).getClassBytes(), name);
                 } else {
-                    if (JavaOctetEditor.getInstance().getJar().classes.get(path) != null) {
-                        return Pair.make(JavaOctetEditor.getInstance().getJar().classes.get(path).getClassBytes(), name);
+                    if (JavaOctetEditor.getInstance().getJar().hasClass(name)) {
+                        return Pair.make(JavaOctetEditor.getInstance().getJar().getClassNode(name).getClassBytes(), name);
                     }
                 }
                 return null;

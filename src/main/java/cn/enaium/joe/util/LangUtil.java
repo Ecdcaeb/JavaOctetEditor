@@ -16,7 +16,7 @@
 
 package cn.enaium.joe.util;
 
-import cn.enaium.joe.config.util.CachedConfigValue;
+import cn.enaium.joe.util.config.util.CachedConfigValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.pmw.tinylog.Logger;

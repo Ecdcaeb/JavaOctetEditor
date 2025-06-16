@@ -18,7 +18,6 @@ package cn.enaium.joe.util.compiler;
 
 import cn.enaium.joe.Main;
 import cn.enaium.joe.util.Util;
-import cn.enaium.joe.util.compiler.environment.RecompileEnvironment;
 import cn.enaium.joe.util.compiler.virtual.MemoryClassLoader;
 import cn.enaium.joe.util.compiler.virtual.VirtualFileManager;
 import cn.enaium.joe.util.compiler.virtual.VirtualJavaFileObject;
@@ -71,7 +70,7 @@ public class Compiler {
     }
 
     public CompileError compile() {
-        MemoryClassLoader memoryClassLoader = new MemoryClassLoader(Main.classLoader, RecompileEnvironment.getEnvironment());
+        MemoryClassLoader memoryClassLoader = new MemoryClassLoader(Main.classLoader, null);
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager standardJavaFileManager = compiler.getStandardFileManager(null, null, StandardCharsets.UTF_8);
         VirtualFileManager fileManager = new VirtualFileManager(standardJavaFileManager, this.javaFileObjectMap, memoryClassLoader);

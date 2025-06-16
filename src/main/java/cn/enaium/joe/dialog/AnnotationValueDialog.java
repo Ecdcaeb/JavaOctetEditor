@@ -22,7 +22,7 @@ import cn.enaium.joe.util.JMenuUtil;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.ListUtil;
 import cn.enaium.joe.util.MessageUtil;
-import cn.enaium.joe.wrapper.ObjectWrapper;
+import cn.enaium.joe.util.wrapper.ObjectWrapper;
 import org.objectweb.asm.tree.AnnotationNode;
 
 import javax.swing.*;

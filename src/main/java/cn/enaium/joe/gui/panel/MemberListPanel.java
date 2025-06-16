@@ -22,11 +22,11 @@ import cn.enaium.joe.dialog.FieldDialog;
 import cn.enaium.joe.dialog.MethodDialog;
 import cn.enaium.joe.dialog.search.SearchFieldDialog;
 import cn.enaium.joe.dialog.search.SearchMethodDialog;
-import cn.enaium.joe.event.events.FileTabbedSelectEvent;
+import cn.enaium.joe.util.event.events.FileTabbedSelectEvent;
 import cn.enaium.joe.gui.panel.file.tabbed.tab.classes.ClassTabPanel;
 import cn.enaium.joe.util.JMenuUtil;
 import cn.enaium.joe.util.LangUtil;
-import cn.enaium.joe.util.OpcodeUtil;
+import cn.enaium.joe.util.asm.OpcodeUtil;
 import cn.enaium.joe.util.Pair;
 import cn.enaium.joe.util.classes.ClassNode;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -94,7 +94,7 @@ public class MemberListPanel extends BorderPanel {
             add(new JLabel(name));
         }});
 
-        JavaOctetEditor.getInstance().event.register(FileTabbedSelectEvent.class, event -> {
+        JavaOctetEditor.getInstance().EVENTS.register(FileTabbedSelectEvent.class, event -> {
             if (event.getSelect() instanceof ClassTabPanel) {
                 ClassTabPanel select = (ClassTabPanel) event.getSelect();
                 ClassNode classNode = select.classNode;

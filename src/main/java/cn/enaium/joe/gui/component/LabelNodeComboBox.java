@@ -16,8 +16,8 @@
 
 package cn.enaium.joe.gui.component;
 
-import cn.enaium.joe.util.OpcodeUtil;
-import cn.enaium.joe.wrapper.LabelNodeWrapper;
+import cn.enaium.joe.util.asm.OpcodeUtil;
+import cn.enaium.joe.util.wrapper.LabelNodeWrapper;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 

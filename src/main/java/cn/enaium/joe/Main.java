@@ -63,7 +63,7 @@ public final class Main {
                 continue;
             }
 
-            jar.classes.put(allLoadedClass.getName(), ClassNode.of(IOUtil.getBytes(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".class")))));
+            jar.putClassNode(ClassNode.of(IOUtil.getBytes(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".class")))));
         }
         JavaOctetEditor.getInstance().setJar(jar);
     }

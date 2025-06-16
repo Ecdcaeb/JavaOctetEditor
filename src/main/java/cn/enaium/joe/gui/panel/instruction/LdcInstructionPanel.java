@@ -19,17 +19,14 @@ package cn.enaium.joe.gui.panel.instruction;
 import cn.enaium.joe.gui.panel.confirm.HandleEditPanel;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
-import cn.enaium.joe.wrapper.Wrapper;
+import cn.enaium.joe.util.wrapper.Wrapper;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;

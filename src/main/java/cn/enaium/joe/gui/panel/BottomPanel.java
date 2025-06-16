@@ -19,7 +19,7 @@ package cn.enaium.joe.gui.panel;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.annotation.Indeterminate;
 import cn.enaium.joe.gui.panel.popup.TaskListPopup;
-import cn.enaium.joe.task.AbstractTask;
+import cn.enaium.joe.util.task.AbstractTask;
 import cn.enaium.joe.util.Pair;
 
 import javax.swing.*;
@@ -59,7 +59,7 @@ public class BottomPanel extends JPanel {
 
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
         scheduledExecutorService.scheduleAtFixedRate(() -> {
-            List<Pair<AbstractTask<?>, CompletableFuture<?>>> task = JavaOctetEditor.getInstance().task.getTask();
+            List<Pair<AbstractTask<?>, CompletableFuture<?>>> task = JavaOctetEditor.getInstance().TASKS.getTask();
             if (task.isEmpty()) {
                 SwingUtilities.invokeLater(() -> {
                     jProgressBar.setValue(0);

@@ -20,15 +20,14 @@ import cn.enaium.joe.gui.component.LabelNodeComboBox;
 import cn.enaium.joe.gui.panel.confirm.LabelListEditPanel;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
-import cn.enaium.joe.util.OpcodeUtil;
-import cn.enaium.joe.wrapper.LabelNodeWrapper;
+import cn.enaium.joe.util.asm.OpcodeUtil;
+import cn.enaium.joe.util.wrapper.LabelNodeWrapper;
 import org.benf.cfr.reader.util.StringUtils;
 import org.objectweb.asm.tree.*;
 
 import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Enaium

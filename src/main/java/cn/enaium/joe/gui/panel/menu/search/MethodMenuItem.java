@@ -17,7 +17,6 @@
 package cn.enaium.joe.gui.panel.menu.search;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.dialog.search.SearchFieldDialog;
 import cn.enaium.joe.dialog.search.SearchMethodDialog;
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.LangUtil;

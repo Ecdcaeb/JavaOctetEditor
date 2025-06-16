@@ -19,7 +19,6 @@ package cn.enaium.joe.gui.panel.confirm;
 import cn.enaium.joe.gui.panel.instruction.*;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
-import cn.enaium.joe.util.OpcodeUtil;
 import org.objectweb.asm.tree.*;
 
 import java.awt.*;

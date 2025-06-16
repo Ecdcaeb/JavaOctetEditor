@@ -35,10 +35,10 @@ public class FileTreeNode extends FolderTreeNode {
     }
 
     public byte[] getData() {
-        return JavaOctetEditor.getInstance().getJar().resources.get(file);
+        return JavaOctetEditor.getInstance().getJar().getResource(file);
     }
 
     public void setData(byte[] data) {
-        JavaOctetEditor.getInstance().getJar().resources.put(file, data);
+        JavaOctetEditor.getInstance().getJar().putResource(file, data);
     }
 }

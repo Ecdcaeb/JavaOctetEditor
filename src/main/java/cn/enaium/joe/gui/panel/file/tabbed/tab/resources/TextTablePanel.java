@@ -17,7 +17,7 @@
 package cn.enaium.joe.gui.panel.file.tabbed.tab.resources;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.ApplicationConfig;
+import cn.enaium.joe.util.config.extend.ApplicationConfig;
 import cn.enaium.joe.gui.panel.BorderPanel;
 import cn.enaium.joe.gui.panel.CodeAreaPanel;
 import cn.enaium.joe.gui.panel.file.tree.node.FileTreeNode;
@@ -51,7 +51,7 @@ public class TextTablePanel extends BorderPanel {
             getTextArea().setSyntaxEditingStyle(syntax);
             getTextArea().setText(new String(fileTreeNode.getData(), StandardCharsets.UTF_8));
 
-            KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).keymap.getValue().save.getValue(), () -> {
+            KeyStrokeUtil.register(getTextArea(), JavaOctetEditor.getInstance().CONFIG.getByClass(ApplicationConfig.class).keymap.getValue().save.getValue(), () -> {
                 fileTreeNode.setData(getTextArea().getText().getBytes(StandardCharsets.UTF_8));
                 MessageUtil.info(LangUtil.i18n("success"));
             });

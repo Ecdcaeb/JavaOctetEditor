@@ -16,8 +16,8 @@
 
 package cn.enaium.joe.gui.panel.confirm;
 
-import cn.enaium.joe.util.ASMUtil;
-import cn.enaium.joe.wrapper.ObjectWrapper;
+import cn.enaium.joe.util.asm.ASMUtil;
+import cn.enaium.joe.util.wrapper.ObjectWrapper;
 
 import javax.swing.*;
 import java.awt.*;

@@ -18,15 +18,11 @@ package cn.enaium.joe.gui.panel.instruction;
 
 import cn.enaium.joe.gui.component.LabelNodeComboBox;
 import cn.enaium.joe.util.LangUtil;
-import cn.enaium.joe.util.OpcodeUtil;
-import cn.enaium.joe.wrapper.LabelNodeWrapper;
+import cn.enaium.joe.util.wrapper.LabelNodeWrapper;
 import org.objectweb.asm.tree.*;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Enaium

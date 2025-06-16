@@ -18,7 +18,7 @@ package cn.enaium.joe.gui.panel.menu.file;
 
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.jar.Jar;
-import cn.enaium.joe.task.OutputJarTask;
+import cn.enaium.joe.util.task.tasks.OutputJarTask;
 import cn.enaium.joe.util.JFileChooserUtil;
 import cn.enaium.joe.util.LangUtil;
 
@@ -38,7 +38,7 @@ public class SaveMenuItem extends JMenuItem {
             }
             File show = JFileChooserUtil.show(JFileChooserUtil.Type.SAVE);
             if (show != null) {
-                JavaOctetEditor.getInstance().task.submit(new OutputJarTask(jar, show));
+                JavaOctetEditor.getInstance().TASKS.submit(new OutputJarTask(jar, show));
             }
         });
     }

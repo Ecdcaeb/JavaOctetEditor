@@ -20,6 +20,7 @@ import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.gui.panel.BorderPanel;
 import cn.enaium.joe.gui.panel.MemberListPanel;
 import cn.enaium.joe.gui.panel.file.tree.node.MethodTreeNode;
+import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.JMenuUtil;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.Pair;
@@ -74,10 +75,9 @@ public class CallTreeDialog extends Dialog {
         for (AbstractInsnNode instruction : methodNode.instructions) {
             if (instruction instanceof MethodInsnNode methodInsnNode) {
                 if (!(methodTreeNode.classNode.getInternalName() + "." + methodNode.name + methodNode.desc).equals(methodInsnNode.owner + "." + methodInsnNode.name + methodInsnNode.desc)) {
-                    Map<String, ClassNode> classes = JavaOctetEditor.getInstance().getJar().classes;
-                    String key = methodInsnNode.owner + ".class";
-                    if (classes.containsKey(key)) {
-                        ClassNode classNode = classes.get(key);
+                    Jar jar = JavaOctetEditor.getInstance().getJar();
+                    if (jar.hasClass(methodInsnNode.owner)) {
+                        ClassNode classNode = jar.getClassNode(methodInsnNode.owner);
                         //Find target method
                         for (MethodNode method : classNode.getMethods()) {
                             if ((classNode.getInternalName() + "." + method.name + method.desc).equals(methodInsnNode.owner + "." + methodInsnNode.name + methodInsnNode.desc)) {

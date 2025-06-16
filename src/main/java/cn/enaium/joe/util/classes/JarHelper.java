@@ -14,7 +14,7 @@ public class JarHelper {
         HashMap<String, ClassNode> classNodes = new HashMap<>();
         classNodes.put(classNode.getInternalName(), classNode);
         for(String clazz : classNode.getInnerClassesInternalName()){
-            ClassNode cn = jar.classes.get(clazz + ".class");
+            ClassNode cn = jar.getClassNode(clazz);
             if (cn != null) {
                 classNodes.put(cn.getInternalName(), cn);
             }

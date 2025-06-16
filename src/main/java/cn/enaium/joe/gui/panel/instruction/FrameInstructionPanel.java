@@ -19,9 +19,8 @@ package cn.enaium.joe.gui.panel.instruction;
 import cn.enaium.joe.gui.panel.confirm.FrameListEditPanel;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
-import cn.enaium.joe.util.OpcodeUtil;
+import cn.enaium.joe.util.asm.OpcodeUtil;
 import org.objectweb.asm.tree.FrameNode;
-import org.objectweb.asm.tree.InsnList;
 
 import javax.swing.*;
 import java.util.List;

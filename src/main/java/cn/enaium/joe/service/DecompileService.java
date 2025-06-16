@@ -17,7 +17,7 @@
 package cn.enaium.joe.service;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.ApplicationConfig;
+import cn.enaium.joe.util.config.extend.ApplicationConfig;
 import cn.enaium.joe.service.decompiler.IDecompiler;
 import cn.enaium.joe.service.decompiler.VineFlowerDecompiler;
 import cn.enaium.joe.service.decompiler.CFRDecompiler;
@@ -48,6 +48,6 @@ public class DecompileService {
 
 
     public static IDecompiler getService() {
-        return JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).decompilerMode.getValue().getDecompiler();
+        return JavaOctetEditor.getInstance().CONFIG.getByClass(ApplicationConfig.class).decompilerMode.getValue().getDecompiler();
     }
 }

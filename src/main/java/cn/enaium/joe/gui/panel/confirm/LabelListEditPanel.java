@@ -18,8 +18,7 @@ package cn.enaium.joe.gui.panel.confirm;
 
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
-import cn.enaium.joe.wrapper.LabelNodeWrapper;
-import cn.enaium.joe.wrapper.Wrapper;
+import cn.enaium.joe.util.wrapper.LabelNodeWrapper;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LabelNode;

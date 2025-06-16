@@ -17,16 +17,16 @@
 package cn.enaium.joe.gui.panel.method;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.config.extend.ApplicationConfig;
+import cn.enaium.joe.util.asm.OpcodeUtil;
+import cn.enaium.joe.util.config.extend.ApplicationConfig;
 import cn.enaium.joe.dialog.search.SearchFieldDialog;
-import cn.enaium.joe.dialog.search.SearchInstructionDialog;
 import cn.enaium.joe.dialog.search.SearchLdcDialog;
 import cn.enaium.joe.dialog.search.SearchMethodDialog;
 import cn.enaium.joe.gui.component.InstructionComboBox;
 import cn.enaium.joe.gui.panel.confirm.InstructionEditPanel;
 import cn.enaium.joe.util.Util;
 import cn.enaium.joe.util.*;
-import cn.enaium.joe.wrapper.InstructionWrapper;
+import cn.enaium.joe.util.wrapper.InstructionWrapper;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -61,7 +61,7 @@ public class MethodInstructionPanel extends JPanel {
         }
 
         JPopupMenu jPopupMenu = new JPopupMenu();
-        ApplicationConfig.KeymapConfig keymapConfig = JavaOctetEditor.getInstance().config.getByClass(ApplicationConfig.class).keymap.getValue();
+        ApplicationConfig.KeymapConfig keymapConfig = JavaOctetEditor.getInstance().CONFIG.getByClass(ApplicationConfig.class).keymap.getValue();
 
         addItem(instructionJList, jPopupMenu, LangUtil.i18n("popup.instructions.edit"), () -> {
             InstructionWrapper selectedValue = instructionJList.getSelectedValue();

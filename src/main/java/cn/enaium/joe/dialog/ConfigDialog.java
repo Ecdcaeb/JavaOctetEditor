@@ -17,18 +17,15 @@
 package cn.enaium.joe.dialog;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.annotation.NoUI;
-import cn.enaium.joe.config.Config;
-import cn.enaium.joe.config.value.*;
+import cn.enaium.joe.util.config.NoUI;
+import cn.enaium.joe.util.config.Config;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.Util;
+import cn.enaium.joe.util.config.value.Value;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
 import java.awt.event.*;
 import java.lang.reflect.Field;
 
@@ -58,7 +55,7 @@ public class ConfigDialog extends Dialog {
                             setToolTipText(value.getDescription());
                         }});
 
-                        add(JavaOctetEditor.getInstance().config.createGuiComponent(value), "wrap");
+                        add(JavaOctetEditor.getInstance().CONFIG.createGuiComponent(value), "wrap");
                     }
                 }
             } catch (IllegalAccessException e) {
@@ -70,7 +67,7 @@ public class ConfigDialog extends Dialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                JavaOctetEditor.getInstance().config.save();
+                JavaOctetEditor.getInstance().CONFIG.save();
             }
         });
     }

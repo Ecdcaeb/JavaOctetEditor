@@ -17,7 +17,7 @@
 package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.event.events.EditSaveSuccessEvent;
+import cn.enaium.joe.util.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.classes.ClassNode;
 
@@ -47,7 +47,7 @@ public class ClassTabPanel extends JPanel {
         JTabbedPane jTabbedPane = new JTabbedPane();
         jTabbedPane.setTabPlacement(JTabbedPane.BOTTOM);
         jTabbedPane.addTab(LangUtil.i18n("class.tab.bytecodeView"), traceBytecodeTabPanel = new TraceBytecodeTabPanel(classNode));
-        jTabbedPane.addTab(LangUtil.i18n("class.tab.decompileEdit"), decompileTabPanel = new DecompileTabPanel(classNode));
+        jTabbedPane.addTab(LangUtil.i18n("class.tab.decompileView"), decompileTabPanel = new DecompileTabPanel(classNode));
         jTabbedPane.addTab(LangUtil.i18n("class.tab.visitorEdit"), asmTablePanel = new ASMifierTablePanel(classNode));
         jTabbedPane.addTab(LangUtil.i18n("class.tab.infoEdit"), classInfoTabPanel = new ClassInfoTabPanel(classNode));
         jTabbedPane.setSelectedIndex(classTabIndex);
@@ -71,7 +71,7 @@ public class ClassTabPanel extends JPanel {
     }
 
     static {
-        JavaOctetEditor.getInstance().event.register(EditSaveSuccessEvent.class, event -> {
+        JavaOctetEditor.getInstance().EVENTS.register(EditSaveSuccessEvent.class, event -> {
             if (internalName2panel.containsKey(event.classInternalName())){
                 ClassTabPanel panel = internalName2panel.get(event.classInternalName());
                 if (panel != null){

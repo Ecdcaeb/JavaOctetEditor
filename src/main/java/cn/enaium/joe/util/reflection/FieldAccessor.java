@@ -3,9 +3,7 @@ package cn.enaium.joe.util.reflection;
 import java.lang.reflect.Field;
 
 @SuppressWarnings("all")
-public class FieldAccessor<T, E> {
-
-    private final Field field;
+public record FieldAccessor<T, E>(Field field) {
 
     public FieldAccessor(Field field){
         field.setAccessible(true);
@@ -26,9 +24,5 @@ public class FieldAccessor<T, E> {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public Field getField() {
-        return field;
     }
 }

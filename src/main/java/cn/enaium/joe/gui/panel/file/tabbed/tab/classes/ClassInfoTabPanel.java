@@ -18,7 +18,7 @@ package cn.enaium.joe.gui.panel.file.tabbed.tab.classes;
 
 
 import cn.enaium.joe.dialog.AnnotationListDialog;
-import cn.enaium.joe.event.events.EditSaveSuccessEvent;
+import cn.enaium.joe.util.event.events.EditSaveSuccessEvent;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.StringUtil;
 import cn.enaium.joe.util.classes.ClassNode;

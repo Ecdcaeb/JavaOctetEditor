@@ -17,7 +17,7 @@
 package cn.enaium.joe.gui.panel.popup;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.task.AbstractTask;
+import cn.enaium.joe.util.task.AbstractTask;
 import cn.enaium.joe.util.Pair;
 
 import javax.swing.*;
@@ -45,7 +45,7 @@ public class TaskListPopup extends AbstractPopup {
         scheduledExecutorService.scheduleAtFixedRate(() -> {
             SwingUtilities.invokeLater(() -> {
                 DefaultListModel<AbstractTask<?>> abstractTaskDefaultListModel = new DefaultListModel<>();
-                for (Pair<AbstractTask<?>, CompletableFuture<?>> abstractTaskCompletableFuturePair : JavaOctetEditor.getInstance().task.getTask()) {
+                for (Pair<AbstractTask<?>, CompletableFuture<?>> abstractTaskCompletableFuturePair : JavaOctetEditor.getInstance().TASKS.getTask()) {
                     abstractTaskDefaultListModel.addElement(abstractTaskCompletableFuturePair.getKey());
                 }
                 comp.setModel(abstractTaskDefaultListModel);

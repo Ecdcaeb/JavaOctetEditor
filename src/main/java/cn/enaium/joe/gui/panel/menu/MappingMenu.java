@@ -17,7 +17,7 @@
 package cn.enaium.joe.gui.panel.menu;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.task.RemappingTask;
+import cn.enaium.joe.util.task.tasks.RemappingTask;
 import cn.enaium.joe.util.JFileChooserUtil;
 import cn.enaium.joe.util.LangUtil;
 import net.fabricmc.mappingio.format.MappingFormat;
@@ -48,7 +48,7 @@ public class MappingMenu extends JMenu {
                         }
                     });
                     if (JavaOctetEditor.getInstance().getJar() != null && show != null) {
-                        JavaOctetEditor.getInstance().task.submit(new RemappingTask(show, value));
+                        JavaOctetEditor.getInstance().TASKS.submit(new RemappingTask(show, value));
                     }
                 });
             }});

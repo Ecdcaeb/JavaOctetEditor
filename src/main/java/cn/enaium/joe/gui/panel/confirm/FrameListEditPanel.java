@@ -18,7 +18,7 @@ package cn.enaium.joe.gui.panel.confirm;
 
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
-import cn.enaium.joe.util.OpcodeUtil;
+import cn.enaium.joe.util.asm.OpcodeUtil;
 import cn.enaium.joe.util.StringUtil;
 import org.objectweb.asm.tree.FrameNode;
 

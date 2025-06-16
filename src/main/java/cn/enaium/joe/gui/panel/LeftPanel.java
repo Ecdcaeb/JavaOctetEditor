@@ -20,15 +20,13 @@ import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.JTreeUtil;
 import cn.enaium.joe.util.LangUtil;
+import cn.enaium.joe.util.classes.ClassNode;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author Enaium
@@ -48,26 +46,27 @@ public class LeftPanel extends BorderPanel {
                             Jar jar = JavaOctetEditor.getInstance().getJar();
                             if (jar != null) {
                                 if (!jTextField.getText().replace(" ", "").isEmpty()) {
-                                    Jar searchedJar = jar.copy();
+                                    Jar searchedJar = new Jar();
+                                    String lowCaseSearchText = jTextField.getText().toLowerCase();
 
-                                    searchedJar.classes = searchedJar.classes.entrySet().stream().filter(stringClassNodeEntry -> {
-                                        String key = stringClassNodeEntry.getKey();
-
-                                        if (!key.contains("/")) {
-                                            key = key.substring(key.lastIndexOf("/") + 1);
+                                    for (ClassNode classNode : jar.getClasses()) {
+                                        if (
+                                                jTextField.getText().indexOf('/') > -1 ?
+                                                        classNode.getInternalName().toLowerCase().contains(lowCaseSearchText) :
+                                                        classNode.getCanonicalName().toLowerCase().contains(lowCaseSearchText)
+                                        ) {
+                                            searchedJar.putClassNode(classNode);
                                         }
+                                    }
 
-                                        return key.toLowerCase(Locale.ROOT).contains(jTextField.getText().toLowerCase(Locale.ROOT));
-                                    }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-                                    searchedJar.resources = searchedJar.resources.entrySet().stream().filter(stringEntry -> {
-                                        String key = stringEntry.getKey();
-                                        if (!key.contains("/")) {
-                                            key = key.substring(key.lastIndexOf("/") + 1);
+                                    for (Map.Entry<String, byte[]> entry : jar.getResources().entrySet()) {
+                                        if(entry.getKey().toLowerCase().contains(lowCaseSearchText)) {
+                                            searchedJar.putResource(entry.getKey(), entry.getValue());
                                         }
-                                        return key.toLowerCase(Locale.ROOT).contains(jTextField.getText().toLowerCase(Locale.ROOT));
-                                    }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                                    }
 
                                     JavaOctetEditor.getInstance().fileTree.refresh(searchedJar);
+
                                     JTreeUtil.setTreeExpandedState(JavaOctetEditor.getInstance().fileTree, true);
                                 } else {
                                     JavaOctetEditor.getInstance().fileTree.refresh(jar);

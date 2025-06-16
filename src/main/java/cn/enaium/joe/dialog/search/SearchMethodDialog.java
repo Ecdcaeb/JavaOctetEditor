@@ -19,9 +19,7 @@ package cn.enaium.joe.dialog.search;
 import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.dialog.SearchDialog;
 import cn.enaium.joe.gui.panel.search.ResultNode;
-import cn.enaium.joe.task.SearchFieldTask;
-import cn.enaium.joe.task.SearchMethodTask;
-import cn.enaium.joe.util.ASyncUtil;
+import cn.enaium.joe.util.task.tasks.SearchMethodTask;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.StringUtil;
@@ -66,7 +64,7 @@ public class SearchMethodDialog extends SearchDialog {
                     }
 
 
-                    JavaOctetEditor.getInstance().task
+                    JavaOctetEditor.getInstance().TASKS
                             .submit(new SearchMethodTask(JavaOctetEditor.getInstance().getJar(), owner.getText(), name.getText(), description.getText(), anInterface.isSelected()))
                             .thenAccept(it -> {
                                 ((DefaultListModel<ResultNode>) resultList.getModel()).clear();
@@ -95,7 +93,7 @@ public class SearchMethodDialog extends SearchDialog {
         this.name.setText(fieldInsnNode.name);
         this.owner.setText(classNode.getInternalName());
         this.desc.setText(fieldInsnNode.desc);
-        JavaOctetEditor.getInstance().task
+        JavaOctetEditor.getInstance().TASKS
                 .submit(new SearchMethodTask(JavaOctetEditor.getInstance().getJar(), owner.getText(), name.getText(), desc.getText()))
                 .thenAccept(it -> {
                     ((DefaultListModel<ResultNode>) resultList.getModel()).clear();

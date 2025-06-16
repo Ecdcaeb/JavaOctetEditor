@@ -17,7 +17,7 @@
 package cn.enaium.joe.gui.panel.file.tabbed;
 
 import cn.enaium.joe.JavaOctetEditor;
-import cn.enaium.joe.event.events.FileTabbedSelectEvent;
+import cn.enaium.joe.util.event.events.FileTabbedSelectEvent;
 import cn.enaium.joe.util.JMenuUtil;
 import cn.enaium.joe.util.LangUtil;
 
@@ -35,7 +35,7 @@ public class FileTabbedPanel extends JTabbedPane {
         putClientProperty("JTabbedPane.tabCloseCallback", (BiConsumer<JTabbedPane, Integer>) JTabbedPane::remove);
         addChangeListener(e -> {
             Component selectedComponent = ((FileTabbedPanel) e.getSource()).getSelectedComponent();
-            JavaOctetEditor.getInstance().event.call(new FileTabbedSelectEvent(selectedComponent));
+            JavaOctetEditor.getInstance().EVENTS.call(new FileTabbedSelectEvent(selectedComponent));
         });
         JMenuUtil.addPopupMenu(this, () -> new JPopupMenu() {{
             add(new JMenuItem(LangUtil.i18n("popup.tabbed.closeAll")) {{
