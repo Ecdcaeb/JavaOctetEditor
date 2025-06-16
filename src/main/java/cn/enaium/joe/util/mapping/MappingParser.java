@@ -65,7 +65,7 @@ public class MappingParser {
             }
 
             @Override
-            public boolean visitMethodVar(int lvtRowIndex, int lvIndex, int startOpIdx, String srcName) throws IOException {
+            public boolean visitMethodVar(int i, int i1, int i2, int i3, String s) throws IOException {
                 return false;
             }
 
@@ -122,7 +122,7 @@ public class MappingParser {
             }
 
             @Override
-            public boolean visitMethodVar(int lvtRowIndex, int lvIndex, int startOpIdx, String srcName) throws IOException {
+            public boolean visitMethodVar(int i, int i1, int i2, int i3, String s) throws IOException {
                 return false;
             }
 
@@ -181,7 +181,7 @@ public class MappingParser {
     }
 
     private static boolean isProGuard(MappingFormat mappingFormat) {
-        return mappingFormat == MappingFormat.PROGUARD;
+        return mappingFormat == MappingFormat.PROGUARD_FILE;
     }
 
     public static MappingFormat isAnyMatched(String name){

@@ -19,7 +19,7 @@ package cn.enaium.joe.util;
 import cn.enaium.joe.dialog.OptionDialog;
 import cn.enaium.joe.gui.panel.BorderPanel;
 import cn.enaium.joe.gui.panel.confirm.ConfirmPanel;
-import org.pmw.tinylog.Logger;
+import org.tinylog.Logger;
 
 import javax.swing.*;
 import java.awt.*;

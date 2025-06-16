@@ -16,7 +16,7 @@
 
 package cn.enaium.joe.util;
 
-import org.pmw.tinylog.Logger;
+import org.tinylog.Logger;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

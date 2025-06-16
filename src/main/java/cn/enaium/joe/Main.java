@@ -20,11 +20,10 @@ import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.*;
 import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.reflection.ReflectionHelper;
-import org.pmw.tinylog.Configurator;
-import org.pmw.tinylog.Logger;
-import org.pmw.tinylog.writers.ConsoleWriter;
-import org.pmw.tinylog.writers.FileWriter;
+import org.tinylog.Logger;
+import org.tinylog.writers.ConsoleWriter;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.InvocationTargetException;
@@ -69,7 +68,6 @@ public final class Main {
     }
 
     private static void launch() {
-        Configurator.currentConfig().writer(new ConsoleWriter(), "[{date: HH:mm:ss.SSS}] {level} > {message}").addWriter(new FileWriter("latest.log"), "[{date: HH:mm:ss.SSS}] {level} > {message}").activate();
         System.setOut(new TinyLogPrintStream(System.out, STDOUT));
         System.setErr(new TinyLogPrintStream(System.err, STDERR));
 

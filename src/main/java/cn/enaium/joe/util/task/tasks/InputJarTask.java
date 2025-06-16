@@ -24,7 +24,7 @@ import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.Util;
 import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.task.AbstractTask;
-import org.pmw.tinylog.Logger;
+import org.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;

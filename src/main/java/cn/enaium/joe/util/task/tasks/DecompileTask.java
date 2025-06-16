@@ -20,7 +20,7 @@ import cn.enaium.joe.service.DecompileService;
 import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.task.AbstractTask;
 import cn.enaium.joe.util.task.Repeatable;
-import org.pmw.tinylog.Logger;
+import org.tinylog.Logger;
 
 /**
  * @author Enaium

@@ -19,7 +19,7 @@ package cn.enaium.joe.util;
 import cn.enaium.joe.util.config.util.CachedConfigValue;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import org.pmw.tinylog.Logger;
+import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;

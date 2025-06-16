@@ -56,7 +56,7 @@ public class RemappingTask extends AbstractTask<Boolean> {
     @Override
     public Boolean get() {
 
-        if (mappingFormat == MappingFormat.ENIGMA) {
+        if (mappingFormat == MappingFormat.ENIGMA_FILE) {
             if (!mapping.getName().endsWith(".mapping")) {
                 MessageUtil.warning("File suffix must be mapping");
             }

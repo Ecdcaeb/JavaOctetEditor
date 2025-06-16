@@ -30,7 +30,7 @@ import com.strobel.decompiler.DecompilationOptions;
 import com.strobel.decompiler.DecompilerSettings;
 import com.strobel.decompiler.PlainTextOutput;
 import com.strobel.decompiler.languages.java.JavaFormattingOptions;
-import org.pmw.tinylog.Logger;
+import org.tinylog.Logger;
 
 import java.io.StringWriter;
 import java.util.HashMap;

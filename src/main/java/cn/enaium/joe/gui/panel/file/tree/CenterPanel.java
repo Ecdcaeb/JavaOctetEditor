@@ -67,7 +67,7 @@ public class CenterPanel extends BorderPanel {
                         } else {
                             MappingFormat mappingFormat = MappingParser.isAnyMatched(name);
                             if (mappingFormat != null) {
-                                JavaOctetEditor.getInstance().TASKS.submit(new RemappingTask(file, MappingFormat.SRG));
+                                JavaOctetEditor.getInstance().TASKS.submit(new RemappingTask(file, MappingFormat.SRG_FILE));
                             }
                         }
                     }

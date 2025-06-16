@@ -16,7 +16,8 @@
 
 package cn.enaium.joe.gui.panel.file;
 
-import org.pmw.tinylog.Logger;
+
+import org.tinylog.Logger;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

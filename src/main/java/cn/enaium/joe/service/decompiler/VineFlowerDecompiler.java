@@ -25,7 +25,7 @@ import org.jetbrains.java.decompiler.main.Fernflower;
 import org.jetbrains.java.decompiler.main.extern.IContextSource;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
-import org.pmw.tinylog.Logger;
+import org.tinylog.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
