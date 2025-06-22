@@ -27,6 +27,7 @@ import java.util.function.Consumer;
  * @since 1.2.0
  */
 public class EventManager {
+
     private final Map<Class<? extends Event>, List<Consumer<? extends Event>>> listenerMap =
             new ConcurrentHashMap<>();
 
