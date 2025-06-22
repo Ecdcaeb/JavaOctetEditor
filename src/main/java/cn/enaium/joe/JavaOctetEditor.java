@@ -48,6 +48,8 @@ public class JavaOctetEditor {
 
     public static final String TITLE = "JavaOctetEditor";
 
+    public static final String VERSION = "1.4.6";
+
     public JFrame window;
 
     private Jar jar;

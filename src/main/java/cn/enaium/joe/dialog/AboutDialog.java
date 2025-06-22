@@ -16,6 +16,7 @@
 
 package cn.enaium.joe.dialog;
 
+import cn.enaium.joe.JavaOctetEditor;
 import cn.enaium.joe.util.LangUtil;
 import cn.enaium.joe.util.reflection.ReflectionHelper;
 import net.miginfocom.swing.MigLayout;
@@ -32,6 +33,8 @@ public class AboutDialog extends Dialog {
         super(LangUtil.i18n("menu.help.about"));
         setContentPane(new JPanel(new MigLayout("fillx", "[fill][fill]")) {{
             setBorder(new EmptyBorder(10, 10, 10, 10));
+            add(new JLabel(JavaOctetEditor.TITLE + " " + JavaOctetEditor.VERSION), "wrap");
+
             add(new JLabel(LangUtil.i18n("about.system")), "wrap");
             add(new JLabel(LangUtil.i18n("about.system.description")), "wrap");
 
