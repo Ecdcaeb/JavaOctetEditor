@@ -76,7 +76,7 @@ shadowJar {
         include(dependency('com.google.code.gson:gson'))
         include(dependency('org.tinylog:.*'))
         include(dependency('org.vineflower:vineflower'))
-        include(dependency('net.fabricmc:mapping-io:'))
+        include(dependency('net.fabricmc:mapping-io'))
         include(dependency('zone.rong:imaginebreaker'))
     }
     archiveClassifier.set('')
