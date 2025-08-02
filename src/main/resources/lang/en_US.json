@@ -33,6 +33,7 @@
   "menu.search.opcode": "Opcode",
   "menu.attach": "Attach",
   "menu.attach.process": "Process",
+  "menu.attach.transform": "Class Transformation",
   "menu.mapping": "Mapping",
   "menu.help": "Help",
   "menu.help.about": "About",

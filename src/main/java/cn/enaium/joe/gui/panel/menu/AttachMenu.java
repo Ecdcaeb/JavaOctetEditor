@@ -17,6 +17,7 @@
 package cn.enaium.joe.gui.panel.menu;
 
 import cn.enaium.joe.gui.panel.menu.attach.ProcessMenuItem;
+import cn.enaium.joe.gui.panel.menu.attach.TransformMenuItem;
 import cn.enaium.joe.util.LangUtil;
 
 import javax.swing.*;
@@ -29,5 +30,6 @@ public class AttachMenu extends JMenu {
     public AttachMenu() {
         super(LangUtil.i18n("menu.attach"));
         add(new ProcessMenuItem());
+        add(new TransformMenuItem());
     }
 }

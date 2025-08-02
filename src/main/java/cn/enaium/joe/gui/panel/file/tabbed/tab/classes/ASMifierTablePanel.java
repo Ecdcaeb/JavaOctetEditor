@@ -46,27 +46,11 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
                     try {
                         String className = "ASMifier" + Integer.toHexString(classNode.getInternalName().hashCode()) + Integer.toHexString(getTextArea().getText().hashCode());
                         String stringBuilder =
-                                "import org.objectweb.asm.AnnotationVisitor;" +
-                                        "import org.objectweb.asm.Attribute;" +
-                                        "import org.objectweb.asm.ClassReader;" +
-                                        "import org.objectweb.asm.ClassWriter;" +
-                                        "import org.objectweb.asm.ConstantDynamic;" +
-                                        "import org.objectweb.asm.FieldVisitor;" +
-                                        "import org.objectweb.asm.Handle;" +
-                                        "import org.objectweb.asm.Label;" +
-                                        "import org.objectweb.asm.MethodVisitor;" +
-                                        "import org.objectweb.asm.Opcodes;" +
-                                        "import org.objectweb.asm.RecordComponentVisitor;" +
-                                        "import org.objectweb.asm.ModuleVisitor;" +
-                                        "import org.objectweb.asm.Type;" +
-                                        "import org.objectweb.asm.TypePath;" +
-                                        "public class " + className + " implements Opcodes" +
-                                        "{" +
+                                        "import org.objectweb.asm.*;" +
+                                        "public class " + className + " implements Opcodes {" +
                                         "public static byte[] dump() throws Exception {" +
-                                        getTextArea().getText() +
-                                        "return classWriter.toByteArray();" +
-                                        "}" +
-                                        "}";
+                                             getTextArea().getText() +
+                                        "return classWriter.toByteArray();}} ";
 
                         StringWriter errorTracer = new StringWriter();
                         byte[] dumpClazz = Compiler.compileSingle(className, stringBuilder, errorTracer);
@@ -83,6 +67,8 @@ public class ASMifierTablePanel extends ClassNodeTabPanel {
                 }
             });
         }};
+        codeAreaPanel.getTextArea().setCodeFoldingEnabled(true);
+        LanguageSupportFactory.get().register(codeAreaPanel.getTextArea());
         codeAreaPanel.getTextArea().setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         codeAreaPanel.getTextArea().setEditable(true);
         update();

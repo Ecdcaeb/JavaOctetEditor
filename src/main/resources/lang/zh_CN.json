@@ -33,6 +33,7 @@
   "menu.search.opcode": "操作码",
   "menu.attach": "附上",
   "menu.attach.process": "进程",
+  "menu.attach.transform": "类转化",
   "menu.mapping": "映射",
   "menu.help": "帮助",
   "menu.help.about": "关于",
