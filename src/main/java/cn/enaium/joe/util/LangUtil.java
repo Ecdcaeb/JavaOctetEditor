@@ -57,7 +57,7 @@ public class LangUtil {
 
         try (InputStream stream = LangUtil.class.getResourceAsStream("/lang/" + lang + ".json")){
             for(Map.Entry<String, JsonElement> entry : JsonParser.parseReader(new InputStreamReader(Objects.requireNonNull(stream))).getAsJsonObject().entrySet()) {
-                locales.putIfAbsent(entry.getKey(), entry.getValue().getAsString());
+                locales.put(entry.getKey(), entry.getValue().getAsString());
             }
         } catch (IOException | NullPointerException e) {
             Logger.warn(e);
