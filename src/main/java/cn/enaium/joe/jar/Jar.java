@@ -24,7 +24,7 @@ import java.util.*;
  * @author Enaium
  */
 public class Jar {
-    // internal name + ".class" -> ClassNode
+    // internal name -> ClassNode
     private Map<String, ClassNode> classes = new LinkedHashMap<>();
     private Map<String, byte[]> resources = new LinkedHashMap<>();
 

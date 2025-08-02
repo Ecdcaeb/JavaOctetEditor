@@ -17,6 +17,7 @@
 package cn.enaium.joe.service.decompiler;
 
 import cn.enaium.joe.JavaOctetEditor;
+import cn.enaium.joe.jar.Jar;
 import cn.enaium.joe.util.MessageUtil;
 import cn.enaium.joe.util.classes.ClassNode;
 import cn.enaium.joe.util.classes.JarHelper;
@@ -29,6 +30,7 @@ import org.tinylog.Logger;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.jar.Manifest;
@@ -39,11 +41,13 @@ import java.util.jar.Manifest;
  */
 public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompiler, IResultSaver, IContextSource, IContextSource.IOutputSink {
     private String returned;
-    private HashMap<String, ClassNode> activeClass;
+    private ClassNode toDecompileClass;
+    private HashMap<String, ClassNode> classNodeHashMap;
+
     public static final CachedGlobalValue<Map<String, Object>> customProperties = new CachedGlobalValue<>(config -> {
         Map<String, String> map = JavaOctetEditor.getInstance().CONFIG.getConfigMapStrings(config);
         HashMap<String, Object> hashMap = new HashMap<>(map.size());
-        for(Map.Entry<String, String> entry : map.entrySet()){
+        for (Map.Entry<String, String> entry : map.entrySet()) {
             String v = entry.getValue();
             if (v.equals("true")) {
                 v = "1";
@@ -52,21 +56,24 @@ public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompil
             }
             hashMap.put(entry.getKey(), v);
         }
-        return Collections.unmodifiableMap(hashMap);});
+        return Collections.unmodifiableMap(hashMap);
+    });
 
     @Override
     public String decompile(final ClassNode classNode) {
+        toDecompileClass = classNode;
+        classNodeHashMap = JarHelper.getAllNodes(classNode);
         returned = null;
-        activeClass = JarHelper.getAllNodes(classNode);
         BaseDecompiler baseDecompiler = new BaseDecompiler(this, customProperties.getValue(), this);
         baseDecompiler.addSource(this);
+        baseDecompiler.addLibrary(new JarLibrary(JavaOctetEditor.getInstance().getJar()));
         baseDecompiler.decompileContext();
         return returned;
     }
 
     @Override
     public void saveClassFile(String path, String qualifiedName, String entryName, String content, int[] mapping) {
-        if (returned == null){
+        if (returned == null && toDecompileClass.getInternalName().equals(qualifiedName)) {
             returned = content;
         }
     }
@@ -78,21 +85,21 @@ public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompil
 
     @Override
     public void writeMessage(String message, Severity severity) {
-        switch (severity){
+        switch (severity) {
             case INFO -> Logger.info(message);
             case WARN -> Logger.warn(message);
-            case TRACE -> Logger.trace(message);
-            case ERROR -> MessageUtil.error(message);
+            //case TRACE -> Logger.trace(message);
+            case ERROR -> Logger.error(message);
         }
     }
 
     @Override
     public void writeMessage(String message, Severity severity, Throwable t) {
-        switch (severity){
+        switch (severity) {
             case INFO -> Logger.info(t, message);
             case WARN -> Logger.warn(t, message);
             case TRACE -> Logger.trace(t, message);
-            case ERROR -> MessageUtil.error(message, t);
+            case ERROR -> Logger.error(message, t);
         }
     }
 
@@ -103,7 +110,7 @@ public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompil
 
     @Override
     public Entries getEntries() {
-        return new Entries(activeClass.keySet().stream().map(Entry::atBase).toList(), List.of(), List.of());
+        return new Entries(classNodeHashMap.keySet().stream().map(Entry::atBase).toList(), List.of(), List.of());
     }
 
     @Override
@@ -113,19 +120,18 @@ public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompil
 
     @Override
     public InputStream getInputStream(String resource) {
-        if (activeClass.containsKey(resource)) return new ByteArrayInputStream(activeClass.get(resource).getClassBytes());
         return null;
     }
 
     @Override
     public byte[] getClassBytes(String className) {
-        if (activeClass.containsKey(className)) return activeClass.get(className).getClassBytes();
+        if (hasClass(className)) return classNodeHashMap.get(className).getClassBytes();
         return null;
     }
 
     @Override
     public boolean hasClass(String className) {
-        return activeClass.containsKey(className);
+        return classNodeHashMap.containsKey(className);
     }
 
     @Override
@@ -135,18 +141,85 @@ public class VineFlowerDecompiler extends IFernflowerLogger implements IDecompil
 
     @Override
     public void acceptClass(String qualifiedName, String fileName, String content, int[] mapping) {
-        this.saveClassFile(null, null, null, content, mapping);
+        this.saveClassFile(null, qualifiedName, null, content, mapping);
     }
 
-    @Override public void begin() {}
-    @Override public void close() {}
-    @Override public void acceptDirectory(String s) {}
-    @Override public void acceptOther(String s) {}
-    @Override public void saveFolder(String path) {}
-    @Override public void copyFile(String source, String path, String entryName) {}
-    @Override public void createArchive(String path, String archiveName, Manifest manifest) {}
-    @Override public void saveDirEntry(String path, String archiveName, String entryName) {}
-    @Override public void copyEntry(String source, String path, String archiveName, String entry) {}
-    @Override public void saveClassEntry(String path, String archiveName, String qualifiedName, String entryName, String content) {}
-    @Override public void closeArchive(String path, String archiveName) {}
+    @Override
+    public void begin() {
+    }
+
+    @Override
+    public void close() {
+    }
+
+    @Override
+    public void acceptDirectory(String s) {
+    }
+
+    @Override
+    public void acceptOther(String s) {
+    }
+
+    @Override
+    public void saveFolder(String path) {
+    }
+
+    @Override
+    public void copyFile(String source, String path, String entryName) {
+    }
+
+    @Override
+    public void createArchive(String path, String archiveName, Manifest manifest) {
+    }
+
+    @Override
+    public void saveDirEntry(String path, String archiveName, String entryName) {
+    }
+
+    @Override
+    public void copyEntry(String source, String path, String archiveName, String entry) {
+    }
+
+    @Override
+    public void saveClassEntry(String path, String archiveName, String qualifiedName, String entryName, String content) {
+    }
+
+    @Override
+    public void closeArchive(String path, String archiveName) {
+    }
+
+    public static class JarLibrary implements IContextSource {
+        protected Jar jar;
+
+        public JarLibrary(Jar jar) {
+            this.jar = jar;
+        }
+
+        @Override
+        public String getName() {
+            return "JavaOctetEditor Jar Library";
+        }
+
+        @Override
+        public Entries getEntries() {
+            return new Entries(jar.getClasses().stream().map(ClassNode::getInternalName).map(Entry::atBase).toList(), List.of(), List.of());
+        }
+
+        @Override
+        public InputStream getInputStream(String resource) {
+            return null;
+        }
+
+        @Override
+        public byte[] getClassBytes(String className) {
+            if (jar.hasClass(className)) jar.getClassNode(className).getClassBytes();
+            return null;
+        }
+
+        @Override
+        public boolean hasClass(String className) throws IOException {
+            Logger.error("has class? " + className);
+            return jar.hasClass(className);
+        }
+    }
 }
