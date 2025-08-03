@@ -56,6 +56,7 @@ public class DecompileTabPanel extends ClassNodeTabPanel {
                 }
             });
         }};
+        codeAreaPanel.getTextArea().setEditable(false);
         codeAreaPanel.getTextArea().setSyntaxEditingStyle("text/java");
         update();
         codeAreaPanel.getTextArea().setCaretPosition(0);

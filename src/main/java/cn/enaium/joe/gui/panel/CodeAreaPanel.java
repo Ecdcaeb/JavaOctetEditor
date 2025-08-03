@@ -77,7 +77,7 @@ public class CodeAreaPanel extends BorderPanel implements ActionListener {
         toolBar.setVisible(false);
         setTop(toolBar);
         setCenter(new RTextScrollPane(textArea) {{
-            getGutter().setLineNumberFont(font);
+            //getGutter().setLineNumberFont(font);
             KeyStrokeUtil.register(textArea, KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK), () -> {
                 if (!StringUtil.isBlank(textArea.getSelectedText())) {
                     searchField.setText(textArea.getSelectedText());
